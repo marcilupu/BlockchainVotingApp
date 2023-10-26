@@ -1,0 +1,53 @@
+﻿@model BlockchainVotingApp.Models.Login.ViewModels.LoginViewModel
+
+<div class="login-form login-signin" style="width: 35rem;">
+    <div class="text-center p-3 mb-3">
+        <h2 class="p-2">Welcome to VApp!</h2>
+        <h4 class="p-2">Create account</h4>
+        <p style="font-size: 18px;">
+            Already have an account? <a class="card-link text-decoration-none" href="Index">Sign in</a>
+        </p>
+    </div>
+    <form action="/Login/CreateAccount" method="post">
+        <div class="form-group p-2">
+            <input type="text" class="form-control bg-light border-info py-3 px-6 ps-3" id="FirstName" name="firstName" placeholder="First name">
+        </div>
+        <div class="form-group p-2">
+            <input type="text" class="form-control bg-light border-info py-3 px-6 ps-3" id="LastName" name="lastName" placeholder="Last name">
+        </div>
+        <div class="form-group p-2">
+            <input type="email" class="form-control bg-light border-info py-3 px-6 ps-3" id="exampleInputEmail1" name="email" placeholder="Email">
+        </div>
+        <div class="form-group p-2">
+            <input type="text" class="form-control bg-light border-info py-3 px-6 ps-3" id="NationalId" name="nationalId" placeholder="NationalId">
+        </div>
+        <div class="form-group p-2">
+            <select name="County" id="county" class="form-select">
+                <option></option>
+                @foreach(var county in Model.Counties)
+                {
+                    <option name="SelectedCounty" value="@county.id">@county.name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group p-2">
+            <select name="Gender" id="gender" class="form-select">
+                <option></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+        </div>
+        <div class="form-group p-2">
+            <div class="icon-input-group">
+                <input type="password" class="form-control bg-light border-info py-3 px-6 ps-3" id="Password" name="password" placeholder="Password">
+            </div>
+        </div>
+        <div class="form-group p-3 mb-2 text-center">
+            <button type="submit" class="btn btn-primary px-5 py-2">Submit</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/register.js"></script>
+}

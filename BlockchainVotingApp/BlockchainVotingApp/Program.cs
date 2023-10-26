@@ -1,7 +1,11 @@
+using BlockchainVotingApp.Data.Ef.Config;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDataAccessLayer(builder.Configuration);
 
 var app = builder.Build();
 
@@ -19,6 +23,10 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/controller}/{action}/{id?}");
 
 app.MapControllerRoute(
     name: "default",
