@@ -12,6 +12,8 @@
 
         public DbCounty? County { get; set; }
         public int? CountyId { get; set; }
+
+        public ICollection<DbCandidate>? Candidates { get; set; }
     }
 
     public enum ElectionState

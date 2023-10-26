@@ -1,0 +1,58 @@
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels.AddElectionViewModel
+
+<div>
+    <h2>Create a new election</h2>
+    <form action="/manage/election/createElection" method="post" style="width: 35rem;" class="mt-4">
+        <div class="form-group mb-3">
+            <label class="mb-2">Election name</label>
+            <input id="electionName" type="text" name="Name" class="form-control" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="mb-2">Contract address</label>
+            <input id="contractAddress" type="text" name="ContractAddress" class="form-control" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="mb-2">Election start date</label>
+            <div class="input-group date" id="startDatepicker">
+                <input type="text" class="form-control" id="startDate" name="StartDate" />
+                <span class="input-group-append input-group-addon">
+                    <span class="input-group-text bg-light d-block">
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <label class="mb-2">Election end date</label>
+            <div class="input-group date" id="endDatepicker">
+                <input type="text" class="form-control" id="endDate" name="EndDate" />
+                <span class="input-group-append input-group-addon">
+                    <span class="input-group-text bg-light d-block">
+                        <i class="fa fa-calendar"></i>
+                    </span>
+                </span>
+            </div>
+        </div>
+        <div class="form-group mb-3">
+            <label class="mb-2">Rules</label>
+            <input id="electionRules" type="text" name="Rules" class="form-control" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="mb-2">County</label>
+            <select name="County" id="county" class="form-select">
+                <option></option>
+                @foreach (var county in Model.Counties)
+                {
+                    <option name="SelectedCounty" value="@county.id">@county.name</option>
+                }
+            </select>
+        </div>
+        <div class="form-group p-3 mb-2 text-center">
+            <button type="submit" class="btn btn-primary px-5 py-2">Create</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/areas/manage/election.js"></script>
+}

@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BlockchainVotingApp.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker.min.css" asp-append-version="true" />
+    <script src="https://kit.fontawesome.com/76c2720fae.js" crossorigin="anonymous"></script>
 </head>
-<body>
+<body style="background-image: url('/media/bg.jpg'); background-attachment:fixed; background-size: cover;">
     <header>
         <h1>HOME ADMIN LAYOUT</h1>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -25,7 +27,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link text-dark" asp-area="Manage" asp-controller="Election" asp-action="Index">Elections</a>
                         </li>
                     </ul>
                 </div>
@@ -47,6 +49,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/select2/js/select2.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-datepicker/js/bootstrap-datepicker.min.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

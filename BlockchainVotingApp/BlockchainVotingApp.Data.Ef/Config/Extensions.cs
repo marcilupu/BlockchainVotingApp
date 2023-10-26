@@ -19,6 +19,8 @@ namespace BlockchainVotingApp.Data.Ef.Config
             // Add repos to DI container.
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICountyRepository, CountyRepository>();
+            services.AddScoped<IElectionRepository, ElectionRepository>();
+            services.AddScoped<ICandidateRepository, ICandidateRepository>();   
 
             services.AddIdentity<DbUser, IdentityRole>().AddEntityFrameworkStores<VDbContext>();
 

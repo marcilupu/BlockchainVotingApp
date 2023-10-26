@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Manage\Models\Candidate\ViewModels\" />
     <Folder Include="Models\User\" />
   </ItemGroup>
 
