@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BlockchainVotingApp.Data.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
 {
@@ -11,6 +12,6 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
         public IActionResult AddCandidate() => View();
 
         [HttpPost]
-        public IActionResult AddCandidate() => View();
+        public IActionResult AddCandidate([FromServices] ICandidateRepository candidateRepository) => View();
     }
 }

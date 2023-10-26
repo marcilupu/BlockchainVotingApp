@@ -20,7 +20,7 @@ namespace BlockchainVotingApp.Data.Ef.Config
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ICountyRepository, CountyRepository>();
             services.AddScoped<IElectionRepository, ElectionRepository>();
-            services.AddScoped<ICandidateRepository, ICandidateRepository>();   
+            services.AddScoped<ICandidateRepository, CandidateRepository>();   
 
             services.AddIdentity<DbUser, IdentityRole>().AddEntityFrameworkStores<VDbContext>();
 
