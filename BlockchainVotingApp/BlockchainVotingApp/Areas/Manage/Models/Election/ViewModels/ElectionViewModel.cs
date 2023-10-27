@@ -1,4 +1,6 @@
-﻿using BlockchainVotingApp.Data.Models;
+﻿using BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels;
+using BlockchainVotingApp.Data.Models;
+using Org.BouncyCastle.Utilities;
 
 namespace BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels
 {
@@ -8,32 +10,10 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels
         {
             Elections = elections.Select(item =>
             {
-                return new ElectionItemViewModel()
-                {
-                    Name= item.Name,
-                    Id= item.Id,
-                    State = item.State,
-                    County = item.County?.Name,
-                    ContractAddress= item.ContractAddress,
-                    StartDate= item.StartDate,
-                    EndDate= item.EndDate,
-                    Rules = item.Rules
-                };
-            }).ToList();
+                return new ElectionItemViewModel(item);
+            }).ToList();     
         }
 
-        public List<ElectionItemViewModel> Elections { get; set; } = null!;
-    }
-
-    public class ElectionItemViewModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = null!;
-        public string ContractAddress { get; set; } = null!;
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string? Rules { get; set; }
-        public string? County { get; set; }
-        public ElectionState State { get; set; }
+        public List<ElectionItemViewModel> Elections { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿@model BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels.ElectionViewModel
 
-
 <a href="/Manage/Election/CreateElection" class="btn btn-primary px-5 py-2 mb-5 mt-3">Create a new Election</a>
 
 <div class="row">
@@ -29,14 +28,14 @@
                 <div class="card-body" id="electionCardBody">
                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="[data-a-panel='@election.Id']" type="button" role="tab" aria-controls="details" aria-selected="true">Details</button>
+                            <button class="nav-link active" data-bs-toggle="tab" data-bs-target="[data-details-panel='@election.Id']" type="button" role="tab" aria-controls="details" aria-selected="true">Details</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="[data-b-panel='@election.Id']" type="button" role="tab" aria-controls="candidates" aria-selected="false">Candidates</button>
+                            <button class="nav-link" data-bs-toggle="tab" data-bs-target="[data-candidates-panel='@election.Id']" type="button" role="tab" aria-controls="candidates" aria-selected="false">Candidates</button>
                         </li>
                     </ul>
                     <div class="tab-content mt-4" id="electionTabContent">
-                        <div class="tab-pane fade show active" data-a-panel="@election.Id" role="tabpanel" aria-labelledby="details-tab">
+                        <div class="tab-pane fade show active" data-details-panel="@election.Id" role="tabpanel" aria-labelledby="details-tab">
                             <span style="display: block" class="mb-3">
                                 <i class="fa-regular fa-calendar-days"></i>
                                 <span>@election.StartDate - @election.EndDate</span>
@@ -56,9 +55,20 @@
                                 </span>
                             }
                         </div>
-                        <div class="tab-pane fade" data-b-panel="@election.Id" role="tabpanel" aria-labelledby="candidates-tab">
-                            <button class="btn btn-primary" data-create-candidate="true" data-election-id="@election.Id">Add candidates</button>
-                            @*Table with candidates*@
+                        <div class="tab-pane fade" data-candidates-panel="@election.Id" role="tabpanel" aria-labelledby="candidates-tab">
+                            <div class="row">
+                                <div class="col">
+                                    <h5>List candidates</h5>
+                                </div>
+                                <div class="col d-flex justify-content-end">
+                                    <button class="btn btn-warning rounded-pill py-1 px-4" data-create-candidate="true" data-election-id="@election.Id">Add</button>
+                                </div>
+                            </div>
+                            <div class="row mt-4">
+                                <table id="candidatesTable" class="table" data-candidates-table="@election.Id">
+                                    @await Html.PartialAsync("/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml", election.Candidates)
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -91,13 +101,13 @@
                     </div>
                     <div class="form-group mb-3">
                         <label class="mb-2">Biography</label>
-                        <input id="biography" type="text" name="Biography" class="form-control" />
+                        <textarea id="biography" type="text" name="Biography" class="form-control"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Add</button>
+                <button type="button" class="btn btn-primary submit-usage">Add</button>
             </div>
         </div>
     </div>
@@ -105,4 +115,4 @@
 
 @section Scripts {
     <script src="~/js/areas/manage/election/index.js"></script>
-}
+    }

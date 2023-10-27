@@ -1,0 +1,1 @@
+﻿$('#candidatesTable').DataTable();

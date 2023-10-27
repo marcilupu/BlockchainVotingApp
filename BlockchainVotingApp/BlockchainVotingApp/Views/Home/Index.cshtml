@@ -1,12 +1,40 @@
-﻿@{
+﻿@model BlockchainVotingApp.Models.Home.HomeViewModel
+
+@{
     Layout = "_HomeLayout";
 }
 
-@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center h-100 w-100 p-2 mt-5">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>
+                            <i class="fa-solid fa-user"></i>
+                            <span>Ongoing elections</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body" id="electionsCardBody">
+                    <p>Card body</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>
+                            <i class="fa-solid fa-user"></i>
+                            <span>Candidates results</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body" id="electionResultsCardBody">
+                    <p>Card body</p>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

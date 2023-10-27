@@ -19,6 +19,6 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Candidate
         public string Biography { get; set; } = null!;
 
         [Required(ErrorMessage = "Election is required")]
-        public int Election { get; set; }
+        public int ElectionId { get; set; }
     }
 }

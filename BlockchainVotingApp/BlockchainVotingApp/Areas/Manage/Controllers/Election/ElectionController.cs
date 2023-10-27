@@ -1,4 +1,5 @@
-﻿using BlockchainVotingApp.Areas.Manage.Models.Election;
+﻿using BlockchainVotingApp.AppCode.Extensions;
+using BlockchainVotingApp.Areas.Manage.Models.Election;
 using BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
@@ -36,23 +37,17 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateElection([FromServices] IElectionRepository electionRepository, AddElectionModel electionModel)
+        public async Task<IActionResult> CreateElection([FromServices] IElectionRepository electionRepository, 
+                                                        AddElectionModel electionModel)
         {
-            
-            var election = new DbElection()
-            {
-                Name = electionModel.Name,
-                ContractAddress = electionModel.ContractAddress,
-                StartDate = electionModel.StartDate,
-                EndDate = electionModel.EndDate,
-                Rules = electionModel.Rules,
-                CountyId = electionModel.County,
-                State = ElectionState.Upcoming
-            };
+            var election = electionModel.ToDb();
 
-            int electionId = await electionRepository.Insert(election);
+            await electionRepository.Insert(election);
 
-            return View("/Areas/Manage/Views/Election/Index.cshtml");
+            var elections = await electionRepository.GetAll();
+            var electionViewModel = new ElectionViewModel(elections);
+
+            return View("/Areas/Manage/Views/Election/Index.cshtml", electionViewModel);
         }
     }
 }

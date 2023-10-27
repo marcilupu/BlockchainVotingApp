@@ -1,3 +1,11 @@
-﻿<a href="#" class="btn btn-primary">Add candidates</a>
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels.CandidateViewModel
 
-<p>Candidates List</p>
+<h2 class="mb-5">Candidates List</h2>
+
+<table id="candidatesTable" class="table">
+    @await Html.PartialAsync("/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml", Model.Items)
+</table>
+
+@section Scripts {
+    <script src="/js/areas/manage/candidate/index.js"></script>
+}

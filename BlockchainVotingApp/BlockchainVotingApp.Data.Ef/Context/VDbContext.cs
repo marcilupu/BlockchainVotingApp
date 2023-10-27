@@ -12,7 +12,6 @@ namespace BlockchainVotingApp.Data.Ef.Context
         public DbSet<DbElection> Elections { get; set; } = null!;
         public DbSet<DbCandidate> Candidates { get; set; } = null!;
         public DbSet<DbCounty> Counties { get; set; } = null!;
-        public DbSet<DbVoter> Voters { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

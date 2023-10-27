@@ -1,0 +1,25 @@
+﻿@model IEnumerable<BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels.CandidateItemViewModel>
+
+
+<thead>
+    <tr>
+        <th>Full Name</th>
+        <th>Organization</th>
+        <th>Biography</th>
+        <th>Actions</th>
+    </tr>
+</thead>
+<tbody>
+    @foreach (var candidate in Model)
+    {
+        <tr>
+            <td>@candidate.FullName</td>
+            <td>@candidate.Organization</td>
+            <td>@candidate.Biography</td>
+            <td>
+                <a href="#" class="btn btn-primary px-1 py-0"><i class="fa-solid fa-pen"></i></a>
+                <button onclick="#" id="deleteCandidate" name="deleteCandidate" class="btn btn-danger ms-2 px-1 py-0"><i class="fa-solid fa-trash-can"></i></button>
+            </td>
+        </tr>
+    }
+</tbody>

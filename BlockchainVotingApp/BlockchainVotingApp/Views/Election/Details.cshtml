@@ -1,0 +1,88 @@
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels.ElectionItemViewModel
+
+@{
+    Layout = "_HomeLayout";
+}
+
+<div>
+    <div class="row">
+        <h3>Vote for @Model.Name</h3>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @Model.Name</h4>
+                                @if ((int)Model.State == 0)
+                                {
+                                    <span class="badge bg-primary py-1 px-2">@Model.State</span>
+                                }
+                                @if ((int)Model.State == 1)
+                                {
+                                    <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">@Model.State</span>
+                                }
+                                @if ((int)Model.State == 2)
+                                {
+                                    <span class="badge bg-success py-1 px-2">@Model.State</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="electionCardBody">
+                    <span style="display: block" class="mb-3">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span>@Model.StartDate - @Model.EndDate</span>
+                    </span>
+                    @if (!string.IsNullOrEmpty(Model.Rules))
+                    {
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>@Model.Rules</span>
+                        </span>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.County))
+                    {
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-city"></i>
+                            <span>@Model.County</span>
+                        </span>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        @foreach (var candidate in Model.Candidates)
+        {
+            <div class="col-4 mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @candidate.FullName</h4>
+                        </div>
+                    </div>
+                    <div class="card-body" id="candidateCardBody">
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>@candidate.Organization</span>
+                        </span>
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>@candidate.Biography</span>
+                        </span>
+                        <div>
+                            <button data-candidate-id="@candidate.Id" class="btn btn-primary rounded-pill py-2 px-3">Vote</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
