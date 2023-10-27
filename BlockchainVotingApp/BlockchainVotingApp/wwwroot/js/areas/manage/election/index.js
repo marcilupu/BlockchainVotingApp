@@ -26,7 +26,8 @@ const ElectionPageComponent = function () {
             }
         }
 
-        const openModal = function () {
+        const openModal = function (electionId) {
+            internalContext.electionId = electionId;
             internalContext.target.modal("show");
         }
 
@@ -43,6 +44,7 @@ const ElectionPageComponent = function () {
                     type: 'POST',
                     data: internalContext.form.serialize() + '&ElectionId=' + internalContext.electionId,
                     success: function () {
+                        internalContext.target.modal("hide");
                         location.href = '/Manage/Election/Index';
                     },
                     complete: function () {
@@ -83,7 +85,8 @@ const ElectionPageComponent = function () {
         addCandidateEngine.init(electionId);
 
         $(context.ids.addCandidateModal.initiatorButtonAttr).on('click', function (e) {
-            addCandidateEngine.openModal();
+            electionId = $(this).attr(context.ids.addCandidateModal.dataElectionIdAttr);
+            addCandidateEngine.openModal(electionId);
         });
     }
 

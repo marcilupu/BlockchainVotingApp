@@ -31,9 +31,12 @@
                                         <span class="badge bg-success py-1 px-2">@election.State</span>
                                     }
                                 </div>
-                                <div class="col d-flex justify-content-end">
-                                    <a href="/Election/Details?id=@election.Id" class="btn btn-warning rounded-pill py-3 px-3" data-create-candidate="true" data-election-id="@election.Id">Go to vote</a>
-                                </div>
+                                @if (election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
+                                {
+                                    <div class="col d-flex justify-content-end">
+                                        <a href="/Election/Details?id=@election.Id" class="btn btn-warning rounded-pill py-3 px-3" data-create-candidate="true" data-election-id="@election.Id">Vote</a>
+                                    </div>
+                                }
                             </div>
                         </div>
                     </div>

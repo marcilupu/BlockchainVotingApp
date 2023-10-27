@@ -20,7 +20,7 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
 
         public async Task<DbElection?> Get(int electionId)
         {
-            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates).FirstOrDefaultAsync();
+            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates).FirstOrDefaultAsync(x => x.Id == electionId);
         }
 
         public async Task<List<DbElection>> GetAll()
