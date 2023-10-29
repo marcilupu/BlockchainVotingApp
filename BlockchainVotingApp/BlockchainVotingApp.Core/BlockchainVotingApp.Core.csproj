@@ -7,12 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="DomainModels\" />
-    <Folder Include="Infrastructure\Elections\" />
-    <Folder Include="Infrastructure\Candidates\" />
-    <Folder Include="Infrastructure\Users\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\BlockchainVotingApp.Data\BlockchainVotingApp.Data.csproj" />
   </ItemGroup>
 
 </Project>

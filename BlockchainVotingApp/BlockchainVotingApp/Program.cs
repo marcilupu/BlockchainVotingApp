@@ -1,3 +1,6 @@
+using BlockchainVotingApp.AppCode.Services.Users;
+using BlockchainVotingApp.Core.Extensions;
+using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Ef.Config;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDataAccessLayer(builder.Configuration);
+builder.Services.AddScoped<IAppUserService, AppUserService>();
+builder.Services.AddCoreServices();
 
 var app = builder.Build();
 

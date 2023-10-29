@@ -7,12 +7,7 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels
         public CandidatesViewModel(List<DbCandidate> candidates) {
             Items = candidates.Select(item =>
             {
-                return new CandidatesItemViewModel()
-                {
-                    FullName = $"{item.FirstName} {item.LastName}",
-                    Organization = item.Organization,
-                    Biography= item.Biography,
-                };
+                return new CandidatesItemViewModel(item);
             }).ToList();
         }
 

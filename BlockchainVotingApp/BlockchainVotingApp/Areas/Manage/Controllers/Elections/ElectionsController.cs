@@ -14,27 +14,22 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
             var elections = await electionRepository.GetAll();
 
             var electionViewModel = new ElectionsViewModel(elections);
-   
+
             return View(electionViewModel);
         }
 
         [HttpGet]
         public async Task<IActionResult> CreateElection([FromServices] ICountyRepository countyRepository)
         {
-            AddElectionViewModel electionViewModel = new AddElectionViewModel();
-
             var counties = await countyRepository.GetAll();
 
-            electionViewModel.Counties = counties.Select(county =>
-            {
-                return (county.Name, county.Id);
-            }).ToList();
+            AddElectionViewModel electionViewModel = new(counties);
 
             return View("/Areas/Manage/Views/Elections/AddElection.cshtml", electionViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateElection([FromServices] IElectionRepository electionRepository, 
+        public async Task<IActionResult> CreateElection([FromServices] IElectionRepository electionRepository,
                                                         AddElectionModel electionModel)
         {
             var election = electionModel.ToDb();

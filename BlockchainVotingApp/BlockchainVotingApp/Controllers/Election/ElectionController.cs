@@ -1,4 +1,5 @@
-﻿using BlockchainVotingApp.Controllers.Users;
+﻿using BlockchainVotingApp.AppCode.Services.Users;
+using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.Models.Election.ViewModels;
@@ -7,34 +8,29 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlockchainVotingApp.Controllers.Election
 {
-    public class ElectionController : AuthenticatedController
+    public class ElectionController : Controller
     {
-        public ElectionController(UserManager<DbUser> userManager) : base(userManager) { }
+        public ElectionController(UserManager<DbUser> userManager) { }
 
-        public async Task<IActionResult> Index([FromServices] IElectionRepository electionRepository)
-
+        public async Task<IActionResult> Index([FromServices] IElectionService electionService, [FromServices] IAppUserService appUserService)
         {
-            var user = await _userManager.GetUserAsync(HttpContext.User);
+            var user = await appUserService.GetUserAsync();
 
-            var elections = await electionRepository.GetAllByCounty(user.CountyId);
+            var elections = await  electionService.GetAllByCounty(user.CountyId);
 
             var electionViewModel = new ElectionsViewModel(elections);
-
-            //check smart contract function HasUserVoted()
-            //Set HasVoted
-
 
             return View(electionViewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details([FromServices] IElectionRepository electionRepository, int id)
+        public async Task<IActionResult> Details([FromServices] IElectionService electionService, int id)
         {
-            var election = await electionRepository.Get(id);
+            var election = await electionService.Get(id);
 
             if (election != null)
             {
-                var electionViewModel = new ElectionItemViewModel(election);
+                var electionViewModel = new ElectionCandidatesViewModel(election);
 
                 return View("/Views/Election/Details.cshtml", electionViewModel);
             }
