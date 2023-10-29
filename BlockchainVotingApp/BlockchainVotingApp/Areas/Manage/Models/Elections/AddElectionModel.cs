@@ -1,7 +1,6 @@
-﻿using BlockchainVotingApp.Data.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlockchainVotingApp.Areas.Manage.Models.Election
+namespace BlockchainVotingApp.Areas.Manage.Models.Elections
 {
     public class AddElectionModel
     {

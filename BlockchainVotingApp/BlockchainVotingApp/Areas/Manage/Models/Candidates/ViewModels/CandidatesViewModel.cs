@@ -1,13 +1,13 @@
 ﻿using BlockchainVotingApp.Data.Models;
 
-namespace BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels
+namespace BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels
 {
-    public class CandidateViewModel
+    public class CandidatesViewModel
     {
-        public CandidateViewModel(List<DbCandidate> candidates) {
+        public CandidatesViewModel(List<DbCandidate> candidates) {
             Items = candidates.Select(item =>
             {
-                return new CandidateItemViewModel()
+                return new CandidatesItemViewModel()
                 {
                     FullName = $"{item.FirstName} {item.LastName}",
                     Organization = item.Organization,
@@ -16,6 +16,6 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels
             }).ToList();
         }
 
-        public List<CandidateItemViewModel> Items { get; set; }
+        public List<CandidatesItemViewModel> Items { get; set; }
     }
 }

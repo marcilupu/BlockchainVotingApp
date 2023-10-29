@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlockchainVotingApp.Areas.Manage.Models.Candidate
+namespace BlockchainVotingApp.Areas.Manage.Models.Candidates
 {
     public class AddCandidateModel
     {

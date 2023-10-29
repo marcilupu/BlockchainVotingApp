@@ -1,16 +1,16 @@
-﻿using BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels;
+﻿using BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels;
 using BlockchainVotingApp.Data.Models;
 using System.Reflection.Metadata.Ecma335;
 
-namespace BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels
+namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
 {
-    public class ElectionItemViewModel
+    public class ElectionsItemViewModel
     {
-        public ElectionItemViewModel(DbElection election)
+        public ElectionsItemViewModel(DbElection election)
         {
             Candidates = election.Candidates!.Select(item =>
             {
-                return new CandidateItemViewModel()
+                return new CandidatesItemViewModel()
                 {
                     FullName = $"{item.FirstName} {item.LastName}",
                     Organization= item.Organization,
@@ -38,6 +38,6 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels
         public string? Rules { get; set; }
         public string? County { get; set; }
         public ElectionState State { get; set; }
-        public List<CandidateItemViewModel> Candidates { get; set; }
+        public List<CandidatesItemViewModel> Candidates { get; set; }
     }
 }

@@ -20,6 +20,10 @@ namespace BlockchainVotingApp.Controllers.Election
 
             var electionViewModel = new ElectionsViewModel(elections);
 
+            //check smart contract function HasUserVoted()
+            //Set HasVoted
+
+
             return View(electionViewModel);
         }
 
@@ -38,9 +42,9 @@ namespace BlockchainVotingApp.Controllers.Election
             return NotFound();
         }
 
-        public IActionResult Vote()
+        public IActionResult Vote(int candidateId)
         {
-
+            
 
             return new OkResult();
         }

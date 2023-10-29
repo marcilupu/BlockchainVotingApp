@@ -1,5 +1,5 @@
-﻿using BlockchainVotingApp.Areas.Manage.Models.Candidate;
-using BlockchainVotingApp.Areas.Manage.Models.Election;
+﻿using BlockchainVotingApp.Areas.Manage.Models.Candidates;
+using BlockchainVotingApp.Areas.Manage.Models.Elections;
 using BlockchainVotingApp.Data.Models;
 
 namespace BlockchainVotingApp.AppCode.Extensions

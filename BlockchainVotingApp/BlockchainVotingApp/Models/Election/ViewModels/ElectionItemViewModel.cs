@@ -37,6 +37,7 @@ namespace BlockchainVotingApp.Models.Election.ViewModels
         public string? Rules { get; set; }
         public string? County { get; set; }
         public ElectionState State { get; set; }
+        public bool HasVoted { get; set; }
         public List<CandidateItemViewModel> Candidates { get; set; }
     }
 }

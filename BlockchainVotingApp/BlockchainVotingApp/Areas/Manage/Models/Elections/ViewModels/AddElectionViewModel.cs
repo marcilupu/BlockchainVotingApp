@@ -1,4 +1,4 @@
-﻿namespace BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels
+﻿namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
 {
     public class AddElectionViewModel
     {

@@ -31,13 +31,17 @@
                                         <span class="badge bg-success py-1 px-2">@election.State</span>
                                     }
                                 </div>
-                                @if (election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
+                                @if (election.HasVoted)
                                 {
                                     <div class="col d-flex justify-content-end">
                                         <div class="d-flex rounded-circle justify-content-center align-items-center bg-success vote-button">
                                             <a href="/Election/Details?id=@election.Id" class="text-decoration-none text-white">Vote</a>                                       
                                         </div>
                                     </div>
+                                }
+                                else
+                                {
+                                    
                                 }
                             </div>
                         </div>

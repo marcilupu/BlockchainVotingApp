@@ -1,0 +1,11 @@
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels.CandidatesViewModel
+
+<h2 class="mb-5">Candidates List</h2>
+
+<table id="candidatesTable" class="table">
+    <partial name="/Areas/Manage/Views/Candidates/CandidatesListPartialView.cshtml" model="@Model.Items" />
+</table>
+
+@section Scripts {
+    <script src="/js/areas/manage/candidate/index.js"></script>
+}

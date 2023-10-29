@@ -1,6 +1,6 @@
-﻿@model BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels.ElectionViewModel
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels.ElectionsViewModel
 
-<a href="/Manage/Election/CreateElection" class="btn btn-primary px-5 py-2 mb-5 mt-3">Create a new Election</a>
+<a href="/Manage/Elections/CreateElection" class="btn btn-primary px-5 py-2 mb-5 mt-3">Create a new Election</a>
 
 <div class="row">
     @foreach (var election in Model.Elections)
@@ -66,7 +66,7 @@
                             </div>
                             <div class="row mt-4">
                                 <table id="candidatesTable" class="table" data-candidates-table="@election.Id">
-                                    <partial name="/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml" model="election.Candidates"/>
+                                    <partial name="/Areas/Manage/Views/Candidates/CandidatesListPartialView.cshtml" model="election.Candidates"/>
                                 </table>
                             </div>
                         </div>

@@ -10,6 +10,10 @@ const ElectionPageComponent = function () {
                 target: "#addCandidateModal",
                 form: "#addCandidateForm"
             }
+        },
+        apis: {
+            addCandidate: '/Manage/Candidates/AddCandidate',
+            listElections: '/Manage/Elections/Index'
         }
     }
 
@@ -40,12 +44,12 @@ const ElectionPageComponent = function () {
                 });
 
                 $.ajax({
-                    url: '/Manage/Candidate/AddCandidate',
+                    url: context.apis.addCandidate,
                     type: 'POST',
                     data: internalContext.form.serialize() + '&ElectionId=' + internalContext.electionId,
                     success: function () {
                         internalContext.target.modal("hide");
-                        location.href = '/Manage/Election/Index';
+                        location.href = context.apis.listElections;
                     },
                     complete: function () {
                         //unlock the modal

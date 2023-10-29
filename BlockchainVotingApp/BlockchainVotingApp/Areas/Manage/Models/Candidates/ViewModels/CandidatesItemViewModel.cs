@@ -1,6 +1,6 @@
-﻿namespace BlockchainVotingApp.Areas.Manage.Models.Candidate.ViewModels
+﻿namespace BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels
 {
-    public class CandidateItemViewModel
+    public class CandidatesItemViewModel
     {
         public string FullName { get; set; } = null!;
         public string Organization { get; set; } = null!;

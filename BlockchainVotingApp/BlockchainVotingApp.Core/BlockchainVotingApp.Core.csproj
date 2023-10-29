@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Extensions\" />
+    <Folder Include="DomainModels\" />
+    <Folder Include="Infrastructure\Elections\" />
+    <Folder Include="Infrastructure\Candidates\" />
+    <Folder Include="Infrastructure\Users\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>

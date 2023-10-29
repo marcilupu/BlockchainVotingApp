@@ -1,4 +1,4 @@
-﻿using BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels;
+﻿using BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels;
 using BlockchainVotingApp.Data.Models;
 
 namespace BlockchainVotingApp.Models.Election.ViewModels
