@@ -66,7 +66,7 @@
                             </div>
                             <div class="row mt-4">
                                 <table id="candidatesTable" class="table" data-candidates-table="@election.Id">
-                                    @await Html.PartialAsync("/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml", election.Candidates)
+                                    <partial name="/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml" model="election.Candidates"/>
                                 </table>
                             </div>
                         </div>

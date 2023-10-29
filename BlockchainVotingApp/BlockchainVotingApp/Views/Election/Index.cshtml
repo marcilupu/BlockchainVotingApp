@@ -1,4 +1,4 @@
-﻿@model BlockchainVotingApp.Models.Election.ElectionsViewModels
+﻿@model BlockchainVotingApp.Models.Election.ViewModels.ElectionsViewModel
 
 @{
     Layout = "_HomeLayout";
@@ -34,7 +34,9 @@
                                 @if (election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
                                 {
                                     <div class="col d-flex justify-content-end">
-                                        <a href="/Election/Details?id=@election.Id" class="btn btn-warning rounded-pill py-3 px-3" data-create-candidate="true" data-election-id="@election.Id">Vote</a>
+                                        <div class="d-flex rounded-circle justify-content-center align-items-center bg-success vote-button">
+                                            <a href="/Election/Details?id=@election.Id" class="text-decoration-none text-white">Vote</a>                                       
+                                        </div>
                                     </div>
                                 }
                             </div>

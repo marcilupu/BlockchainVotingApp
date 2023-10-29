@@ -1,8 +1,7 @@
-﻿using BlockchainVotingApp.Areas.Manage.Models.Election.ViewModels;
-using BlockchainVotingApp.Controllers.Users;
+﻿using BlockchainVotingApp.Controllers.Users;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
-using BlockchainVotingApp.Models.Election;
+using BlockchainVotingApp.Models.Election.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +18,7 @@ namespace BlockchainVotingApp.Controllers.Election
 
             var elections = await electionRepository.GetAllByCounty(user.CountyId);
 
-            var electionViewModel = new ElectionsViewModels(elections);
+            var electionViewModel = new ElectionsViewModel(elections);
 
             return View(electionViewModel);
         }
@@ -29,13 +28,20 @@ namespace BlockchainVotingApp.Controllers.Election
         {
             var election = await electionRepository.Get(id);
 
-            var electionViewModel = new ElectionItemViewModel(election!);
+            if (election != null)
+            {
+                var electionViewModel = new ElectionItemViewModel(election);
 
-            return View("/Views/Election/Details.cshtml", electionViewModel);
+                return View("/Views/Election/Details.cshtml", electionViewModel);
+            }
+
+            return NotFound();
         }
 
         public IActionResult Vote()
-        { 
+        {
+
+
             return new OkResult();
         }
     }

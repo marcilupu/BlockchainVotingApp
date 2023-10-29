@@ -3,7 +3,7 @@
 <h2 class="mb-5">Candidates List</h2>
 
 <table id="candidatesTable" class="table">
-    @await Html.PartialAsync("/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml", Model.Items)
+    <partial name="/Areas/Manage/Views/Candidate/CandidatesListPartialView.cshtml" model="@Model.Items" />
 </table>
 
 @section Scripts {

@@ -55,9 +55,7 @@ const ElectionPageComponent = function () {
             }
         }
 
-        const init = function (electionId) {
-            //Init DataTable
-            internalContext.electionId = electionId;
+        const init = function () {
             $(internalContext.candidatesTable.target).DataTable();
 
             internalContext.target.find('.submit-usage').on('click', function (event) {
@@ -81,8 +79,7 @@ const ElectionPageComponent = function () {
     }();
 
     const init = function () {
-        var electionId = $(context.ids.addCandidateModal.initiatorButtonAttr).attr(context.ids.addCandidateModal.dataElectionIdAttr);
-        addCandidateEngine.init(electionId);
+        addCandidateEngine.init();
 
         $(context.ids.addCandidateModal.initiatorButtonAttr).on('click', function (e) {
             electionId = $(this).attr(context.ids.addCandidateModal.dataElectionIdAttr);
