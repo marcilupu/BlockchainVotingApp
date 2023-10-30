@@ -1,57 +1,81 @@
-//Starting with the pragma solidity version
-pragma solidity >=0.4.22 <0.8.0;
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity >=0.8.0;
 
 contract Election {
-	// Model a Candidate
-	struct Candidate {
-		uint id;
-		string name;
-		uint voteCount;
-	}
+    //Election properties
+    mapping(uint => bool) public voters;
 
-	event votedEvent (
-        uint indexed _candidateId
-    );
+    mapping(uint => uint) public votes;
 
-	// Store account that have voted
-	// this is simple going to take an account and give a boolean is the account has voted
-	mapping(address => bool) public voters;
+    mapping(uint => uint) public candidatesVotesCount;
+    mapping(uint => bool) public candidates;
 
-	// Store Candidates
-	// Fetch Candidates
-	// candidateId => candidate structure type
-	mapping(uint => Candidate) public candidates;
+    uint votesCount;
 
-	// Store Candidates count
-	uint public candidatesCount;
+    //Is the election is ongoing, changes to the election must not be made (eg. description or candidates of the election)
+    bool public IsUpcomingElection;
 
-	// Constructor
-	constructor() public {
-		addCandidate("Candidate 1");
-		addCandidate("Candidate 2"); 
-	} 
+    //Test to see if is cheaper to use a list of voters as a parameters and a loop to add the voters 
+    //instead using a single voterId and made too many transactions
+    function addVoter(uint voterId) public {
+        require(IsUpcomingElection);
+        
+        voters[voterId] = true;
+    }
 
-	function addCandidate (string memory _name) private {
-		candidatesCount ++;
-		candidates[candidatesCount] = Candidate(candidatesCount, _name, 0);
-	}
+    function addVoters(uint[] memory votersList) public {
+        require(IsUpcomingElection);
 
-	function vote (uint _candidateId) public {
-		//require that they haven't voted before
-		//if the statement is false, the require() will return false and exist the function
-		require(!voters[msg.sender]);
+        uint lenght = votersList.length;
 
-		//require a valid candidate
-		require(_candidateId > 0 && _candidateId <= candidatesCount);
+        for(uint i = 0; i < lenght; i++)
+        {
+            voters[i] = true;
+        }
+    }
 
-		// record that the voter has voted
-		// With msg.sender I read the account which voted
-		voters[msg.sender] = true;
+    function addCandidate(uint candidateId) public {
+        require(IsUpcomingElection);
+        
+        candidatesVotesCount[candidateId] = 0;
+    }
 
-		//update candidate vote count
-		candidates[_candidateId].voteCount ++;
+    function castVote(uint voterId, uint candidateId) public {
+        //The election should be ongoing in order to voter
+        require(!IsUpcomingElection);
 
-		// trigger voted event
-    	emit votedEvent(_candidateId);
-	}
+        //The voter has to be in the appropriate voters list
+        require(voters[voterId]);
+
+        //The candidate has to be in the candidates list for the current election
+        require(candidatesVotesCount[candidateId] >= 0);
+
+        //If the voter has already voted, he cannot vote again
+        require(votes[voterId] != 0);
+        
+        votes[voterId] = candidateId;
+
+        candidatesVotesCount[candidateId]++;
+
+        votesCount++;
+    }
+
+    //Get the votes of the user
+    function getUserVote(uint voterId) public view returns (uint, uint){
+        require(votes[voterId] >= 0, "Key does not exists");
+
+        return (voterId, votes[voterId]);
+    }
+
+    //Check if the user has already voted (the voter is in the votes mapping)
+    function checkUserHasVoted(uint voterId) public view returns (bool) {
+        require(votes[voterId] !=0 , "The user has already voted");
+
+        return true;
+    }
+
+    //If the election change the state from upcoming to ungoing, set the IsUpcomingElection to true and do not let the users to made any other changes to the contract
+    function changeElectionState() public{
+        IsUpcomingElection = true;
+    }
 }

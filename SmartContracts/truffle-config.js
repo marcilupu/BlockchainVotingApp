@@ -1,6 +1,4 @@
 module.exports = {
-  // See <http://truffleframework.com/docs/advanced/configuration>
-  // for more about customizing your Truffle configuration!
   networks: {
     development: {
       host: "127.0.0.1",
@@ -10,10 +8,10 @@ module.exports = {
     develop: {
       port: 8545
     },
-    compilers: {
-      solc: {
-        version: "0.5.16",    // Fetch exact version from solc-bin (default: truffle's version)
-      }
+  },
+  compilers: {
+    solc: {
+      version: "0.8.0",    // Fetch exact version from solc-bin (default: truffle's version)
     }
   }
 };
