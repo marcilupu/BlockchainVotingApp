@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlockchainVotingApp.Data.Ef.Migrations
 {
     [DbContext(typeof(VDbContext))]
-    [Migration("20231025203455_UpdateVotingDb")]
-    partial class UpdateVotingDb
+    [Migration("20231029193733_RenamedTables")]
+    partial class RenamedTables
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -73,6 +73,93 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Counties");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Alba"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Arad"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Arges"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Bihor"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Brasov"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "Braila"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "Bucuresti"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "Cluj"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Name = "Constanta"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Name = "Covasna"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Name = "Dolj"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Name = "Galati"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Name = "Gorj"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Name = "Giurgiu"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Name = "Hunedoara"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Name = "Ialomita"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Name = "Iasi"
+                        });
                 });
 
             modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbElection", b =>
@@ -115,8 +202,11 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
 
             modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbUser", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -199,37 +289,16 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers", (string)null);
+                    b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbVoter", b =>
+            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbUserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("ElectionId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ElectionId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Voters");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -250,10 +319,10 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,18 +336,17 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RoleId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims", (string)null);
+                    b.ToTable("RoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -292,18 +360,17 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims", (string)null);
+                    b.ToTable("UserClaims", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -314,36 +381,35 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins", (string)null);
+                    b.ToTable("UserLogins", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("RoleId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles", (string)null);
+                    b.ToTable("UserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -356,13 +422,13 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens", (string)null);
+                    b.ToTable("UserTokens", (string)null);
                 });
 
             modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbCandidate", b =>
                 {
                     b.HasOne("BlockchainVotingApp.Data.Models.DbElection", "Election")
-                        .WithMany()
+                        .WithMany("Candidates")
                         .HasForeignKey("ElectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -390,35 +456,16 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Navigation("County");
                 });
 
-            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbVoter", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("BlockchainVotingApp.Data.Models.DbElection", "Election")
-                        .WithMany()
-                        .HasForeignKey("ElectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlockchainVotingApp.Data.Models.DbUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Election");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("BlockchainVotingApp.Data.Models.DbUserRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
                 {
                     b.HasOne("BlockchainVotingApp.Data.Models.DbUser", null)
                         .WithMany()
@@ -427,7 +474,7 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
                 {
                     b.HasOne("BlockchainVotingApp.Data.Models.DbUser", null)
                         .WithMany()
@@ -436,9 +483,9 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("BlockchainVotingApp.Data.Models.DbUserRole", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -451,13 +498,18 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("BlockchainVotingApp.Data.Models.DbUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbElection", b =>
+                {
+                    b.Navigation("Candidates");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,7 +10,7 @@ namespace BlockchainVotingApp.Controllers.Election
 {
     public class ElectionController : Controller
     {
-        public ElectionController(UserManager<DbUser> userManager) { }
+        public ElectionController() { }
 
         public async Task<IActionResult> Index([FromServices] IElectionService electionService, [FromServices] IAppUserService appUserService)
         {

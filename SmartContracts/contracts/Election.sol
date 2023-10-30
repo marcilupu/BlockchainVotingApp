@@ -5,20 +5,25 @@ contract Election {
     //Election properties
     mapping(uint => bool) public voters;
 
+    uint votesCount;
     mapping(uint => uint) public votes;
+    mapping(uint => bool) public usersVoted;
 
     mapping(uint => uint) public candidatesVotesCount;
     mapping(uint => bool) public candidates;
 
-    uint votesCount;
-
     //Is the election is ongoing, changes to the election must not be made (eg. description or candidates of the election)
-    bool public IsUpcomingElection;
+    bool public IsUpcomingElection = true;
 
     //Test to see if is cheaper to use a list of voters as a parameters and a loop to add the voters 
     //instead using a single voterId and made too many transactions
     function addVoter(uint voterId) public {
-        require(IsUpcomingElection);
+        require(voterId != 0, "The voterId is null");
+
+        require(IsUpcomingElection, "The election should be upcoming in order to be changed");
+
+        //Do not add a voter if he has been already added
+        require(!voters[voterId], "The voter has already been added");
         
         voters[voterId] = true;
     }
@@ -30,30 +35,41 @@ contract Election {
 
         for(uint i = 0; i < lenght; i++)
         {
-            voters[i] = true;
+            addVoter(votersList[i]);
         }
     }
 
     function addCandidate(uint candidateId) public {
-        require(IsUpcomingElection);
+        require(candidateId != 0, "The candidate id is null");
+
+        require(IsUpcomingElection, "The election should be upcoming in order to be changed");
+
+        require(!candidates[candidateId], "The candidate has already been added");
         
         candidatesVotesCount[candidateId] = 0;
+        candidates[candidateId] = true;
     }
 
     function castVote(uint voterId, uint candidateId) public {
+        require(voterId != 0, "The voterId is null");
+        require(candidateId != 0, "The candidateId is null");
+
         //The election should be ongoing in order to voter
-        require(!IsUpcomingElection);
+        require(!IsUpcomingElection, "The election is still upcoming, you cannot vote!");
 
         //The voter has to be in the appropriate voters list
-        require(voters[voterId]);
+        require(voters[voterId], "The voter has to be in the election list");
 
         //The candidate has to be in the candidates list for the current election
-        require(candidatesVotesCount[candidateId] >= 0);
+        require(candidatesVotesCount[candidateId] >= 0, "The candidate has to be in the candidatesVotesCount list");
+        require(candidates[candidateId], "The candidate has to be in the election candidates list");
 
         //If the voter has already voted, he cannot vote again
-        require(votes[voterId] != 0);
+        require(!usersVoted[voterId], "The user can vote only once");
         
         votes[voterId] = candidateId;
+
+        usersVoted[voterId] = true;
 
         candidatesVotesCount[candidateId]++;
 
@@ -62,20 +78,27 @@ contract Election {
 
     //Get the votes of the user
     function getUserVote(uint voterId) public view returns (uint, uint){
-        require(votes[voterId] >= 0, "Key does not exists");
+        //Check if user exists
+        require(voterId != 0, "The voterId is null");
+        
+        require(usersVoted[voterId], "Key does not exists. The user has not voted");
 
         return (voterId, votes[voterId]);
     }
 
     //Check if the user has already voted (the voter is in the votes mapping)
+    //The function returns true if the voter has already voted, than returns false
     function checkUserHasVoted(uint voterId) public view returns (bool) {
-        require(votes[voterId] !=0 , "The user has already voted");
+        require(voterId != 0, "The voterId is null");
 
-        return true;
+        if(votes[voterId] > 0 && usersVoted[voterId])
+            return true;
+        else
+            return false;
     }
 
     //If the election change the state from upcoming to ungoing, set the IsUpcomingElection to true and do not let the users to made any other changes to the contract
     function changeElectionState() public{
-        IsUpcomingElection = true;
+        IsUpcomingElection = false;
     }
 }

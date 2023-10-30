@@ -22,7 +22,7 @@ namespace BlockchainVotingApp.Data.Ef.Config
             services.AddScoped<IElectionRepository, ElectionRepository>();
             services.AddScoped<ICandidateRepository, CandidateRepository>();   
 
-            services.AddIdentity<DbUser, IdentityRole>().AddEntityFrameworkStores<VDbContext>();
+            services.AddIdentity<DbUser, DbUserRole>().AddEntityFrameworkStores<VDbContext>();
 
             services.ConfigureApplicationCookie(options =>
             {

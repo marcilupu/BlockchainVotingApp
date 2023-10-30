@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace BlockchainVotingApp.Data.Models
 {
-    public class DbUser : IdentityUser
+    public class DbUser : IdentityUser<int>
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
