@@ -1,10 +1,10 @@
-﻿using BlockchainVotingApp.Data.Models;
+﻿using BlockchainVotingApp.Core.DomainModels;
 
 namespace BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels
 {
     public class CandidatesViewModel
     {
-        public CandidatesViewModel(List<DbCandidate> candidates) {
+        public CandidatesViewModel(List<Candidate> candidates) {
             Items = candidates.Select(item =>
             {
                 return new CandidatesItemViewModel(item);

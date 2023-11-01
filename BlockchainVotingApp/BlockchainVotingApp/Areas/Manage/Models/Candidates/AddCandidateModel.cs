@@ -14,7 +14,6 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Candidates
         [Required(ErrorMessage = "Organization name is required")]
         public string Organization { get; set; } = null!;
 
-
         [Required(ErrorMessage = "Biography is required")]
         public string Biography { get; set; } = null!;
 

@@ -6,6 +6,7 @@ namespace BlockchainVotingApp.Core.DomainModels
     {
         public AppUser(DbUser user)
         {
+            Id = user.Id;
             Name = $"{user.FirstName} {user.LastName}";
             Email = user.Email;
             Username = user.UserName;
@@ -16,7 +17,7 @@ namespace BlockchainVotingApp.Core.DomainModels
                 DateOfBirth = user.DateOfBirth.Value;
         }
 
-
+        public int Id { get; set; }
         public string Name { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Gender { get; set; } = null!;

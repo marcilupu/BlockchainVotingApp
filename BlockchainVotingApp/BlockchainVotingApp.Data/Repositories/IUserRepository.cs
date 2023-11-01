@@ -6,5 +6,6 @@ namespace BlockchainVotingApp.Data.Repositories
     {
         public Task<DbUser?> GetByNationalId(string nationalId);
         public Task<List<DbUser>> GetAll();
+        public Task<List<DbUser>> GetAllByCounty(int countyId);
     }
 }

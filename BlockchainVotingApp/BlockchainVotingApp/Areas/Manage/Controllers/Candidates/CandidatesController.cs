@@ -1,18 +1,22 @@
 ﻿using BlockchainVotingApp.AppCode.Extensions;
 using BlockchainVotingApp.Areas.Manage.Models.Candidates;
 using BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels;
+using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
+using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Converters;
+using System.Net.WebSockets;
 
 namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
 {
     [Area("manage")]
-    public class CandidatesController: Controller
+    public class CandidatesController : Controller
     {
-        public async Task<IActionResult> Index([FromServices] ICandidateRepository candidateRepository) 
+        public async Task<IActionResult> Index([FromServices] ICandidateService candidateService)
         {
-            var candidates = await candidateRepository.GetAll();
+            var candidates = await candidateService.GetAll();
 
             var candidatesViewModel = new CandidatesViewModel(candidates);
 
@@ -23,11 +27,12 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
         public IActionResult AddCandidate() => View();
 
         [HttpPost]
-        public async Task<IActionResult> AddCandidate([FromServices] ICandidateRepository candidateRepository, AddCandidateModel addCandidateModel)
+        public async Task<IActionResult> AddCandidate([FromServices] ICandidateService candidateService,
+                                                       AddCandidateModel addCandidateModel)
         {
             DbCandidate candidate = addCandidateModel.ToDb();
 
-            await candidateRepository.Insert(candidate);
+            await candidateService.Insert(candidate);
 
             return new OkResult();
         }

@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BlockchainVotingApp.Data\BlockchainVotingApp.Data.csproj" />
+    <ProjectReference Include="..\BlockchainVotingApp.SmartContract\BlockchainVotingApp.SmartContract.csproj" />
   </ItemGroup>
 
 </Project>

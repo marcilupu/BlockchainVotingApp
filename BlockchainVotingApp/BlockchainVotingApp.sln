@@ -7,17 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainVotingApp", "Bloc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainVotingApp.Data", "BlockchainVotingApp.Data\BlockchainVotingApp.Data.csproj", "{7BE823D5-9A59-455B-B9EC-68AA4361E1DD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainVotingApp.Test", "BlockchainVotingApp.Test\BlockchainVotingApp.Test.csproj", "{470C48A8-F8F6-46D8-AB75-F67CADB37E2F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainVotingApp.Data.Ef", "BlockchainVotingApp.Data.Ef\BlockchainVotingApp.Data.Ef.csproj", "{7ECE5615-6597-496D-BD5E-E0BA96A26982}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainVotingApp.Core", "BlockchainVotingApp.Core\BlockchainVotingApp.Core.csproj", "{BE45E346-9350-42AA-9517-689C11DACBC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainVotingApp.Core", "BlockchainVotingApp.Core\BlockchainVotingApp.Core.csproj", "{BE45E346-9350-42AA-9517-689C11DACBC6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{A13B6E21-362F-46D1-98F8-C823EF352DA9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{23A4D125-7CBD-4FBA-A459-36F0FA6DC2F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainVotingApp.SmartContract", "BlockchainVotingApp.SmartContract\BlockchainVotingApp.SmartContract.csproj", "{36510491-7DFD-41B9-8EEA-C8740A765FFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainVotingApp.SmartContract", "BlockchainVotingApp.SmartContract\BlockchainVotingApp.SmartContract.csproj", "{36510491-7DFD-41B9-8EEA-C8740A765FFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainApp.Test", "ConsoleApp1\BlockchainApp.Test.csproj", "{E37DF78C-BC01-426A-AA39-254CAC1FFBFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +33,6 @@ Global
 		{7BE823D5-9A59-455B-B9EC-68AA4361E1DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BE823D5-9A59-455B-B9EC-68AA4361E1DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BE823D5-9A59-455B-B9EC-68AA4361E1DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{470C48A8-F8F6-46D8-AB75-F67CADB37E2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{470C48A8-F8F6-46D8-AB75-F67CADB37E2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{470C48A8-F8F6-46D8-AB75-F67CADB37E2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{470C48A8-F8F6-46D8-AB75-F67CADB37E2F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7ECE5615-6597-496D-BD5E-E0BA96A26982}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7ECE5615-6597-496D-BD5E-E0BA96A26982}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ECE5615-6597-496D-BD5E-E0BA96A26982}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,6 +45,10 @@ Global
 		{36510491-7DFD-41B9-8EEA-C8740A765FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36510491-7DFD-41B9-8EEA-C8740A765FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36510491-7DFD-41B9-8EEA-C8740A765FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E37DF78C-BC01-426A-AA39-254CAC1FFBFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E37DF78C-BC01-426A-AA39-254CAC1FFBFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E37DF78C-BC01-426A-AA39-254CAC1FFBFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E37DF78C-BC01-426A-AA39-254CAC1FFBFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

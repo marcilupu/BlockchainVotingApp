@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "truffle": "^5.11.5"
+    "ganache-cli": "^6.12.2",
+    "truffle": "^5.8.4"
   }
 }

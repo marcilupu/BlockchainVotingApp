@@ -31,7 +31,7 @@
                                         <span class="badge bg-success py-1 px-2">@election.State</span>
                                     }
                                 </div>
-                                @if (election.HasVoted)
+                                @if (!election.HasVoted)
                                 {
                                     <div class="col d-flex justify-content-end">
                                         <div class="d-flex rounded-circle justify-content-center align-items-center bg-success vote-button">
@@ -41,7 +41,11 @@
                                 }
                                 else
                                 {
-                                    
+                                    <div class="col d-flex justify-content-end">
+                                        <div class="d-flex rounded-circle justify-content-center align-items-center bg-light vote-button">
+                                            <a href="#" class="text-decoration-none text-white">Voted</a>
+                                        </div>
+                                    </div>
                                 }
                             </div>
                         </div>

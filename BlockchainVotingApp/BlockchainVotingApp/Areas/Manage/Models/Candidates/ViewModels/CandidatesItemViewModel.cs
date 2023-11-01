@@ -1,12 +1,13 @@
-﻿using BlockchainVotingApp.Data.Models;
+﻿using BlockchainVotingApp.Core.DomainModels;
+using BlockchainVotingApp.Data.Models;
 
 namespace BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels
 {
     public class CandidatesItemViewModel
     {
-        public CandidatesItemViewModel(DbCandidate item)
+        public CandidatesItemViewModel(Candidate item)
         {
-            FullName = $"{item.FirstName} {item.LastName}";
+            FullName = item.FullName;
             Organization = item.Organization;
             Biography = item.Biography;
         }

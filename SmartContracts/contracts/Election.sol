@@ -77,7 +77,7 @@ contract Election {
     }
 
     //Get the votes of the user
-    function getUserVote(uint voterId) public view returns (uint, uint){
+    function getUserVote(uint voterId) public view returns (uint VoterId, uint CandidateId){
         //Check if user exists
         require(voterId != 0, "The voterId is null");
         
@@ -98,7 +98,7 @@ contract Election {
     }
 
     //If the election change the state from upcoming to ungoing, set the IsUpcomingElection to true and do not let the users to made any other changes to the contract
-    function changeElectionState() public{
-        IsUpcomingElection = false;
+    function changeElectionState(bool electionState) public{
+        IsUpcomingElection = electionState;
     }
 }

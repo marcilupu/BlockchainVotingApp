@@ -1,8 +1,10 @@
 ﻿using BlockchainVotingApp.AppCode.Services.Users;
+using BlockchainVotingApp.Core.DomainModels;
 using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.Models.Election.ViewModels;
+using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +12,19 @@ namespace BlockchainVotingApp.Controllers.Election
 {
     public class ElectionController : Controller
     {
-        public ElectionController() { }
-
-        public async Task<IActionResult> Index([FromServices] IElectionService electionService, [FromServices] IAppUserService appUserService)
+        private readonly IAppUserService _appUserService;
+        private readonly IElectionService _electionService;
+        public ElectionController(IAppUserService appUserService, IElectionService electionService)
         {
-            var user = await appUserService.GetUserAsync();
+            _appUserService = appUserService;
+            _electionService = electionService;
+        }
 
-            var elections = await  electionService.GetAllByCounty(user.CountyId);
+        public async Task<IActionResult> Index([FromServices] ISmartContractService smartContractService)
+        {
+            var user = await _appUserService.GetUserAsync();
+
+            var elections = await _electionService.GetAllByCounty(user);          
 
             var electionViewModel = new ElectionsViewModel(elections);
 
@@ -24,9 +32,9 @@ namespace BlockchainVotingApp.Controllers.Election
         }
 
         [HttpGet]
-        public async Task<IActionResult> Details([FromServices] IElectionService electionService, int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var election = await electionService.Get(id);
+            var election = await _electionService.Get(id);
 
             if (election != null)
             {
@@ -38,11 +46,18 @@ namespace BlockchainVotingApp.Controllers.Election
             return NotFound();
         }
 
-        public IActionResult Vote(int candidateId)
+        public async Task<IActionResult> Vote(int candidateId)
         {
-            
+            var user = await _appUserService.GetUserAsync();
 
-            return new OkResult();
+            var result = await _electionService.Vote(user.Id, candidateId);
+
+            if(result)
+            {
+                return new OkResult();
+            }
+
+            return new BadRequestResult();
         }
     }
 }

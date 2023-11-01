@@ -10,6 +10,10 @@ namespace BlockchainVotingApp.Core.Extensions
         {
             services.AddScoped<ICandidateService, CandidateService>();
             services.AddScoped<IElectionService, ElectionService>();
+            
+
+            //This service is used in order to change the election state
+            services.AddScoped<IElectionModule, ElectionModule>();
 
             return services;
         }

@@ -1,4 +1,5 @@
 ﻿using BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels;
+using BlockchainVotingApp.Core.DomainModels;
 using BlockchainVotingApp.Data.Models;
 using System.Reflection.Metadata.Ecma335;
 
@@ -6,7 +7,7 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
 {
     public class ElectionsItemViewModel
     {
-        public ElectionsItemViewModel(DbElection election)
+        public ElectionsItemViewModel(Election election)
         {
             Candidates = election.Candidates!.Select(item =>
             {
@@ -16,7 +17,7 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
             Name = election.Name;
             Id = election.Id;
             State = election.State;
-            County = election.County?.Name;
+            County = election.County;
             ContractAddress = election.ContractAddress;
             StartDate = election.StartDate;
             EndDate = election.EndDate;
