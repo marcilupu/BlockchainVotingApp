@@ -71,8 +71,8 @@ namespace BlockchainVotingApp.Core.Services
         public async Task<int> Insert(DbElection election)
         {
             //Deploy a new smart contract to interact with
-            //var deployedContract = await _smartContractService.DeploySmartContract(string.Empty);
-            election.ContractAddress = "0x58Da176c7CD60cA8f4CFfcDdB7D09301E7F7B670";
+            var deployedContract = await _smartContractService.DeploySmartContract(string.Empty);
+            election.ContractAddress = deployedContract;
 
             int electionId = await _electionRepository.Insert(election);
 
