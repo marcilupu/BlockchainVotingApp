@@ -48,12 +48,29 @@ namespace BlockchainVotingApp.SmartContract.Services
 
             ElectionDeployment deploymentMessage = new ElectionDeployment();
 
-            var deploymentHandler = web3.Eth.GetContractDeploymentHandler<ElectionDeployment>();
-            var transactionReceipt = await deploymentHandler.SendRequestAndWaitForReceiptAsync(deploymentMessage);
+            try
+            {
+                //var estimatedGas = await web3.Eth.Transactions.EstimateGas.SendRequestAsync(new Nethereum.RPC.Eth.DTOs.CallInput
+                //{
+                //    From = _adminDefaultAccountAddress,
+                //    Data = deploymentMessage.ByteCode
+                //});
 
-            var contractAddress = transactionReceipt.ContractAddress;
+                var deploymentHandler = web3.Eth.GetContractDeploymentHandler<ElectionDeployment>();
+                var transactionReceipt = await deploymentHandler.SendRequestAndWaitForReceiptAsync(deploymentMessage);
 
-            return contractAddress;
+                var contractAddress = transactionReceipt.ContractAddress;
+
+                return contractAddress;
+            }
+            catch (RpcResponseException response)
+            {
+                throw response;
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
 
         public async Task<Votes> GetUserVote(int voterId, string contractAddress)

@@ -3,9 +3,6 @@ using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.SmartContract.Infrastructure;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Nethereum.Contracts.QueryHandlers.MultiCall;
-using static System.Collections.Specialized.BitVector32;
 
 namespace BlockchainVotingApp.Core.Services
 {

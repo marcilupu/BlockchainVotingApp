@@ -1,4 +1,6 @@
-﻿using Nethereum.Contracts;
+﻿using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Contracts;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 
@@ -11,13 +13,12 @@ namespace BlockchainVotingApp.SmartContract.Models
 
         static ElectionDeployment()
         {
-            BYTECODE = $"0x{GetResource("BlockchainVotingApp.SmartContract.Contracts.contracts_Election_sol_Election.bin")}";
+            BYTECODE = GetResource("BlockchainVotingApp.SmartContract.Contracts.contracts_Election_sol_Election.bin").Trim('"');
             ABI = GetResource("BlockchainVotingApp.SmartContract.Contracts.contracts_Election_sol_Election.abi");
         }
 
         public ElectionDeployment() : base(BYTECODE) { }
-
-
+ 
         #region Internals
 
         private static string GetResource(string resourceName)

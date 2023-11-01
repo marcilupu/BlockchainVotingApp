@@ -1,3 +1,6 @@
+//Because Ethereum is an open source project, the first line shows the contract’s open source license.
+//The second line specifies the Solidity version necessary to execute this contract.
+
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0;
 
