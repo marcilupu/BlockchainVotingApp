@@ -18,6 +18,7 @@ namespace BlockchainVotingApp.Core.DomainModels
             StartDate = election.StartDate;
             EndDate = election.EndDate;
             Rules = election.Rules;
+            NumberOfVotes= election.NumberOfVotes;
             if (election.CountyId.HasValue && election.County != null)
             {
                 County = election.County.Name;
@@ -41,6 +42,8 @@ namespace BlockchainVotingApp.Core.DomainModels
         public int? CountyId { get; set; }
         
         public string? County { get; set; }
+
+        public int NumberOfVotes { get; set; }
         
         public ElectionState State { get; set; }
         
@@ -55,6 +58,7 @@ namespace BlockchainVotingApp.Core.DomainModels
         }
        
         public bool HasVoted { get; set; }
+        public string SelectedCandidate { get; set; } = null!;
 
     }
 }

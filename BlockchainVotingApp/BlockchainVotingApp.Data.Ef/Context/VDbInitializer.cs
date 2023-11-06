@@ -13,7 +13,7 @@ namespace BlockchainVotingApp.Data.Ef.Context
         public static void Seed(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DbCounty>().HasData(
-                new DbCounty() { Id = 1, Name = "Alba"},
+                new DbCounty() { Id = 1, Name = "Alba" },
                 new DbCounty() { Id = 2, Name = "Arad" },
                 new DbCounty() { Id = 3, Name = "Arges" },
                 new DbCounty() { Id = 4, Name = "Bihor" },
@@ -30,7 +30,12 @@ namespace BlockchainVotingApp.Data.Ef.Context
                 new DbCounty() { Id = 15, Name = "Hunedoara" },
                 new DbCounty() { Id = 16, Name = "Ialomita" },
                 new DbCounty() { Id = 17, Name = "Iasi" }
-                );
+            );
+
+            modelBuilder.Entity<DbUserRole>().HasData(
+                new DbUserRole { Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "1" },
+                new DbUserRole { Id = 2, Name = "Voter", NormalizedName = "VOTER", ConcurrencyStamp = "2" }
+            );
         }
     }
 }

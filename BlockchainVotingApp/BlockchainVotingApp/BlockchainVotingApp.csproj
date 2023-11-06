@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\User\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BlockchainVotingApp.Core\BlockchainVotingApp.Core.csproj" />
     <ProjectReference Include="..\BlockchainVotingApp.Data.Ef\BlockchainVotingApp.Data.Ef.csproj" />
     <ProjectReference Include="..\BlockchainVotingApp.SmartContract\BlockchainVotingApp.SmartContract.csproj" />

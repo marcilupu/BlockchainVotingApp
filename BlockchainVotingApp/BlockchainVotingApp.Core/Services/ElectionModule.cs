@@ -15,11 +15,21 @@ namespace BlockchainVotingApp.Core.Services
             _electionRepository = electionRepository;
             _smartContractService = smartContractService;
         }
+
+        public async Task<bool> UpdateElectionsState()
+        {
+            var elections = await _electionRepository.GetAll();
+
+            foreach(var election in elections) {
+                var result = await UpdateElectionState(election.Id);
+            }
+
+            return true;
+        }
+
         public async Task<bool> UpdateElectionState(int electionId)
         {
             var election = await _electionRepository.Get(electionId);
-
-            bool result = true;
 
             if (election != null )
             {
@@ -28,20 +38,23 @@ namespace BlockchainVotingApp.Core.Services
                 if (actualDateTime < election.StartDate)
                 {
                     election.State = ElectionState.Upcoming;
-                    result = await _smartContractService.ChangeElectionState(true, election.ContractAddress);
+                    await _electionRepository.Update(election);
+                    return await _smartContractService.ChangeElectionState(true, election.ContractAddress);
                 }
                 if (actualDateTime > election.EndDate)
                 {
                     election.State = ElectionState.Completed;
-                    result = await _smartContractService.ChangeElectionState(false, election.ContractAddress);
+                    await _electionRepository.Update(election);
+                    return await _smartContractService.ChangeElectionState(false, election.ContractAddress);
                 }
                 else
                 {
                     election.State = ElectionState.Ongoing;
-                    result = await _smartContractService.ChangeElectionState(false, election.ContractAddress);
+                    await _electionRepository.Update(election);
+                    return await _smartContractService.ChangeElectionState(false, election.ContractAddress);
                 }
             }
-            return result;
+            return false;
         }
     }
 }

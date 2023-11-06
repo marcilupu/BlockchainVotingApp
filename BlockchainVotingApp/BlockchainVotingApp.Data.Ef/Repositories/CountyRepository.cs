@@ -19,6 +19,11 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
             _vDbContext = vDbContext;
         }
 
+        public async Task<DbCounty?> Get(int id)
+        {
+            return await _vDbContext.Counties.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
         public async Task<List<DbCounty>> GetAll()
         {
             return await _vDbContext.Counties.ToListAsync();

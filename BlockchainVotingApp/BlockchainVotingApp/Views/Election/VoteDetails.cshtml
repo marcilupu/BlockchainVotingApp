@@ -1,0 +1,108 @@
+﻿@model BlockchainVotingApp.Models.Election.ViewModels.VoteViewModel
+
+@{
+    Layout = "_HomeLayout";
+}
+
+<div>
+    <div class="row mt-4">
+        <h3>@Model.Name result</h3>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <div class="row">
+                            <div class="col">
+                                <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @Model.Name</h4>
+                                @if ((int)Model.State == 1)
+                                {
+                                    <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">@Model.State</span>
+                                }
+                                @if ((int)Model.State == 2)
+                                {
+                                    <span class="badge bg-success py-1 px-2">@Model.State</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="electionCardBody">
+                    <span style="display: block" class="mb-3">
+                        <i class="fa-regular fa-calendar-days"></i>
+                        <span>@Model.StartDate - @Model.EndDate</span>
+                    </span>
+                    @if (!string.IsNullOrEmpty(Model.Rules))
+                    {
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>@Model.Rules</span>
+                        </span>
+                    }
+                    @if (!string.IsNullOrEmpty(Model.County))
+                    {
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-city"></i>
+                            <span>@Model.County</span>
+                        </span>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 mb-5">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h4 class=text-success>Result</h4>
+                    </div>
+                </div>
+                <div class="card-body" id="electionCardBody">
+                    <span class="fs-4">
+                        <span class="fw-bold">You voted: </span>
+                        <span>@Model.SelectedCandidate</span>
+                    </span>
+
+                    @if ((int)Model.State == 2)
+                    {
+                        <span class="fs-4">
+                            <span class="fw-bold">Total number of votes: </span>
+                            <span> @Model.NumberOfVotes</span>
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <h4 class="text-center pb-4" style="font-size: 28px;">Candidates</h4>
+        @foreach (var candidate in Model.Candidates)
+        {
+            <div class="col-4 mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h4 class="card-label"><i class="fa-solid fa-check-to-slot text-primary"></i> @candidate.FullName</h4>
+                        </div>
+                    </div>
+                    <div class="card-body" id="candidateCardBody">
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-circle-info text-warning"></i>
+                            <span>@candidate.Organization</span>
+                        </span>
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-circle-info text-warning"></i>
+                            <span>@candidate.Biography</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+

@@ -1,0 +1,36 @@
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Users.ViewModels.UsersViewModel
+
+@{
+    Layout = "_HomeLayout";
+}
+
+<h2 class="mb-5">Users List</h2>
+
+<table id="usersTable" class="table">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>County</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in @Model.Users)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>@user.CountyName</td>
+                <td>
+                    <a href="#" class="btn btn-primary px-1 py-0"><i class="fa-solid fa-pen"></i></a>
+                    <button onclick="#" id="deleteUser" name="deleteUser" class="btn btn-danger ms-2 px-1 py-0"><i class="fa-solid fa-trash-can"></i></button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="~/js/areas/manage/users/index.js"></script>
+}

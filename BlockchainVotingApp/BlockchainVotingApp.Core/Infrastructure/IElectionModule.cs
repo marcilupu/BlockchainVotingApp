@@ -8,5 +8,6 @@ namespace BlockchainVotingApp.Core.Infrastructure
     public interface IElectionModule
     {
         public Task<bool> UpdateElectionState(int electionId);
+        public Task<bool> UpdateElectionsState();
     }
 }

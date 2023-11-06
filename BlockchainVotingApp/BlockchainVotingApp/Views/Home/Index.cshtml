@@ -2,35 +2,87 @@
     Layout = "_HomeLayout";
 }
 
-<div class="text-center h-100 w-100 p-2 mt-5">
-    <div class="row">
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span>
-                            <i class="fa-solid fa-user"></i>
-                            <span>Ongoing elections</span>
-                        </span>
-                    </div>
+<div class="row p-4">
+    <div class="col">
+        <p class="fw-bold" style="font-size: 37px;">Welcome to Blockachain-based voting app</p>
+        <p class="text-secondary" style="font-size: 18px;">This system is a blockchain-based voting application that uses ZKP to improve voter privacy.</p>
+        <a href="/Election/Index" type="button" class="btn btn-primary">Get Started</a>
+    </div>
+</div>
+
+<div class="row p-4">
+    <div class="card pt-3 pb-5 shadow p-3 mb-1 rounded h-100">
+        <div class="card-body">
+            <h1>Bar chart results -> number of votes per election</h1>
+        </div>
+    </div>
+</div>
+
+<div class="row p-4">
+    <div class="card pt-3 pb-5 shadow p-3 mb-1 rounded h-100">
+        <div class="card-body">
+            <h1>Pie hart results -> number of votes per election per candidate</h1>
+            <h4>Choose the election and see the results</h4>
+        </div>
+    </div>
+</div>
+
+<div class="row p-4">
+    <div class="col">
+        <div class="card pt-3 pb-5 shadow p-3 mb-1 rounded h-100">
+            <div class="row">
+                <div class="col">
+                    <h5 class="card-title">Elections</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">8 elections</h6>
                 </div>
-                <div class="card-body" id="electionsCardBody">
-                    <p>Card body</p>
+                <div class="col d-flex justify-content-end">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <a href="/Election/Index" class="btn btn-light">All elections</a>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span>
-                            <i class="fa-solid fa-user"></i>
-                            <span>Candidates results</span>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-check-to-slot text-primary"></i>
+                            <span>ElectionName</span>
                         </span>
                     </div>
+                    <div class="col d-flex justify-content-end">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">Ongoing</span>
+                        </div>
+                    </div>
+                    <hr class="hr" />
                 </div>
-                <div class="card-body" id="electionResultsCardBody">
-                    <p>Card body</p>
+                <div class="row">
+                    <div class="col">
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-check-to-slot text-primary"></i>
+                            <span>ElectionName</span>
+                        </span>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">Ongoing</span>
+                        </div>
+                    </div>
+                    <hr class="hr" />
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <span style="display: block" class="mb-3">
+                            <i class="fa-solid fa-check-to-slot text-primary"></i>
+                            <span>ElectionName</span>
+                        </span>
+                    </div>
+                    <div class="col d-flex justify-content-end">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">Ongoing</span>
+                        </div>
+                    </div>
+                    <hr class="hr" />
                 </div>
             </div>
         </div>

@@ -6,7 +6,7 @@
     <title>@ViewData["Title"] - BlockchainVotingApp</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/lib/select2/css/select2.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BlockchainVotingApp.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap-datepicker/css/bootstrap-datepicker.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/datatable/css/dataTables.bootstrap5.min.css" asp-append-version="true" />
@@ -14,37 +14,62 @@
 </head>
 <body style="background-image: url('/media/bg.jpg'); background-attachment:fixed; background-size: cover;">
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-light shadow p-2 mb-5 rounded">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BlockchainVotingApp</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/media/logo/poll.svg" alt="BlockchainVotingApp" height="60" width="80" /></a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Election" asp-action="Index">Elections</a>
+                            <a class="nav-link" asp-area="" asp-controller="Election" asp-action="Index">Elections</a>
+                        </li>'
+                        <admin>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="adminNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminNavbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Manage" asp-controller="Elections" asp-action="Index">Elections</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Manage" asp-controller="Candidates" asp-action="Index">Candidates</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Manage" asp-controller="Users" asp-action="Index">Users</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </admin>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Hi, @User.Identity.Name</a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Index">My account</a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="nav-item">
+                                    <a class="dropdown-item" asp-area="" asp-controller="Election" asp-action="Votes">My votes</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="User" asp-action="Logout">Sign out</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
+    <div class="container h-100 w-100">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
-
-    @*<footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2023 - BlockchainVotingApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

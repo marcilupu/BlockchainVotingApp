@@ -1,8 +1,12 @@
 ﻿@model BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels.AddElectionViewModel
 
+@{
+    Layout = "_HomeLayout";
+}
+
 <div>
     <h2>Create a new election</h2>
-    <form action="/manage/election/createElection" method="post" style="width: 35rem;" class="mt-4">
+    <form action="/manage/elections/createElection" method="post" style="width: 35rem;" class="mt-4">
         <div class="form-group mb-3">
             <label class="mb-2">Election name</label>
             <input id="electionName" type="text" name="Name" class="form-control" />

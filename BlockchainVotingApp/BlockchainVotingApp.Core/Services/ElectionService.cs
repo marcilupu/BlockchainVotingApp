@@ -32,7 +32,19 @@ namespace BlockchainVotingApp.Core.Services
 
             if (dbElection != null)
             {
-                return await RetrieveInternal(dbElection);
+                return await RetrieveInternal(dbElection, null);
+            }
+
+            return null;
+        }
+
+        public async Task<UserElection?> GetElectionForUser(int id, int userId)
+        {
+            var dbElection = await _electionRepository.Get(id);
+
+            if (dbElection != null)
+            {
+                return await RetrieveInternal(dbElection, userId);
             }
 
             return null;
@@ -53,19 +65,46 @@ namespace BlockchainVotingApp.Core.Services
         {
             var electionsRepo = await _electionRepository.GetAllByCounty(user.CountyId);
 
-            var retrieveTasks = electionsRepo.Select(async dbElection => await RetrieveInternal(dbElection)).ToList();
+            var retrieveTasks = electionsRepo.Select(async dbElection => await RetrieveInternal(dbElection, null)).ToList();
 
             var elections = (await Task.WhenAll(retrieveTasks)).ToList();
 
             foreach (var election in elections)
             {
-                var hasVoted = await _smartContractService.HasUserVoted(user.Id, election.ContractAddress);
-
-                if (hasVoted)
-                    election.HasVoted = true;
+                election.HasVoted = await _smartContractService.HasUserVoted(user.Id, election.ContractAddress);
             }
 
             return elections;
+        }
+
+        public async Task<int> GetVoteForUser(int userId, string contractAddress)
+        {
+            var result = await _smartContractService.GetUserVote(userId, contractAddress);
+            if (result != null)
+            {
+                return result.CandidateId;
+            }
+
+            return 0;
+        }
+
+        public async Task<List<UserElection>> GetVotesForUser(AppUser user)
+        {
+            var elections = await GetAllByCounty(user);
+
+            foreach (var election in elections)
+            {
+                var candidateId = await GetVoteForUser(user.Id, election.ContractAddress);
+
+                var candidate = await _candidateService.Get(candidateId);
+
+                if (candidate != null)
+                {
+                    election.SelectedCandidate = candidate.FullName;
+                }
+            }
+
+            return elections.Where(x => x.HasVoted).ToList();
         }
 
         public async Task<int> Insert(DbElection election)
@@ -76,22 +115,12 @@ namespace BlockchainVotingApp.Core.Services
 
             int electionId = await _electionRepository.Insert(election);
 
-            //Get all the voters that can vote for the current election
-            //If the election is intended for a specific country/administrative-territorial unit, only the users who resides in that particular area are allowed to vote
-            List<DbUser> users;
-            if (election.CountyId.HasValue)
-            {
-                users = await _userRepository.GetAllByCounty(election.CountyId.Value);
-            }
-            else
-            {
-                users = await _userRepository.GetAll();
-            }
+            var result = await AddVoters(election);
 
-            List<int> usersIds = users.Select(item => item.Id).ToList();
-
-            //Storage into the smart contract the users that cand vote for this election
-            var result = await _smartContractService.AddVoters(usersIds, election.ContractAddress);
+            if(!result)
+            {
+                return 0;
+            }
 
             return electionId;
         }
@@ -120,14 +149,47 @@ namespace BlockchainVotingApp.Core.Services
             return false;
         }
 
+        private async Task<bool> AddVoters(DbElection election)
+        {
+            //Get all the voters that can vote for the current election
+            //If the election is intended for a specific country/administrative-territorial unit, only the users who resides in that particular area are allowed to vote
+            List<DbUser> users;
+            if (election.CountyId.HasValue)
+            {
+                users = await _userRepository.GetAllByCounty(election.CountyId.Value);
+            }
+            else
+            {
+                users = await _userRepository.GetAll();
+            }
+
+            List<int> usersIds = users.Select(item => item.Id).ToList();
+
+            //Storage into the smart contract the users that cand vote for this election
+            var result = await _smartContractService.AddVoters(usersIds, election.ContractAddress);
+
+            if (result)
+            {
+                return true;
+            }
+
+            return false;
+        }
 
         #region Private
 
-        private async Task<UserElection> RetrieveInternal(DbElection dbElection)
+        private async Task<UserElection> RetrieveInternal(DbElection dbElection, int? userId)
         {
             var election = new UserElection(dbElection);
 
-            election.HasVoted = true;
+            if (userId.HasValue)
+            {
+                election.HasVoted = await _smartContractService.HasUserVoted(userId.Value, election.ContractAddress);
+            }
+            else
+            {
+                election.HasVoted = false;
+            }
 
             return election;
         }

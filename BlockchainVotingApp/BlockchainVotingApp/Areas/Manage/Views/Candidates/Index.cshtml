@@ -1,5 +1,9 @@
 ﻿@model BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels.CandidatesViewModel
 
+@{
+    Layout = "_HomeLayout";
+}
+
 <h2 class="mb-5">Candidates List</h2>
 
 <table id="candidatesTable" class="table">
@@ -7,5 +11,5 @@
 </table>
 
 @section Scripts {
-    <script src="/js/areas/manage/candidate/index.js"></script>
+    <script src="~/js/areas/manage/candidate/index.js"></script>
 }

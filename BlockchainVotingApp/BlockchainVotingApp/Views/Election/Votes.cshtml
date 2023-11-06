@@ -1,0 +1,37 @@
+﻿@model BlockchainVotingApp.Models.Election.ViewModels.VotesViewModel
+
+@{
+    Layout = "_HomeLayout";
+}
+
+<div class="row mb-4">
+    <h1>My votes</h1>
+</div>
+
+<div class="row mb-4" id="votes-container">
+    @foreach (var vote in Model.VotesList)
+    {
+        <div class="col-4">
+            <div class="card text-center p-2 me-4 mb-4 shadow-sm p-3 rounded" style="width: 18rem;">
+                <i class="fa-solid fa-check-to-slot pt-3 text-primary" style="font-size:65px;"></i>
+                <div class="card-body">
+                    <h5 class="card-title">@vote.ElectionName</h5>
+                    @if (vote.ElectionState == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
+                    {
+                        <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">@vote.ElectionState</span>
+                        <p class="card-text m-1">Total number of votes: 0 <p class="fw-light fst-italic">(Election still ongoing)</p></p>
+                    }
+                    @if (vote.ElectionState == BlockchainVotingApp.Data.Models.ElectionState.Completed)
+                    {
+                        <span class="badge bg-success py-1 px-2">@vote.ElectionState</span>
+                        <p class="card-text m-1">Total number of votes: @vote.NumberOfVotes</p>
+                    }
+                    <p class="card-text m-1 text-success fw-bold">Your vote: @vote.CandidateName</p>
+                    <div class="mt-2">
+                        <a href="/Election/VoteDetails?electionId=@vote.ElectionId" class="btn btn-primary"><i class="fa-solid fa-circle-info"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

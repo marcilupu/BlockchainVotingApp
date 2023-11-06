@@ -1,5 +1,9 @@
 ﻿@model BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels.ElectionsViewModel
 
+@{
+    Layout = "_HomeLayout";
+}
+
 <a href="/Manage/Elections/CreateElection" class="btn btn-primary px-5 py-2 mb-5 mt-3">Create a new Election</a>
 
 <div class="row">
@@ -115,4 +119,4 @@
 
 @section Scripts {
     <script src="~/js/areas/manage/election/index.js"></script>
-    }
+}

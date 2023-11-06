@@ -13,6 +13,15 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
             _context = context;
         }
 
+        public async Task<bool> Delete(DbCandidate dbCandidate)
+        {
+            _context.Candidates.Remove(dbCandidate);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<DbCandidate?> Get(int id)
         {
             return await _context.Candidates.Include(item => item.Election).FirstOrDefaultAsync(x => x.Id == id);

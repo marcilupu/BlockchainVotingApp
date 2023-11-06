@@ -9,5 +9,6 @@ namespace BlockchainVotingApp.Data.Repositories
         public Task<List<DbCandidate>> GetAll();
         public Task<List<DbCandidate>> GetAllForElection(int electionId);
         public Task<DbCandidate?> Get(int id);
+        public Task<bool> Delete(DbCandidate dbCandidate);
     }
 }

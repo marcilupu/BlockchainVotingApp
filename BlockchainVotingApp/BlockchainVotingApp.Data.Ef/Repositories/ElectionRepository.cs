@@ -18,6 +18,15 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
             _context = context;
         }
 
+        public async Task<bool> Delete(DbElection election)
+        {
+            _context.Elections.Remove(election);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<DbElection?> Get(int electionId)
         {
             return await _context.Elections.Include(item => item.County).Include(item => item.Candidates).FirstOrDefaultAsync(x => x.Id == electionId);
@@ -25,13 +34,17 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
 
         public async Task<List<DbElection>> GetAll()
         {
-            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates).ToListAsync();
+            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates)
+                                           .OrderBy(item => item.State)
+                                           .OrderByDescending(x => x.StartDate).ToListAsync();
         }
 
         public async Task<List<DbElection>> GetAllByCounty(int countyId)
         {
             return await _context.Elections.Include(item => item.County).Include(item => item.Candidates)
                                             .Where(item => (item.CountyId.HasValue && item.CountyId == countyId) || !item.CountyId.HasValue)
+                                            .OrderBy(item => item.State)
+                                            .OrderByDescending(x => x.StartDate)
                                             .ToListAsync();
         }
 

@@ -182,6 +182,9 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NumberOfVotes")
+                        .HasColumnType("int");
+
                     b.Property<string>("Rules")
                         .HasColumnType("nvarchar(max)");
 
@@ -318,6 +321,22 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "2",
+                            Name = "Voter",
+                            NormalizedName = "VOTER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

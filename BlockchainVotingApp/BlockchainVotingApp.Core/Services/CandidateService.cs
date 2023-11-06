@@ -3,6 +3,7 @@ using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.SmartContract.Infrastructure;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BlockchainVotingApp.Core.Services
 {
@@ -24,7 +25,7 @@ namespace BlockchainVotingApp.Core.Services
 
             if(dbCandidate != null)
             {
-                return new Candidate();
+                return new Candidate(dbCandidate);
             }
             else
             {
@@ -65,7 +66,14 @@ namespace BlockchainVotingApp.Core.Services
             {
                 var result = await _smartContractService.AddCandidate(candidateId, election.ContractAddress);
 
+                //If the smart contract add candidate failed, drop the candidate from the db
+                if (!result)
+                {
+                    await _candidateRepository.Delete(dbCandidate);
+                    return 0;
+                }
             }
+
             return candidateId;
         }
 

@@ -1,7 +1,10 @@
-﻿using BlockchainVotingApp.Data.Models;
+﻿using BlockchainVotingApp.Core.DomainModels;
+using BlockchainVotingApp.Core.Infrastructure;
+using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.Models.Login;
 using BlockchainVotingApp.Models.Login.ViewModels;
+using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,8 +12,17 @@ namespace BlockchainVotingApp.Controllers.Login
 {
     public class LoginController : Controller
     {
+        private readonly ISmartContractService _smartContractService;
+
+        public LoginController(ISmartContractService smartContractService)
+        {
+            _smartContractService = smartContractService;
+        }
+
+        [HttpGet]
         public IActionResult Index() => View();
 
+        [HttpGet]
         public IActionResult Register([FromServices] ICountyRepository countyRepository)
         {
             var counties = countyRepository.GetAll().Result;
@@ -26,7 +38,10 @@ namespace BlockchainVotingApp.Controllers.Login
             return View(loginViewModel);
         }
 
-        public async Task<IActionResult> CreateAccount([FromServices] UserManager<DbUser> userManager, RegisterModel registerModel)
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromServices] UserManager<DbUser> userManager,
+                                                       [FromServices] IElectionService electionService,
+                                                       RegisterModel registerModel)
         {
             if(ModelState.IsValid)
             {
@@ -45,6 +60,18 @@ namespace BlockchainVotingApp.Controllers.Login
 
                 if(result.Succeeded)
                 {
+                    result = await userManager.AddToRoleAsync(user, "Voter");
+
+                    //Add voter to the his election
+                    var elections = await electionService.GetAllByCounty(new AppUser(user));
+
+                    foreach(var election in elections)
+                    {
+                        var smartContractResult = await _smartContractService.AddVoter(user.Id, election.ContractAddress);
+
+                        //What happens if smartContractResult is not succeeded???
+                    }
+
                     return Redirect("/Login/Index");
                 }    
             }

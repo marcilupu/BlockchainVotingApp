@@ -15,13 +15,14 @@ namespace BlockchainVotingApp.SmartContract.Infrastructure
             public int CandidateId { get; set; }
         }
 
-        public Task<string> DeploySmartContract(string adminAccountPrivateKey);
+        Task<string> DeploySmartContract(string adminAccountPrivateKey);
 
-        public Task<bool> AddCandidate(int candidateId, string contractAddress);
-        public Task<bool> AddVoters(List<int> votersIds, string contractAddress);
-        public Task<bool> Vote(int voterId, int candidateId, string contractAddress);
-        public Task<bool> HasUserVoted(int voterId, string contractAddress);
-        public Task<bool> ChangeElectionState(bool electionState, string contractAddress);
-        public Task<Votes> GetUserVote(int voterId, string contractAddress);
+        Task<bool> AddCandidate(int candidateId, string contractAddress);
+        Task<bool> AddVoter(int voterId, string contractAddress);
+        Task<bool> AddVoters(List<int> votersIds, string contractAddress);
+        Task<bool> Vote(int voterId, int candidateId, string contractAddress);
+        Task<bool> HasUserVoted(int voterId, string contractAddress);
+        Task<bool> ChangeElectionState(bool electionState, string contractAddress);
+        Task<Votes> GetUserVote(int voterId, string contractAddress);
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -31,6 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BlockchainVotingApp.Core\BlockchainVotingApp.Core.csproj" />
+    <ProjectReference Include="..\BlockchainVotingApp.Data.Ef\BlockchainVotingApp.Data.Ef.csproj" />
     <ProjectReference Include="..\BlockchainVotingApp.SmartContract\BlockchainVotingApp.SmartContract.csproj" />
   </ItemGroup>
 

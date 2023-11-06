@@ -30,6 +30,8 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         public async Task<bool> AddCandidate(int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addCandidate", candidateId)).IsSuccess;
 
+        public async Task<bool> AddVoter(int voterId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addVoter", voterId)).IsSuccess;
+
         public async Task<bool> AddVoters(List<int> votersIds, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addVoters", votersIds)).IsSuccess;
 
         public async Task<bool> ChangeElectionState(bool electionState, string contractAddress) => (await ExecuteSmartContract(contractAddress, "changeElectionState", electionState)).IsSuccess;
@@ -150,7 +152,6 @@ namespace BlockchainVotingApp.SmartContract.Services
                 }
             }
         }
-
 
         #endregion
     }
