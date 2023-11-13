@@ -11,13 +11,13 @@
 <tbody>
     @foreach (var candidate in Model)
     {
-        <tr>
-            <td>@candidate.FullName</td>
-            <td>@candidate.Organization</td>
-            <td>@candidate.Biography</td>
+        <tr data-candidate-container-id="@candidate.Id">
+            <td data-candidate-name="@candidate.FullName">@candidate.FullName</td>
+            <td data-candidate-organization="@candidate.Organization">@candidate.Organization</td>
+            <td data-candidate-biography="@candidate.Biography">@candidate.Biography</td>
             <td>
-                <a href="#" class="btn btn-primary px-1 py-0"><i class="fa-solid fa-pen"></i></a>
-                <button onclick="#" id="deleteCandidate" name="deleteCandidate" class="btn btn-danger ms-2 px-1 py-0"><i class="fa-solid fa-trash-can"></i></button>
+                <button class="btn btn-primary ms-2 px-1 py-0" data-edit-candidate="true" data-edit-candidate-id="@candidate.Id"><i class="fa-solid fa-pen"></i></button>
+                <button class="btn btn-danger ms-2 px-1 py-0" data-delete-candidate="true" data-delete-candidate-id="@candidate.Id"><i class="fa-solid fa-trash-can"></i></button>
             </td>
         </tr>
     }

@@ -14,19 +14,37 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
     [Authorize(Roles = "Admin")]
     public class ElectionsController : Controller
     {
-        public async Task<IActionResult> Index([FromServices] IElectionService electionService)
-        {
-            var elections = await electionService.GetAll();
+        private readonly ICountyRepository _countyRepository;
+        private readonly IElectionService _electionService;
 
-            var electionViewModel = new ElectionsViewModel(elections);
+        public ElectionsController(ICountyRepository countyRepository, IElectionService electionService)
+        {
+            _countyRepository = countyRepository;
+            _electionService = electionService;
+        }
+
+        private async Task<ElectionsViewModel> GetELectionsViewModel()
+        {
+            var elections = await _electionService.GetAll();
+
+            var counties = await _countyRepository.GetAll();
+
+            var electionViewModel = new ElectionsViewModel(elections, counties);
+
+            return electionViewModel;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var electionViewModel = await GetELectionsViewModel();
 
             return View(electionViewModel);
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateElection([FromServices] ICountyRepository countyRepository)
+        public async Task<IActionResult> CreateElection()
         {
-            var counties = await countyRepository.GetAll();
+            var counties = await _countyRepository.GetAll();
 
             AddElectionViewModel electionViewModel = new(counties);
 
@@ -34,17 +52,15 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateElection([FromServices] IElectionService electionService,
-                                                        AddElectionModel electionModel)
+        public async Task<IActionResult> CreateElection(AddEditElectionModel electionModel)
         {
             var election = electionModel.ToDb();
 
-            var result = await electionService.Insert(election);
+            var result = await _electionService.Insert(election);
 
             if(result != 0)
             {
-                var elections = await electionService.GetAll();
-                var electionViewModel = new ElectionsViewModel(elections);
+                var electionViewModel = await GetELectionsViewModel();
 
                 return View("/Areas/Manage/Views/Elections/Index.cshtml", electionViewModel);
             }
@@ -53,7 +69,41 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
                 //Throw a message that the election could not be created and why...(eg. The election is ongoing and cannot be edited)
                 return new BadRequestResult();
             }
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromServices] IElectionRepository electionRepository, AddEditElectionModel electionModel, int electionId)
+        {
+            var dbDlection = await electionRepository.Get(electionId);
+
+            if(dbDlection != null)
+            {
+                var election = electionModel.ToDb(dbDlection);
+                var result = await electionRepository.Update(election);
+
+                if (result != 0)
+                {
+                    return new OkResult();
+                }
+            }
+            return new BadRequestResult();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete([FromServices] IElectionRepository electionRepository, int id)
+        {
+            var dbElection = await electionRepository.Get(id);
+
+            if(dbElection != null )
+            {
+                var result = await electionRepository.Delete(dbElection);
+
+                if(result)
+                {
+                    return new OkResult();
+                }
+            }
+            return new BadRequestResult();
         }
     }
 }

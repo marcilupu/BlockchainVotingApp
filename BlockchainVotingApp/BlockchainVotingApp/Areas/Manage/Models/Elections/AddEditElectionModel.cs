@@ -2,7 +2,7 @@
 
 namespace BlockchainVotingApp.Areas.Manage.Models.Elections
 {
-    public class AddElectionModel
+    public class AddEditElectionModel
     {
 
         [Required(ErrorMessage = "Name is required")]

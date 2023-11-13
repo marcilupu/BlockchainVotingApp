@@ -2,7 +2,7 @@
 
 namespace BlockchainVotingApp.Areas.Manage.Models.Candidates
 {
-    public class AddCandidateModel
+    public class AddEditCandidateModel
     {
         [Required(ErrorMessage = "First name is required")]
         public string FirstName { get; set; } = null!;

@@ -2,19 +2,26 @@
 using BlockchainVotingApp.Core.DomainModels;
 using BlockchainVotingApp.Data.Models;
 using Org.BouncyCastle.Utilities;
+using System.Diagnostics.Metrics;
 
 namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
 {
-    public class ElectionsViewModel
+    public class ElectionsViewModel 
     {
-        public ElectionsViewModel(List<Election> elections)
+        public ElectionsViewModel(List<Election> elections, List<DbCounty> counties)
         {
             Elections = elections.Select(item =>
             {
                 return new ElectionsItemViewModel(item);
-            }).ToList();     
+            }).ToList();
+
+            Counties = counties.Select(county =>
+            {
+                return (county.Name, county.Id);
+            }).ToList();
         }
 
         public List<ElectionsItemViewModel> Elections { get; set; }
+        public List<(string name, int id)> Counties { get; set; }
     }
 }

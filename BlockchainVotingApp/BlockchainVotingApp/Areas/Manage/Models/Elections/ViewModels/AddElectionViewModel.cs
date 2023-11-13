@@ -11,6 +11,6 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
                 return (county.Name, county.Id);
             }).ToList();
         }
-        public List<(string name, int id)> Counties { get; set; } = null!;
+        public List<(string name, int id)> Counties { get; set; }
     }
 }

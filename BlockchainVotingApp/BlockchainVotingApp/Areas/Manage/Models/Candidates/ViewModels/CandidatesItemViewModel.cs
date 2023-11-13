@@ -10,6 +10,9 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Candidates.ViewModels
             FullName = item.FullName;
             Organization = item.Organization;
             Biography = item.Biography;
+            Id = item.Id;
+            ElectionId = item.ElectionId;
+            Election = item.Election;
         }
 
         public string FullName { get; set; } = null!;

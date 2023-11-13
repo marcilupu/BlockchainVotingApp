@@ -1,0 +1,35 @@
+﻿@*Edit candidate modal*@
+<div class="modal fade" id="editCandidateModal" tabindex="-1" aria-labelledby="editCandidateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCandidateModalLabel">Edit candidate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="#" class="rounded-3 border border-white" id="editCandidateForm">
+                    <div class="form-group mb-3">
+                        <label class="mb-2">FirstName</label>
+                        <input data-first-name type="text" name="FirstName" class="form-control" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="mb-2">LastName</label>
+                        <input data-last-name id="lastName" type="text" name="LastName" class="form-control" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="mb-2">Organization</label>
+                        <input data-organization id="organization" type="text" name="Organization" class="form-control" />
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="mb-2">Biography</label>
+                        <textarea data-biography type="text" name="Biography" class="form-control"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary submit-edit-candidate">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>

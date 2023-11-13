@@ -6,31 +6,41 @@ namespace BlockchainVotingApp.AppCode.Extensions
 {
     public static class DTOExtensions
     {
-        public static DbCandidate ToDb(this AddCandidateModel addCandidateModel, DbCandidate? dbCandidate = null)
+        public static DbCandidate ToDb(this AddEditCandidateModel addCandidateModel, DbCandidate? dbCandidate = null)
         {
-            dbCandidate ??= new DbCandidate() {
-                FirstName= addCandidateModel.FirstName,
-                LastName= addCandidateModel.LastName,
-                Biography= addCandidateModel.Biography,
-                Organization= addCandidateModel.Organization,
-                ElectionId= addCandidateModel.ElectionId,
+            dbCandidate ??= new DbCandidate()
+            {
+                ElectionId = addCandidateModel.ElectionId
             };
+
+            if (!string.IsNullOrEmpty(addCandidateModel.FirstName))
+                dbCandidate.FirstName = addCandidateModel.FirstName;
+
+            if (!string.IsNullOrEmpty(addCandidateModel.LastName))
+                dbCandidate.LastName = addCandidateModel.LastName;
+
+            if (!string.IsNullOrEmpty(addCandidateModel.Biography))
+                dbCandidate.Biography = addCandidateModel.Biography;
+
+            if (!string.IsNullOrEmpty(addCandidateModel.Organization))
+                dbCandidate.Organization = addCandidateModel.Organization;
 
             return dbCandidate;
         }
 
-        public static DbElection ToDb(this AddElectionModel electionModel, DbElection? election = null)
+        public static DbElection ToDb(this AddEditElectionModel electionModel, DbElection? election = null)
         {
             election ??= new DbElection()
             {
-                Name = electionModel.Name,
-                ContractAddress = electionModel.ContractAddress,
-                StartDate = electionModel.StartDate,
-                EndDate = electionModel.EndDate,
-                Rules = electionModel.Rules,
-                CountyId = electionModel.County,
                 State = ElectionState.Upcoming
             };
+
+            election.Name = electionModel.Name;
+            election.ContractAddress = electionModel.ContractAddress;
+            election.StartDate = electionModel.StartDate;
+            election.EndDate = electionModel.EndDate;
+            election.Rules = electionModel.Rules;
+            election.CountyId = electionModel.County;
 
             return election;
         }
