@@ -10,6 +10,10 @@
     <partial name="/Areas/Manage/Views/Candidates/CandidatesListPartialView.cshtml" model="@Model.Items" />
 </table>
 
+<partial name="/Areas/Manage/Views/Candidates/EditCandidateModal.cshtml" />
+<partial name="/Areas/Manage/Views/Candidates/DeleteCandidateModal.cshtml" />
+
 @section Scripts {
     <script src="~/js/areas/manage/candidate/index.js"></script>
+    <script src="~/js/areas/manage/candidate/manageCandidate.js"></script>
 }
