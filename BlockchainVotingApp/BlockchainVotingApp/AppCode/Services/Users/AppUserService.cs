@@ -3,6 +3,9 @@ using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using System.Runtime.CompilerServices;
 
 namespace BlockchainVotingApp.AppCode.Services.Users
 {
@@ -11,22 +14,30 @@ namespace BlockchainVotingApp.AppCode.Services.Users
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UserManager<DbUser> _userManager;
         private readonly IUserRepository _userRepository;
+        private readonly IMemoryCache _memoryCache;
+        private readonly string _currentUserMemoryKey;
+        private readonly string _currentUserRolesKey;
 
-        public AppUserService(IHttpContextAccessor contextAccessor, UserManager<DbUser> userManager, IUserRepository userRepository)
+        public AppUserService(IHttpContextAccessor contextAccessor, UserManager<DbUser> userManager, IUserRepository userRepository, IMemoryCache memoryCache, IConfiguration configuration)
         {
-            _contextAccessor = contextAccessor; 
+            _contextAccessor = contextAccessor;
             _userManager = userManager;
             _userRepository = userRepository;
+            _memoryCache = memoryCache;
+            _currentUserMemoryKey = configuration.GetSection("MemoryCacheKeys").GetSection("CurrentUserMemoryKey").ToString() ?? "currentUserKey";
+            _currentUserRolesKey = configuration.GetSection("MemoryCacheKeys").GetSection("CurrentUserRolesMemoryKey").ToString() ?? "currentUserRolesKey";
         }
 
         public async Task<AppUser> ChangePassword(string currentPass, string newPass)
         {
-            var user =  await _userManager.GetUserAsync(_contextAccessor.HttpContext?.User);
+            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext?.User);
 
-            if(await _userManager.CheckPasswordAsync(user, currentPass))
+            if (await _userManager.CheckPasswordAsync(user, currentPass))
             {
                 await _userManager.ChangePasswordAsync(user, currentPass, newPass);
             }
+
+            _memoryCache.Set(_currentUserMemoryKey, user);
 
             return new AppUser(user);
         }
@@ -41,15 +52,43 @@ namespace BlockchainVotingApp.AppCode.Services.Users
             }).ToList();
         }
 
+        private async Task<DbUser> GetDbUserAsync()
+        {
+            if (_memoryCache.TryGetValue(_currentUserMemoryKey, out DbUser? currentUser))
+            {
+                return currentUser!;
+            }
+
+            var dbUser = await _userManager.GetUserAsync(_contextAccessor.HttpContext?.User);
+
+            var cacheOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
+
+            _memoryCache.Set(_currentUserMemoryKey, dbUser, cacheOptions);
+
+            return dbUser;
+        }
+
         public async Task<AppUser> GetUserAsync()
-        { 
-            return new AppUser(await _userManager.GetUserAsync(_contextAccessor.HttpContext?.User));
+        {
+            return new AppUser(await GetDbUserAsync());
         }
 
         public async Task<IList<string>> GetUserRoles()
         {
-            var user = await _userManager.GetUserAsync(_contextAccessor.HttpContext?.User);
-            return await _userManager.GetRolesAsync(user);
+            var user = await GetDbUserAsync();
+
+            if (_memoryCache.TryGetValue(_currentUserRolesKey, out IList<string>? currentUserRoles))
+            {
+                return currentUserRoles!;
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            var cacheOptions = new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromDays(1));
+
+            _memoryCache.Set(_currentUserRolesKey, roles, cacheOptions);
+
+            return roles;
         }
     }
 }
