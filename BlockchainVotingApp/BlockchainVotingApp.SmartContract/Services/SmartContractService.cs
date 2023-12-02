@@ -93,6 +93,24 @@ namespace BlockchainVotingApp.SmartContract.Services
             }
         }
 
+        public async Task<int> GetTotalNumberOfVotes(string contractAddress)
+        {
+            var web3 = new Web3(_blockchainNetworkUrl);
+
+            try
+            {
+                var contract = web3.Eth.GetContract(ElectionDeployment.ABI, contractAddress);
+
+                var result = await contract.GetFunction("votesCount").CallAsync<int>();
+
+                return result;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         public async Task<bool> HasUserVoted(int voterId, string contractAddress)
         {
             var web3 = new Web3(_blockchainNetworkUrl);

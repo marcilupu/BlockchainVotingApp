@@ -1,14 +1,8 @@
-﻿using BlockchainVotingApp.AppCode.Services.Users;
-using BlockchainVotingApp.Core.DomainModels;
-using BlockchainVotingApp.Core.Infrastructure;
-using BlockchainVotingApp.Data.Models;
-using BlockchainVotingApp.Data.Repositories;
+﻿using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Models.Election.ViewModels;
 using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography.X509Certificates;
 
 namespace BlockchainVotingApp.Controllers.Election
 {

@@ -1,4 +1,5 @@
-﻿using BlockchainVotingApp.Core.DomainModels;
+﻿using BlockchainVotingApp.AppCode.Utilities;
+using BlockchainVotingApp.Core.DomainModels;
 using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
@@ -102,6 +103,8 @@ namespace BlockchainVotingApp.Core.Services
                 {
                     election.SelectedCandidate = candidate.FullName;
                 }
+
+                election.NumberOfVotes = await ElectionHelper.GetElectionVotes(_smartContractService, election.ContractAddress);
             }
 
             return elections.Where(x => x.HasVoted).ToList();
@@ -190,6 +193,8 @@ namespace BlockchainVotingApp.Core.Services
             {
                 election.HasVoted = false;
             }
+
+            election.NumberOfVotes = await ElectionHelper.GetElectionVotes(_smartContractService, election.ContractAddress);
 
             return election;
         }

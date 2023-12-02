@@ -8,7 +8,7 @@ contract Election {
     //Election properties
     mapping(uint => bool) public voters;
 
-    uint votesCount;
+    uint public votesCount;
     mapping(uint => uint) public votes;
     mapping(uint => bool) public usersVoted;
 

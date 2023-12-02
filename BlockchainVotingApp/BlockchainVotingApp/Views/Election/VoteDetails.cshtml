@@ -62,14 +62,15 @@
                     </div>
                 </div>
                 <div class="card-body" id="electionCardBody">
-                    <span class="fs-4">
+                    <span class="fs-5">
                         <span class="fw-bold">You voted: </span>
                         <span>@Model.SelectedCandidate</span>
                     </span>
 
                     @if ((int)Model.State == 2)
                     {
-                        <span class="fs-4">
+                        <br />
+                        <span class="fs-5">
                             <span class="fw-bold">Total number of votes: </span>
                             <span> @Model.NumberOfVotes</span>
                         </span>
