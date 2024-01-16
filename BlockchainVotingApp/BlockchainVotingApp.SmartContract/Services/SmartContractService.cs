@@ -105,8 +105,9 @@ namespace BlockchainVotingApp.SmartContract.Services
 
                 return result;
             }
-            catch
+            catch(RpcResponseException ex)
             {
+                Console.WriteLine($" [RpcResponseException]. Message: {ex.Message}");
                 return 0;
             }
         }
