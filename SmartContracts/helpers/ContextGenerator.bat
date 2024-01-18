@@ -1,4 +1,4 @@
-@echo compile...
+@echo Compile...
 
 set "contextIdentifier=%1"
 
@@ -8,15 +8,16 @@ cd "%verifierContext%"
 
 CALL zokrates compile -i "Verifier.zok" -s "abi.json" -o "out" -r "out.r1cs"
 
-@echo perform the setup phase...
+@echo Perform the setup phase...
 CALL zokrates setup
 
-@echo export-verifier...
+@echo Export verifier...
 CALL zokrates export-verifier -o "../contracts/Verifier.sol"
 
 cd "../"
 :: compile election
 @echo Deploy smart contract...
+
 CALL truffle compile --all 
 
 CALL truffle migrate --f 3

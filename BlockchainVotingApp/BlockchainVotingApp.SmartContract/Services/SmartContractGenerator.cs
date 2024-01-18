@@ -1,66 +1,103 @@
-﻿using BlockchainVotingApp.SmartContract.Infrastructure;
+﻿using BlockchainVotingApp.SmartContract.Extensions;
+using BlockchainVotingApp.SmartContract.Infrastructure;
 using BlockchainVotingApp.SmartContract.Models;
 using BlockchainVotingApp.SmartContract.Utilities;
 using Nethereum.JsonRpc.Client;
 using Nethereum.Web3;
 using Nethereum.Web3.Accounts;
+using System.Diagnostics;
 
 namespace BlockchainVotingApp.SmartContract.Services
 {
     internal sealed class SmartContractGenerator : ISmartContractGenerator
     {
         private readonly ISmartContractConfiguration _configuration;
+        private readonly PathsLookup _pathsLookup;
 
-        public SmartContractGenerator(ISmartContractConfiguration configuration)
+        public SmartContractGenerator(ISmartContractConfiguration configuration, PathsLookup pathsLookup)
         {
             _configuration = configuration;
+            _pathsLookup = pathsLookup;
         }
 
         /// <summary>
         /// Generate the election context : election context, verifier zok file, zokrates context
         /// </summary>
         /// <param name="contextIdentifier"></param>
-        /// <param name="userIds"></param>
-        /// <returns>Contract metadata</returns>
+        /// <param name="usersIds"></param>
+        /// <returns>A new instance of <see cref="ContractMetadata"/></returns>
         public async Task<ContractMetadata?> CreateSmartContractContext(string contextIdentifier, IReadOnlyCollection<int> usersIds)
         {
-            // 1. Create election smart contract context
-            string electionPath = Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier);
-            string templatePath = Path.Combine(_configuration.GeneratorWorkspace, "template");
+            // 1. Create election smart contract context setup
+            string templatePath = _pathsLookup.GeneratorTemplatePath();
+            string contextPath = _pathsLookup.ContextPath(contextIdentifier);
+            string verifierZokPath = _pathsLookup.ContextVerifierProgramPath(contextIdentifier);
 
-            DirectoryHelper.CopyFilesRecursively(templatePath, electionPath);
 
             // 2. Create verifier zok file
-            string verifierZokPath = GenerateVerifierFile(usersIds.ToList(), electionPath);
+            var verifierProgram = VerifierProgramCreator.New(usersIds).Generate();
 
-            // 3. Setup verifier zokrates
-            string cmd = Path.Combine(_configuration.GeneratorWorkspace, _configuration.ContextGenerator);
-            var response = ProcessHelper.InvokeProcess(cmd, electionPath);
-            if (response == 0)
-                return null;
 
-            // 4. Get contract metadata (abi, bytecode)
-            var contractMetadata = await GetSmartContractMetadata(electionPath);
+            if (!string.IsNullOrEmpty(verifierProgram))
+            {
+                // Attempt to copy the template directory content to election path directory.
+                if (templatePath.TryCopyTo(contextPath))
+                {
+                    File.WriteAllText(verifierZokPath, verifierProgram);
 
-            return contractMetadata;
+                    // 3. Setup and run context generator. 
+                    string generatorBat = _pathsLookup.CGeneratorBatPath();
+
+                    var response = await new Process().InvokeBat(generatorBat, contextPath);
+
+                    if (response != null)
+                    {
+                        // 4. Get contract metadata (abi, bytecode)
+                        var contractMetadata = await GetSCMetadataInternal(contextIdentifier);
+
+                        return contractMetadata;
+                    }
+                }
+            }
+
+            return null;
         }
 
-        public Task GenerateProof(string contextIdentifier, int userId)
+        public async Task<Proof?> GenerateProof(string contextIdentifier, int userId)
         {
-            throw new NotImplementedException();
+            // Setup the required path variables. 
+            string generatorBat = _pathsLookup.PGeneratorBatPath();
+
+            // Generate a new unique identifier for proof.
+            string proofId = Guid.NewGuid().ToString();
+
+            // Execute the bat and extract the proof from file.
+            var response = await new Process().InvokeBat(generatorBat, contextIdentifier, proofId, userId.ToString());
+
+            if (response != null)
+            {
+                var proofPath = _pathsLookup.ContextVerifierProofPath(contextIdentifier, proofId);
+
+                if (Proof.TryRead(proofPath, out var proof))
+                {
+                    return proof;
+                }
+            }
+
+            return null;
         }
 
         public async Task<ContractMetadata?> GetSmartContractMetadata(string contextIdentifier)
         {
-            string abiPath = Path.Combine(contextIdentifier, _configuration.ABI);
-            string bytecodePath = Path.Combine(contextIdentifier, _configuration.Bytecode);
+            try
+            {
+                return await GetSCMetadataInternal(contextIdentifier);
+            }
+            catch
+            {
+            }
 
-            var abi = await File.ReadAllTextAsync(abiPath);
-            var bytecode = await File.ReadAllTextAsync(bytecodePath);
-
-            var contractMetadata = new ContractMetadata(bytecode.Trim('"'), abi);
-
-            return contractMetadata;
+            return null;
         }
 
         public async Task<string> DeploySmartContract(string contextIdentifier, string adminAccountPrivateKey)
@@ -75,8 +112,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             var account = new Account(adminDefaultAccountPrivateKey);
             var web3 = new Web3(account, _configuration.BlockchainNetworkUrl);
 
-            string fullContextIdentifier = Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier);
-            var contextMetadata = await GetSmartContractMetadata(fullContextIdentifier);
+            var contextMetadata = await GetSCMetadataInternal(contextIdentifier);
 
             if (contextMetadata != null)
             {
@@ -110,54 +146,29 @@ namespace BlockchainVotingApp.SmartContract.Services
         }
 
 
-        #region private
+        #region Private
 
-        private string GenerateVerifierFile(List<int> usersIds, string contextIdentifier)
+        private async Task<ContractMetadata?> GetSCMetadataInternal(string contextIdentifier)
         {
-            string verifierZokPath = Path.Combine(contextIdentifier, "verifier", "Verifier.zok");
+            string abiPath = _pathsLookup.ContextAbiPath(contextIdentifier);
+            string bytecodePath = _pathsLookup.ContextBytecodePath(contextIdentifier);
 
-            try
+
+            if (File.Exists(abiPath) && File.Exists(bytecodePath))
             {
-                StreamWriter sw = new StreamWriter(verifierZokPath);
+                var abi = await File.ReadAllTextAsync(abiPath);
+                var bytecode = await File.ReadAllTextAsync(bytecodePath);
 
-                var usersCount = usersIds.Count;
 
-                var rand = new Random();
-                var randNumber = rand.Next();
+                var contractMetadata = new ContractMetadata(bytecode.Trim('"'), abi);
 
-                sw.WriteLine("def main(private field userId) {");
-                sw.Write($"field[{usersCount}] ids = [");
-                for (int i = 0; i < usersCount - 1; i++)
-                {
-                    sw.Write($"{usersIds[i]},");
-                }
-                sw.WriteLine($"{usersIds[usersCount - 1]}];");
-
-                sw.WriteLine($"field randomSeed = {randNumber};");
-                sw.WriteLine("field mut match = randomSeed;");
-
-                sw.WriteLine(@$"for u32 i in 0..{usersCount} " + "{");
-                sw.WriteLine(" match = if ids[i] == userId { match + 1 } else { match }; ");
-                sw.WriteLine("}");
-
-                sw.WriteLine("assert(match > randomSeed);");
-                sw.WriteLine("return;");
-                sw.WriteLine("}");
-
-                sw.Close();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception: " + ex.Message);
-            }
-            finally
-            {
-                Console.WriteLine($"The file {verifierZokPath} has been generated...");
+                return contractMetadata;
             }
 
-            return verifierZokPath;
+            return null;
         }
 
         #endregion
+
     }
 }

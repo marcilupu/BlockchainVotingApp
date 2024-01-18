@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using BlockchainApp.Test;
 using BlockchainVotingApp.Core.Extensions;
 using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Ef.Config;
@@ -6,6 +7,10 @@ using BlockchainVotingApp.SmartContract.Extensions;
 using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+await ZKPTest.Test();
+
+return;
 
 var services = new ServiceCollection();
 
