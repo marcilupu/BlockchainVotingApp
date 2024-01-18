@@ -10,13 +10,11 @@ namespace BlockchainVotingApp.Core.Services
     internal class CandidateService : ICandidateService
     {
         private readonly ICandidateRepository _candidateRepository;
-        private readonly ISmartContractService _smartContractService;
         private readonly IElectionRepository _electionRepository;
 
-        public CandidateService(ICandidateRepository candidateRepository, ISmartContractService smartContractService, IElectionRepository electionRepository)
+        public CandidateService(ICandidateRepository candidateRepository, IElectionRepository electionRepository)
         {
             _candidateRepository = candidateRepository;
-            _smartContractService = smartContractService;
             _electionRepository = electionRepository;
         }
         public async Task<Candidate?> Get(int id)

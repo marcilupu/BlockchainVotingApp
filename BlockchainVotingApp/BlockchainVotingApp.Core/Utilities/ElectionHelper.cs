@@ -1,14 +1,24 @@
-﻿using BlockchainVotingApp.SmartContract.Infrastructure;
+﻿using BlockchainVotingApp.Data.Models;
+using BlockchainVotingApp.SmartContract.Infrastructure;
 
 namespace BlockchainVotingApp.AppCode.Utilities
 {
     public static class ElectionHelper
     {
-        public static async Task<int> GetElectionVotes(ISmartContractService smartContractService, string electionContractAddress)
+        public static string GetElectionContextIdentifier(int id, string name)
         {
-            int numberOfVotes = await smartContractService.GetTotalNumberOfVotes(electionContractAddress);
+            return $"{id}_{name}";
+        }
 
-            return numberOfVotes;
+        public static async Task<ISmartContractService> CreateSmartContractService(ISmartContractServiceFactory smartContractServiceFactory, ISmartContractGenerator smartContractGenerator, int electionId, string electioName)
+        {
+            string contextIdentifier = GetElectionContextIdentifier(electionId, electioName);
+            var contextMetadata = await smartContractGenerator.GetSmartContractMetadata(contextIdentifier);
+
+            if (contextMetadata != null)
+                return smartContractServiceFactory.Create(contextMetadata);
+
+            return null;
         }
     }
 }

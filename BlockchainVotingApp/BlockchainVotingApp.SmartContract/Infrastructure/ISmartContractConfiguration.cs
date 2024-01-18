@@ -1,6 +1,6 @@
 ﻿namespace BlockchainVotingApp.SmartContract.Infrastructure
 {
-    internal interface ISmartContractConfiguration
+    public interface ISmartContractConfiguration
     {
         /// <summary>
         /// 
@@ -31,5 +31,15 @@
         /// 
         /// </summary>
         public string ProofGenerator { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ABI { get; }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Bytecode { get; }
     }
 }

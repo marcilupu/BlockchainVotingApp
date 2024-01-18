@@ -9,7 +9,7 @@ namespace BlockchainVotingApp.SmartContract.Infrastructure
 
         Task<ContractMetadata?> CreateSmartContractContext(string contextIdentifier, IReadOnlyCollection<int> userIds);
 
-        Task<ContractMetadata?> GetSmartContractContext(string contextIdentifier);
+        Task<ContractMetadata?> GetSmartContractMetadata(string contextIdentifier);
 
         Task GenerateProof(string contextIdentifier, int userId);
     }

@@ -12,26 +12,31 @@ namespace BlockchainVotingApp.Core.Services
 {
     internal class ElectionService : IElectionService
     {
-        private readonly IElectionRepository _electionRepository;
         private readonly IUserRepository _userRepository;
-        private readonly ISmartContractService _smartContractService;
-        private readonly ICandidateService _candidateService;
+        private readonly IElectionRepository _electionRepository;
         private readonly ICandidateRepository _candidateRepository;
-        private readonly IConfiguration _configuration;
+
+        private readonly ICandidateService _candidateService;
+        private readonly ISmartContractServiceFactory _smartContractServiceFactory;
+        private readonly ISmartContractGenerator _smartContractGenerator;
+
+        private readonly ISmartContractConfiguration _smartContractConfiguration;
 
         public ElectionService(IElectionRepository electionRepository,
                                IUserRepository userRepository,
-                               ISmartContractService smartContractService,
+                               ISmartContractServiceFactory smartContractServiceFactory,
                                ICandidateService candidateService,
-                               ICandidateRepository candidateRepository, 
-                               IConfiguration configuration)
+                               ICandidateRepository candidateRepository,
+                               ISmartContractGenerator smartContractGenerator,
+                               ISmartContractConfiguration smartContractConfiguration)
         {
             _electionRepository = electionRepository;
             _userRepository = userRepository;
-            _smartContractService = smartContractService;
+            _smartContractServiceFactory = smartContractServiceFactory;
             _candidateService = candidateService;
             _candidateRepository = candidateRepository;
-            _configuration = configuration;
+            _smartContractGenerator = smartContractGenerator;
+            _smartContractConfiguration = smartContractConfiguration;
         }
 
         public async Task<UserElection?> Get(int id)
@@ -90,7 +95,7 @@ namespace BlockchainVotingApp.Core.Services
         {
             //todo: REFACTOR
             var result = (Vote?)null; // await _smartContractService.GetUserVote(userId, contractAddress);
-            
+
             if (result != null)
             {
                 return result.CandidateId;
@@ -114,7 +119,16 @@ namespace BlockchainVotingApp.Core.Services
                     election.SelectedCandidate = candidate.FullName;
                 }
 
-                election.NumberOfVotes = await ElectionHelper.GetElectionVotes(_smartContractService, election.ContractAddress);
+                ISmartContractService smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+
+                if (smartContractService != null)
+                {
+                    election.NumberOfVotes = await smartContractService.GetTotalNumberOfVotes(election.ContractAddress);
+                }
+                else
+                {
+                    election.NumberOfVotes = 0;
+                }
             }
 
             return elections.Where(x => x.HasVoted).ToList();
@@ -122,21 +136,18 @@ namespace BlockchainVotingApp.Core.Services
 
         public async Task<bool> GenerateElectionSmartContract(DbElection election)
         {
-            //Get users for this election
+            // Get users for this election
             var usersIds = await GetUserIds(election);
 
-            //Generate the verifier.zok file needeed for ZKP based on participants users
-            GenerateVerifierFile(usersIds);
+            // Get election context name
+            string contextIdentifier = ElectionHelper.GetElectionContextIdentifier(election.Id, election.Name);
 
-            //Generate the verifier.sol and compile it.
-            
-            
-            // todo: uncommment _smartContractService.GenerateVerifierSmartContract();
-
+            // Generate election context
+            var contractMetadata = await _smartContractGenerator.CreateSmartContractContext(contextIdentifier, usersIds);
 
             //Deploy a new smart contract to interact with
-            //var deployedContract = await _smartContractService.DeploySmartContract(string.Empty);
-            //election.ContractAddress = deployedContract;
+            var deployedContract = await _smartContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
+            election.ContractAddress = deployedContract;
 
             //Add voters to smart contract
             //var result = await AddVoters(election, usersIds);
@@ -213,55 +224,18 @@ namespace BlockchainVotingApp.Core.Services
                 election.HasVoted = false;
             }
 
-            election.NumberOfVotes = await ElectionHelper.GetElectionVotes(_smartContractService, election.ContractAddress);
+            ISmartContractService smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+
+            if (smartContractService != null)
+            {
+                election.NumberOfVotes = await smartContractService.GetTotalNumberOfVotes(election.ContractAddress);
+            }
+            else
+            {
+                election.NumberOfVotes = 0;
+            }
 
             return election;
-        }
-
-
-        private void GenerateVerifierFile(List<int> usersIds)
-        {
-            string verifierZokPath = _configuration.GetSection("SmartContract").GetSection("VerifierZokPath").Value;
-            var fullPath = Path.GetFullPath(verifierZokPath);
-
-            try
-            {
-                StreamWriter sw = new StreamWriter(verifierZokPath);
-
-                var usersCount = usersIds.Count;
-
-                var rand = new Random();
-                var randNumber = rand.Next();
-
-                sw.WriteLine("def main(private field userId) {");
-                sw.Write($"field[{usersCount}] ids = [");
-                for (int i = 0; i < usersCount - 1; i++)
-                {
-                    sw.Write($"{usersIds[i]},");
-                }
-                sw.WriteLine($"{usersIds[usersCount - 1]}];");
-
-                sw.WriteLine($"field randomSeed = {randNumber};");
-                sw.WriteLine("field mut match = randomSeed;");
-
-                sw.WriteLine(@$"for u32 i in 0..{usersCount} " + "{");
-                sw.WriteLine(" match = if ids[i] == userId { match + 1 } else { match }; ");
-                sw.WriteLine("}");
-
-                sw.WriteLine("assert(match > randomSeed);");
-                sw.WriteLine("return;");
-                sw.WriteLine("}");
-
-                sw.Close();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine("Exception: " + ex.Message);
-            }
-            finally
-            {
-                Console.WriteLine($"The file {fullPath} has been generated...");
-            }
         }
 
         private async Task<List<int>> GetUserIds(DbElection election)

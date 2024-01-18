@@ -20,9 +20,8 @@ namespace BlockchainVotingApp.SmartContract.Services
         {
             _configuration = configuration;
             _metadata = metadata;
- 
-        }
 
+        }
 
         public async Task<bool> AddCandidate(int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addCandidate", candidateId)).IsSuccess;
 

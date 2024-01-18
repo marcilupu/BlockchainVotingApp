@@ -12,11 +12,8 @@ namespace BlockchainVotingApp.Controllers.Login
 {
     public class LoginController : Controller
     {
-        private readonly ISmartContractService _smartContractService;
-
-        public LoginController(ISmartContractService smartContractService)
+        public LoginController()
         {
-            _smartContractService = smartContractService;
         }
 
         [HttpGet]
