@@ -1,15 +1,15 @@
 {
   "contractName": "Pairing",
   "abi": [],
-  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Verifier.sol\":\"Pairing\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Verifier.sol\":{\"keccak256\":\"0xa25c67beb4f2cb041a2532acae8e8af9e63a0cfaa77b69d545990054f4377e83\",\"urls\":[\"bzz-raw://81dd08b7ef0aa89c3e02d1b4227047cb7c684e1cc4fa1de98e188aef0f5c25ee\",\"dweb:/ipfs/QmYDjAwcVXBoDnEs8TEymxJLhQndLwE3GMJWgG8Y7PhKQw\"]}},\"version\":1}",
-  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220774471e2e3740a6631eed63588fa1646c48a9605b1ff3ab54b820359f45c254e64736f6c63430008000033",
-  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220774471e2e3740a6631eed63588fa1646c48a9605b1ff3ab54b820359f45c254e64736f6c63430008000033",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.0+commit.c7dfd78e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Verifier.sol\":\"Pairing\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Verifier.sol\":{\"keccak256\":\"0x0a1f27a14bbbb587cad0fffdcff8a7c3aaa6834ea3205c7bc8523b6dd6d5b1c7\",\"urls\":[\"bzz-raw://f400bee79417327af1cf376a25c59eb03b69f94d7b2cc4bd1c4cda54b7ec1949\",\"dweb:/ipfs/QmZkyt6RG25ysgZF9arHeN9ibPMFpEC5fWxYeXAj8Y29uj\"]}},\"version\":1}",
+  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122078cd24ab45805b64ed4f211ef8b99d8c0888672615851827867180b0dd06417e64736f6c63430008000033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea264697066735822122078cd24ab45805b64ed4f211ef8b99d8c0888672615851827867180b0dd06417e64736f6c63430008000033",
   "immutableReferences": {},
   "generatedSources": [],
   "deployedGeneratedSources": [],
   "sourceMap": "1128:5104:2:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "1128:5104:2:-:0;;;;;;;;",
-  "source": "// This file is MIT Licensed.\n//\n// Copyright 2017 Christian Reitwiessner\n// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\npragma solidity ^0.8.0;\nlibrary Pairing {\n    struct G1Point {\n        uint X;\n        uint Y;\n    }\n    // Encoding of field elements is: X[0] * z + X[1]\n    struct G2Point {\n        uint[2] X;\n        uint[2] Y;\n    }\n    /// @return the generator of G1\n    function P1() pure internal returns (G1Point memory) {\n        return G1Point(1, 2);\n    }\n    /// @return the generator of G2\n    function P2() pure internal returns (G2Point memory) {\n        return G2Point(\n            [10857046999023057135944570762232829481370756359578518086990519993285655852781,\n             11559732032986387107991004021392285783925812861821192530917403151452391805634],\n            [8495653923123431417604973247489272438418190587263600148770280649306958101930,\n             4082367875863433681332203403145435568316851327593401208105741076214120093531]\n        );\n    }\n    /// @return the negation of p, i.e. p.addition(p.negate()) should be zero.\n    function negate(G1Point memory p) pure internal returns (G1Point memory) {\n        // The prime q in the base field F_q for G1\n        uint q = 21888242871839275222246405745257275088696311157297823662689037894645226208583;\n        if (p.X == 0 && p.Y == 0)\n            return G1Point(0, 0);\n        return G1Point(p.X, q - (p.Y % q));\n    }\n    /// @return r the sum of two points of G1\n    function addition(G1Point memory p1, G1Point memory p2) internal view returns (G1Point memory r) {\n        uint[4] memory input;\n        input[0] = p1.X;\n        input[1] = p1.Y;\n        input[2] = p2.X;\n        input[3] = p2.Y;\n        bool success;\n        assembly {\n            success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)\n            // Use \"invalid\" to make gas estimation work\n            switch success case 0 { invalid() }\n        }\n        require(success);\n    }\n\n\n    /// @return r the product of a point on G1 and a scalar, i.e.\n    /// p == p.scalar_mul(1) and p.addition(p) == p.scalar_mul(2) for all points p.\n    function scalar_mul(G1Point memory p, uint s) internal view returns (G1Point memory r) {\n        uint[3] memory input;\n        input[0] = p.X;\n        input[1] = p.Y;\n        input[2] = s;\n        bool success;\n        assembly {\n            success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)\n            // Use \"invalid\" to make gas estimation work\n            switch success case 0 { invalid() }\n        }\n        require (success);\n    }\n    /// @return the result of computing the pairing check\n    /// e(p1[0], p2[0]) *  .... * e(p1[n], p2[n]) == 1\n    /// For example pairing([P1(), P1().negate()], [P2(), P2()]) should\n    /// return true.\n    function pairing(G1Point[] memory p1, G2Point[] memory p2) internal view returns (bool) {\n        require(p1.length == p2.length);\n        uint elements = p1.length;\n        uint inputSize = elements * 6;\n        uint[] memory input = new uint[](inputSize);\n        for (uint i = 0; i < elements; i++)\n        {\n            input[i * 6 + 0] = p1[i].X;\n            input[i * 6 + 1] = p1[i].Y;\n            input[i * 6 + 2] = p2[i].X[1];\n            input[i * 6 + 3] = p2[i].X[0];\n            input[i * 6 + 4] = p2[i].Y[1];\n            input[i * 6 + 5] = p2[i].Y[0];\n        }\n        uint[1] memory out;\n        bool success;\n        assembly {\n            success := staticcall(sub(gas(), 2000), 8, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)\n            // Use \"invalid\" to make gas estimation work\n            switch success case 0 { invalid() }\n        }\n        require(success);\n        return out[0] != 0;\n    }\n    /// Convenience method for a pairing check for two pairs.\n    function pairingProd2(G1Point memory a1, G2Point memory a2, G1Point memory b1, G2Point memory b2) internal view returns (bool) {\n        G1Point[] memory p1 = new G1Point[](2);\n        G2Point[] memory p2 = new G2Point[](2);\n        p1[0] = a1;\n        p1[1] = b1;\n        p2[0] = a2;\n        p2[1] = b2;\n        return pairing(p1, p2);\n    }\n    /// Convenience method for a pairing check for three pairs.\n    function pairingProd3(\n            G1Point memory a1, G2Point memory a2,\n            G1Point memory b1, G2Point memory b2,\n            G1Point memory c1, G2Point memory c2\n    ) internal view returns (bool) {\n        G1Point[] memory p1 = new G1Point[](3);\n        G2Point[] memory p2 = new G2Point[](3);\n        p1[0] = a1;\n        p1[1] = b1;\n        p1[2] = c1;\n        p2[0] = a2;\n        p2[1] = b2;\n        p2[2] = c2;\n        return pairing(p1, p2);\n    }\n    /// Convenience method for a pairing check for four pairs.\n    function pairingProd4(\n            G1Point memory a1, G2Point memory a2,\n            G1Point memory b1, G2Point memory b2,\n            G1Point memory c1, G2Point memory c2,\n            G1Point memory d1, G2Point memory d2\n    ) internal view returns (bool) {\n        G1Point[] memory p1 = new G1Point[](4);\n        G2Point[] memory p2 = new G2Point[](4);\n        p1[0] = a1;\n        p1[1] = b1;\n        p1[2] = c1;\n        p1[3] = d1;\n        p2[0] = a2;\n        p2[1] = b2;\n        p2[2] = c2;\n        p2[3] = d2;\n        return pairing(p1, p2);\n    }\n}\n\ncontract Verifier {\n    using Pairing for *;\n    struct VerifyingKey {\n        Pairing.G1Point alpha;\n        Pairing.G2Point beta;\n        Pairing.G2Point gamma;\n        Pairing.G2Point delta;\n        Pairing.G1Point[] gamma_abc;\n    }\n    struct Proof {\n        Pairing.G1Point a;\n        Pairing.G2Point b;\n        Pairing.G1Point c;\n    }\n    function verifyingKey() pure internal returns (VerifyingKey memory vk) {\n        vk.alpha = Pairing.G1Point(uint256(0x2d977241a3a3224bcf4baa79d4991526fc70e66404095e787b3576cfc8773ad1), uint256(0x038aa30faa0c667c477cfeca86863cbc0627cb8252ec27168e2f8d33a5270221));\n        vk.beta = Pairing.G2Point([uint256(0x295e2c4d641b7270dccc92f0ff875da665e41a68a4d05e840165f6de5be1d692), uint256(0x0094db4aab5d0a842b767ab510eeb775bd0b8de1247d6380825c39a928c37614)], [uint256(0x1ae35081aa3286009a4aea776424c6a8d4c650df128372a4e5926767da1e8f79), uint256(0x155260d2447be830ff43e3a00797eac82277570385823e6c9865712372aaa8cf)]);\n        vk.gamma = Pairing.G2Point([uint256(0x076519f49a8deef36953f66cdbce80c69e9410635f4bfad765809a27affa4004), uint256(0x16b96e889766047d98f4237c25205b3721749fb4a2b82e3e457168b2ff4d3c56)], [uint256(0x240de2af4eb99ead961ceb7a3ee989dc68eb7cf6792f7a30f65b922aeb05f5a0), uint256(0x24a5183325f92a104fdc064c00bc7f9d9ddf70aa5e3398c98b0c0879e424fd94)]);\n        vk.delta = Pairing.G2Point([uint256(0x1ef6fe0c0e1d0de842ce59aa75cc52d9b958d36aa09a5cc0c8e4657ed1338706), uint256(0x1a35db7bda90917b6fb58aaf5f87acb6a4ef2c4193d80b8840e4b58470ca0ae6)], [uint256(0x1d275b8e0507f6cdbf6f4598ffe01bb5e07ba99ac9e5b9cc7e7ad7b24bcc0548), uint256(0x1ec644160929e6e0253caa7f7a61e2db06bf7a980d44267137c75fa2c562d1a5)]);\n        vk.gamma_abc = new Pairing.G1Point[](1);\n        vk.gamma_abc[0] = Pairing.G1Point(uint256(0x20dd4675161068af079cd6650d01b7119be8e269d926c5615eb8d8250247c0ab), uint256(0x2d3fe186cd9108013c2f4fd32361547e97814160beb50429efe3aeb74079875f));\n    }\n    function verify(uint[] memory input, Proof memory proof) internal view returns (uint) {\n        uint256 snark_scalar_field = 21888242871839275222246405745257275088548364400416034343698204186575808495617;\n        VerifyingKey memory vk = verifyingKey();\n        require(input.length + 1 == vk.gamma_abc.length);\n        // Compute the linear combination vk_x\n        Pairing.G1Point memory vk_x = Pairing.G1Point(0, 0);\n        for (uint i = 0; i < input.length; i++) {\n            require(input[i] < snark_scalar_field);\n            vk_x = Pairing.addition(vk_x, Pairing.scalar_mul(vk.gamma_abc[i + 1], input[i]));\n        }\n        vk_x = Pairing.addition(vk_x, vk.gamma_abc[0]);\n        if(!Pairing.pairingProd4(\n             proof.a, proof.b,\n             Pairing.negate(vk_x), vk.gamma,\n             Pairing.negate(proof.c), vk.delta,\n             Pairing.negate(vk.alpha), vk.beta)) return 1;\n        return 0;\n    }\n    function verifyTx(\n            Proof memory proof\n        ) public view returns (bool r) {\n        uint[] memory inputValues = new uint[](0);\n        \n        if (verify(inputValues, proof) == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n}\n",
+  "source": "// This file is MIT Licensed.\n//\n// Copyright 2017 Christian Reitwiessner\n// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\npragma solidity ^0.8.0;\nlibrary Pairing {\n    struct G1Point {\n        uint X;\n        uint Y;\n    }\n    // Encoding of field elements is: X[0] * z + X[1]\n    struct G2Point {\n        uint[2] X;\n        uint[2] Y;\n    }\n    /// @return the generator of G1\n    function P1() pure internal returns (G1Point memory) {\n        return G1Point(1, 2);\n    }\n    /// @return the generator of G2\n    function P2() pure internal returns (G2Point memory) {\n        return G2Point(\n            [10857046999023057135944570762232829481370756359578518086990519993285655852781,\n             11559732032986387107991004021392285783925812861821192530917403151452391805634],\n            [8495653923123431417604973247489272438418190587263600148770280649306958101930,\n             4082367875863433681332203403145435568316851327593401208105741076214120093531]\n        );\n    }\n    /// @return the negation of p, i.e. p.addition(p.negate()) should be zero.\n    function negate(G1Point memory p) pure internal returns (G1Point memory) {\n        // The prime q in the base field F_q for G1\n        uint q = 21888242871839275222246405745257275088696311157297823662689037894645226208583;\n        if (p.X == 0 && p.Y == 0)\n            return G1Point(0, 0);\n        return G1Point(p.X, q - (p.Y % q));\n    }\n    /// @return r the sum of two points of G1\n    function addition(G1Point memory p1, G1Point memory p2) internal view returns (G1Point memory r) {\n        uint[4] memory input;\n        input[0] = p1.X;\n        input[1] = p1.Y;\n        input[2] = p2.X;\n        input[3] = p2.Y;\n        bool success;\n        assembly {\n            success := staticcall(sub(gas(), 2000), 6, input, 0xc0, r, 0x60)\n            // Use \"invalid\" to make gas estimation work\n            switch success case 0 { invalid() }\n        }\n        require(success);\n    }\n\n\n    /// @return r the product of a point on G1 and a scalar, i.e.\n    /// p == p.scalar_mul(1) and p.addition(p) == p.scalar_mul(2) for all points p.\n    function scalar_mul(G1Point memory p, uint s) internal view returns (G1Point memory r) {\n        uint[3] memory input;\n        input[0] = p.X;\n        input[1] = p.Y;\n        input[2] = s;\n        bool success;\n        assembly {\n            success := staticcall(sub(gas(), 2000), 7, input, 0x80, r, 0x60)\n            // Use \"invalid\" to make gas estimation work\n            switch success case 0 { invalid() }\n        }\n        require (success);\n    }\n    /// @return the result of computing the pairing check\n    /// e(p1[0], p2[0]) *  .... * e(p1[n], p2[n]) == 1\n    /// For example pairing([P1(), P1().negate()], [P2(), P2()]) should\n    /// return true.\n    function pairing(G1Point[] memory p1, G2Point[] memory p2) internal view returns (bool) {\n        require(p1.length == p2.length);\n        uint elements = p1.length;\n        uint inputSize = elements * 6;\n        uint[] memory input = new uint[](inputSize);\n        for (uint i = 0; i < elements; i++)\n        {\n            input[i * 6 + 0] = p1[i].X;\n            input[i * 6 + 1] = p1[i].Y;\n            input[i * 6 + 2] = p2[i].X[1];\n            input[i * 6 + 3] = p2[i].X[0];\n            input[i * 6 + 4] = p2[i].Y[1];\n            input[i * 6 + 5] = p2[i].Y[0];\n        }\n        uint[1] memory out;\n        bool success;\n        assembly {\n            success := staticcall(sub(gas(), 2000), 8, add(input, 0x20), mul(inputSize, 0x20), out, 0x20)\n            // Use \"invalid\" to make gas estimation work\n            switch success case 0 { invalid() }\n        }\n        require(success);\n        return out[0] != 0;\n    }\n    /// Convenience method for a pairing check for two pairs.\n    function pairingProd2(G1Point memory a1, G2Point memory a2, G1Point memory b1, G2Point memory b2) internal view returns (bool) {\n        G1Point[] memory p1 = new G1Point[](2);\n        G2Point[] memory p2 = new G2Point[](2);\n        p1[0] = a1;\n        p1[1] = b1;\n        p2[0] = a2;\n        p2[1] = b2;\n        return pairing(p1, p2);\n    }\n    /// Convenience method for a pairing check for three pairs.\n    function pairingProd3(\n            G1Point memory a1, G2Point memory a2,\n            G1Point memory b1, G2Point memory b2,\n            G1Point memory c1, G2Point memory c2\n    ) internal view returns (bool) {\n        G1Point[] memory p1 = new G1Point[](3);\n        G2Point[] memory p2 = new G2Point[](3);\n        p1[0] = a1;\n        p1[1] = b1;\n        p1[2] = c1;\n        p2[0] = a2;\n        p2[1] = b2;\n        p2[2] = c2;\n        return pairing(p1, p2);\n    }\n    /// Convenience method for a pairing check for four pairs.\n    function pairingProd4(\n            G1Point memory a1, G2Point memory a2,\n            G1Point memory b1, G2Point memory b2,\n            G1Point memory c1, G2Point memory c2,\n            G1Point memory d1, G2Point memory d2\n    ) internal view returns (bool) {\n        G1Point[] memory p1 = new G1Point[](4);\n        G2Point[] memory p2 = new G2Point[](4);\n        p1[0] = a1;\n        p1[1] = b1;\n        p1[2] = c1;\n        p1[3] = d1;\n        p2[0] = a2;\n        p2[1] = b2;\n        p2[2] = c2;\n        p2[3] = d2;\n        return pairing(p1, p2);\n    }\n}\n\ncontract Verifier {\n    using Pairing for *;\n    struct VerifyingKey {\n        Pairing.G1Point alpha;\n        Pairing.G2Point beta;\n        Pairing.G2Point gamma;\n        Pairing.G2Point delta;\n        Pairing.G1Point[] gamma_abc;\n    }\n    struct Proof {\n        Pairing.G1Point a;\n        Pairing.G2Point b;\n        Pairing.G1Point c;\n    }\n    function verifyingKey() pure internal returns (VerifyingKey memory vk) {\n        vk.alpha = Pairing.G1Point(uint256(0x1cdd75667bf136a119464b5eaa24c4325301d9b2cf4c3f4c2520f2f58418a4d7), uint256(0x15994a3d58fdb830e7eefbcd66871fe7fc6a1e20e31cb06d8610ba8c96913c16));\n        vk.beta = Pairing.G2Point([uint256(0x0ad3dd5955bf2e32553d1c5ace16f1daec0bfe5963a3877a7bdecd1c4feb0436), uint256(0x1088e552f40612061071d7fa6ce4e3c83e56b010414dd44af1d2d3a36a6108ee)], [uint256(0x2a67993b8f5892a0ec04f17630f177ffa14aad65902abdca8d5eebdde03300f3), uint256(0x093481382f8836d7761b67f8dfac5cecaee626f23cb6d6f8a02e14dd5c437b1d)]);\n        vk.gamma = Pairing.G2Point([uint256(0x0bbaa23cd49e0cc70d5622ebcbea12559837975d37cc4c6bff1dccbc29f3216c), uint256(0x0db7121aa599f890444036d7ad1a0c4cde4ccbcde6f631266480f4b340e9f389)], [uint256(0x06024a51f4bb9774c9412759ca127c8ec7b4e1639819c579983baddd2b0c5801), uint256(0x0fce96db377b7e970647381c1a465109b72f733adc2600cc797bbc063ddf674e)]);\n        vk.delta = Pairing.G2Point([uint256(0x2352f09849af2f863af4e780cf7b8587a2c1846bc0f16ff165ef667262d8b0bf), uint256(0x19d648ca7d6730c72acc1ecf88adc6a74a72d8ec8d5a71f995b193b7474537f7)], [uint256(0x02a118b18e1b170ac49273fba1bff1a391530b328a064dc867c7d0a0604455a0), uint256(0x23f1f8a57d68899a9e1591a57c1ffb0dba92192326fb253514a26bdbbe40b5d4)]);\n        vk.gamma_abc = new Pairing.G1Point[](1);\n        vk.gamma_abc[0] = Pairing.G1Point(uint256(0x1d4857ef2f73b5e247b04946bf8f227135ec4b906654fdd173cf5602cd267603), uint256(0x182019f5dcc2b5b7dc9b8646c695a9e2a7de4ebf1636962f61581652e485f612));\n    }\n    function verify(uint[] memory input, Proof memory proof) internal view returns (uint) {\n        uint256 snark_scalar_field = 21888242871839275222246405745257275088548364400416034343698204186575808495617;\n        VerifyingKey memory vk = verifyingKey();\n        require(input.length + 1 == vk.gamma_abc.length);\n        // Compute the linear combination vk_x\n        Pairing.G1Point memory vk_x = Pairing.G1Point(0, 0);\n        for (uint i = 0; i < input.length; i++) {\n            require(input[i] < snark_scalar_field);\n            vk_x = Pairing.addition(vk_x, Pairing.scalar_mul(vk.gamma_abc[i + 1], input[i]));\n        }\n        vk_x = Pairing.addition(vk_x, vk.gamma_abc[0]);\n        if(!Pairing.pairingProd4(\n             proof.a, proof.b,\n             Pairing.negate(vk_x), vk.gamma,\n             Pairing.negate(proof.c), vk.delta,\n             Pairing.negate(vk.alpha), vk.beta)) return 1;\n        return 0;\n    }\n    function verifyTx(\n            Proof memory proof\n        ) public view returns (bool r) {\n        uint[] memory inputValues = new uint[](0);\n        \n        if (verify(inputValues, proof) == 0) {\n            return true;\n        } else {\n            return false;\n        }\n    }\n}\n",
   "sourcePath": "D:\\Master\\Dizertatie\\workspace\\BlockchainVotingApp\\SmartContracts\\16_BombTest\\contracts\\Verifier.sol",
   "ast": {
     "absolutePath": "project:/contracts/Verifier.sol",
@@ -8372,7 +8372,7 @@
                         {
                           "arguments": [
                             {
-                              "hexValue": "307832643937373234316133613332323462636634626161373964343939313532366663373065363634303430393565373837623335373663666338373733616431",
+                              "hexValue": "307831636464373536363762663133366131313934363462356561613234633433323533303164396232636634633366346332353230663266353834313861346437",
                               "id": 1008,
                               "isConstant": false,
                               "isLValue": false,
@@ -8382,17 +8382,17 @@
                               "nodeType": "Literal",
                               "src": "6697:66:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_rational_20621660661741603964074687471146068867317945386558505126757420351247196043985_by_1",
-                                "typeString": "int_const 2062...(69 digits omitted)...3985"
+                                "typeIdentifier": "t_rational_13056043228937257667318011249596669561824427832120282684704867907115201111255_by_1",
+                                "typeString": "int_const 1305...(69 digits omitted)...1255"
                               },
-                              "value": "0x2d977241a3a3224bcf4baa79d4991526fc70e66404095e787b3576cfc8773ad1"
+                              "value": "0x1cdd75667bf136a119464b5eaa24c4325301d9b2cf4c3f4c2520f2f58418a4d7"
                             }
                           ],
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_rational_20621660661741603964074687471146068867317945386558505126757420351247196043985_by_1",
-                                "typeString": "int_const 2062...(69 digits omitted)...3985"
+                                "typeIdentifier": "t_rational_13056043228937257667318011249596669561824427832120282684704867907115201111255_by_1",
+                                "typeString": "int_const 1305...(69 digits omitted)...1255"
                               }
                             ],
                             "id": 1007,
@@ -8432,7 +8432,7 @@
                         {
                           "arguments": [
                             {
-                              "hexValue": "307830333861613330666161306336363763343737636665636138363836336362633036323763623832353265633237313638653266386433336135323730323231",
+                              "hexValue": "307831353939346133643538666462383330653765656662636436363837316665376663366131653230653331636230366438363130626138633936393133633136",
                               "id": 1012,
                               "isConstant": false,
                               "isLValue": false,
@@ -8442,17 +8442,17 @@
                               "nodeType": "Literal",
                               "src": "6774:66:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_rational_1601888847651133856880118386152066526412385515508316333270519701894714556961_by_1",
-                                "typeString": "int_const 1601...(68 digits omitted)...6961"
+                                "typeIdentifier": "t_rational_9769409804317951969846968793236869647434726201632231101027672355585876114454_by_1",
+                                "typeString": "int_const 9769...(68 digits omitted)...4454"
                               },
-                              "value": "0x038aa30faa0c667c477cfeca86863cbc0627cb8252ec27168e2f8d33a5270221"
+                              "value": "0x15994a3d58fdb830e7eefbcd66871fe7fc6a1e20e31cb06d8610ba8c96913c16"
                             }
                           ],
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_rational_1601888847651133856880118386152066526412385515508316333270519701894714556961_by_1",
-                                "typeString": "int_const 1601...(68 digits omitted)...6961"
+                                "typeIdentifier": "t_rational_9769409804317951969846968793236869647434726201632231101027672355585876114454_by_1",
+                                "typeString": "int_const 9769...(68 digits omitted)...4454"
                               }
                             ],
                             "id": 1011,
@@ -8595,7 +8595,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307832393565326334643634316237323730646363633932663066663837356461363635653431613638613464303565383430313635663664653562653164363932",
+                                  "hexValue": "307830616433646435393535626632653332353533643163356163653136663164616563306266653539363361333837376137626465636431633466656230343336",
                                   "id": 1024,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -8605,17 +8605,17 @@
                                   "nodeType": "Literal",
                                   "src": "6887:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_18711216179300762427697087149559985224717175118608782731580868222399503521426_by_1",
-                                    "typeString": "int_const 1871...(69 digits omitted)...1426"
+                                    "typeIdentifier": "t_rational_4897460910908988937813900505273786008428426331693070692913631883180978668598_by_1",
+                                    "typeString": "int_const 4897...(68 digits omitted)...8598"
                                   },
-                                  "value": "0x295e2c4d641b7270dccc92f0ff875da665e41a68a4d05e840165f6de5be1d692"
+                                  "value": "0x0ad3dd5955bf2e32553d1c5ace16f1daec0bfe5963a3877a7bdecd1c4feb0436"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_18711216179300762427697087149559985224717175118608782731580868222399503521426_by_1",
-                                    "typeString": "int_const 1871...(69 digits omitted)...1426"
+                                    "typeIdentifier": "t_rational_4897460910908988937813900505273786008428426331693070692913631883180978668598_by_1",
+                                    "typeString": "int_const 4897...(68 digits omitted)...8598"
                                   }
                                 ],
                                 "id": 1023,
@@ -8655,7 +8655,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307830303934646234616162356430613834326237363761623531306565623737356264306238646531323437643633383038323563333961393238633337363134",
+                                  "hexValue": "307831303838653535326634303631323036313037316437666136636534653363383365353662303130343134646434346166316432643361333661363130386565",
                                   "id": 1028,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -8665,17 +8665,17 @@
                                   "nodeType": "Literal",
                                   "src": "6964:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_263006861119878138699694670748827413553837202613911693553768214347324290580_by_1",
-                                    "typeString": "int_const 2630...(67 digits omitted)...0580"
+                                    "typeIdentifier": "t_rational_7478879514469860615170866097698241609548780520800520864860473093738729638126_by_1",
+                                    "typeString": "int_const 7478...(68 digits omitted)...8126"
                                   },
-                                  "value": "0x0094db4aab5d0a842b767ab510eeb775bd0b8de1247d6380825c39a928c37614"
+                                  "value": "0x1088e552f40612061071d7fa6ce4e3c83e56b010414dd44af1d2d3a36a6108ee"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_263006861119878138699694670748827413553837202613911693553768214347324290580_by_1",
-                                    "typeString": "int_const 2630...(67 digits omitted)...0580"
+                                    "typeIdentifier": "t_rational_7478879514469860615170866097698241609548780520800520864860473093738729638126_by_1",
+                                    "typeString": "int_const 7478...(68 digits omitted)...8126"
                                   }
                                 ],
                                 "id": 1027,
@@ -8731,7 +8731,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831616533353038316161333238363030396134616561373736343234633661386434633635306466313238333732613465353932363736376461316538663739",
+                                  "hexValue": "307832613637393933623866353839326130656330346631373633306631373766666131346161643635393032616264636138643565656264646530333330306633",
                                   "id": 1033,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -8741,17 +8741,17 @@
                                   "nodeType": "Literal",
                                   "src": "7043:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_12161763982334356372159777037851912581278581747344801758498740257833279721337_by_1",
-                                    "typeString": "int_const 1216...(69 digits omitted)...1337"
+                                    "typeIdentifier": "t_rational_19180182461093368647716580106480476893082202400219311554408691816041635053811_by_1",
+                                    "typeString": "int_const 1918...(69 digits omitted)...3811"
                                   },
-                                  "value": "0x1ae35081aa3286009a4aea776424c6a8d4c650df128372a4e5926767da1e8f79"
+                                  "value": "0x2a67993b8f5892a0ec04f17630f177ffa14aad65902abdca8d5eebdde03300f3"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_12161763982334356372159777037851912581278581747344801758498740257833279721337_by_1",
-                                    "typeString": "int_const 1216...(69 digits omitted)...1337"
+                                    "typeIdentifier": "t_rational_19180182461093368647716580106480476893082202400219311554408691816041635053811_by_1",
+                                    "typeString": "int_const 1918...(69 digits omitted)...3811"
                                   }
                                 ],
                                 "id": 1032,
@@ -8791,7 +8791,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831353532363064323434376265383330666634336533613030373937656163383232373735373033383538323365366339383635373132333732616161386366",
+                                  "hexValue": "307830393334383133383266383833366437373631623637663864666163356365636165653632366632336362366436663861303265313464643563343337623164",
                                   "id": 1037,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -8801,17 +8801,17 @@
                                   "nodeType": "Literal",
                                   "src": "7120:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_9644119516010721882409339837727053510498048099766573189413960560307824404687_by_1",
-                                    "typeString": "int_const 9644...(68 digits omitted)...4687"
+                                    "typeIdentifier": "t_rational_4163583524659335814161004938440591692937806919342474408469490773676972538653_by_1",
+                                    "typeString": "int_const 4163...(68 digits omitted)...8653"
                                   },
-                                  "value": "0x155260d2447be830ff43e3a00797eac82277570385823e6c9865712372aaa8cf"
+                                  "value": "0x093481382f8836d7761b67f8dfac5cecaee626f23cb6d6f8a02e14dd5c437b1d"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_9644119516010721882409339837727053510498048099766573189413960560307824404687_by_1",
-                                    "typeString": "int_const 9644...(68 digits omitted)...4687"
+                                    "typeIdentifier": "t_rational_4163583524659335814161004938440591692937806919342474408469490773676972538653_by_1",
+                                    "typeString": "int_const 4163...(68 digits omitted)...8653"
                                   }
                                 ],
                                 "id": 1036,
@@ -8968,7 +8968,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307830373635313966343961386465656633363935336636366364626365383063363965393431303633356634626661643736353830396132376166666134303034",
+                                  "hexValue": "307830626261613233636434396530636337306435363232656263626561313235353938333739373564333763633463366266663164636362633239663332313663",
                                   "id": 1050,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -8978,17 +8978,17 @@
                                   "nodeType": "Literal",
                                   "src": "7235:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_3344820631787619016528247067566025048387884668108080247278756752325040816132_by_1",
-                                    "typeString": "int_const 3344...(68 digits omitted)...6132"
+                                    "typeIdentifier": "t_rational_5305194611360913654256108177716897376426167435703628452274505467163976081772_by_1",
+                                    "typeString": "int_const 5305...(68 digits omitted)...1772"
                                   },
-                                  "value": "0x076519f49a8deef36953f66cdbce80c69e9410635f4bfad765809a27affa4004"
+                                  "value": "0x0bbaa23cd49e0cc70d5622ebcbea12559837975d37cc4c6bff1dccbc29f3216c"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_3344820631787619016528247067566025048387884668108080247278756752325040816132_by_1",
-                                    "typeString": "int_const 3344...(68 digits omitted)...6132"
+                                    "typeIdentifier": "t_rational_5305194611360913654256108177716897376426167435703628452274505467163976081772_by_1",
+                                    "typeString": "int_const 5305...(68 digits omitted)...1772"
                                   }
                                 ],
                                 "id": 1049,
@@ -9028,7 +9028,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831366239366538383937363630343764393866343233376332353230356233373231373439666234613262383265336534353731363862326666346433633536",
+                                  "hexValue": "307830646237313231616135393966383930343434303336643761643161306334636465346363626364653666363331323636343830663462333430653966333839",
                                   "id": 1054,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9038,17 +9038,17 @@
                                   "nodeType": "Literal",
                                   "src": "7312:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_10278512250410878963993804353314105106633938855551865032458244972262688898134_by_1",
-                                    "typeString": "int_const 1027...(69 digits omitted)...8134"
+                                    "typeIdentifier": "t_rational_6203524994269631058072369723230840112135303215575924970169355797411184374665_by_1",
+                                    "typeString": "int_const 6203...(68 digits omitted)...4665"
                                   },
-                                  "value": "0x16b96e889766047d98f4237c25205b3721749fb4a2b82e3e457168b2ff4d3c56"
+                                  "value": "0x0db7121aa599f890444036d7ad1a0c4cde4ccbcde6f631266480f4b340e9f389"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_10278512250410878963993804353314105106633938855551865032458244972262688898134_by_1",
-                                    "typeString": "int_const 1027...(69 digits omitted)...8134"
+                                    "typeIdentifier": "t_rational_6203524994269631058072369723230840112135303215575924970169355797411184374665_by_1",
+                                    "typeString": "int_const 6203...(68 digits omitted)...4665"
                                   }
                                 ],
                                 "id": 1053,
@@ -9104,7 +9104,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307832343064653261663465623939656164393631636562376133656539383964633638656237636636373932663761333066363562393232616562303566356130",
+                                  "hexValue": "307830363032346135316634626239373734633934313237353963613132376338656337623465313633393831396335373939383362616464643262306335383031",
                                   "id": 1059,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9114,17 +9114,17 @@
                                   "nodeType": "Literal",
                                   "src": "7391:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_16307796081795468718256095708031006734240168644051666311526464233014011753888_by_1",
-                                    "typeString": "int_const 1630...(69 digits omitted)...3888"
+                                    "typeIdentifier": "t_rational_2717923724387867525727155590673045706925510631642529523468699978007747254273_by_1",
+                                    "typeString": "int_const 2717...(68 digits omitted)...4273"
                                   },
-                                  "value": "0x240de2af4eb99ead961ceb7a3ee989dc68eb7cf6792f7a30f65b922aeb05f5a0"
+                                  "value": "0x06024a51f4bb9774c9412759ca127c8ec7b4e1639819c579983baddd2b0c5801"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_16307796081795468718256095708031006734240168644051666311526464233014011753888_by_1",
-                                    "typeString": "int_const 1630...(69 digits omitted)...3888"
+                                    "typeIdentifier": "t_rational_2717923724387867525727155590673045706925510631642529523468699978007747254273_by_1",
+                                    "typeString": "int_const 2717...(68 digits omitted)...4273"
                                   }
                                 ],
                                 "id": 1058,
@@ -9164,7 +9164,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307832346135313833333235663932613130346664633036346330306263376639643964646637306161356533333938633938623063303837396534323466643934",
+                                  "hexValue": "307830666365393664623337376237653937303634373338316331613436353130396237326637333361646332363030636337393762626330363364646636373465",
                                   "id": 1063,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9174,17 +9174,17 @@
                                   "nodeType": "Literal",
                                   "src": "7468:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_16574959335554681438253937977639594046454859501822173273318733354230715055508_by_1",
-                                    "typeString": "int_const 1657...(69 digits omitted)...5508"
+                                    "typeIdentifier": "t_rational_7149704396116660417150403977852002582455732637760405739510153195244601960270_by_1",
+                                    "typeString": "int_const 7149...(68 digits omitted)...0270"
                                   },
-                                  "value": "0x24a5183325f92a104fdc064c00bc7f9d9ddf70aa5e3398c98b0c0879e424fd94"
+                                  "value": "0x0fce96db377b7e970647381c1a465109b72f733adc2600cc797bbc063ddf674e"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_16574959335554681438253937977639594046454859501822173273318733354230715055508_by_1",
-                                    "typeString": "int_const 1657...(69 digits omitted)...5508"
+                                    "typeIdentifier": "t_rational_7149704396116660417150403977852002582455732637760405739510153195244601960270_by_1",
+                                    "typeString": "int_const 7149...(68 digits omitted)...0270"
                                   }
                                 ],
                                 "id": 1062,
@@ -9341,7 +9341,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831656636666530633065316430646538343263653539616137356363353264396239353864333661613039613563633063386534363537656431333338373036",
+                                  "hexValue": "307832333532663039383439616632663836336166346537383063663762383538376132633138343662633066313666663136356566363637323632643862306266",
                                   "id": 1076,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9351,17 +9351,17 @@
                                   "nodeType": "Literal",
                                   "src": "7583:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_14005783204011243344807539008265685471229742007925953631400188265180505016070_by_1",
-                                    "typeString": "int_const 1400...(69 digits omitted)...6070"
+                                    "typeIdentifier": "t_rational_15977491684521138735151212274700477839649005940456243843558305837772202094783_by_1",
+                                    "typeString": "int_const 1597...(69 digits omitted)...4783"
                                   },
-                                  "value": "0x1ef6fe0c0e1d0de842ce59aa75cc52d9b958d36aa09a5cc0c8e4657ed1338706"
+                                  "value": "0x2352f09849af2f863af4e780cf7b8587a2c1846bc0f16ff165ef667262d8b0bf"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_14005783204011243344807539008265685471229742007925953631400188265180505016070_by_1",
-                                    "typeString": "int_const 1400...(69 digits omitted)...6070"
+                                    "typeIdentifier": "t_rational_15977491684521138735151212274700477839649005940456243843558305837772202094783_by_1",
+                                    "typeString": "int_const 1597...(69 digits omitted)...4783"
                                   }
                                 ],
                                 "id": 1075,
@@ -9401,7 +9401,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831613335646237626461393039313762366662353861616635663837616362366134656632633431393364383062383834306534623538343730636130616536",
+                                  "hexValue": "307831396436343863613764363733306337326163633165636638386164633661373461373264386563386435613731663939356231393362373437343533376637",
                                   "id": 1080,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9411,17 +9411,17 @@
                                   "nodeType": "Literal",
                                   "src": "7660:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_11855291779139119188820547336498205065087737286756248164575671052554769926886_by_1",
-                                    "typeString": "int_const 1185...(69 digits omitted)...6886"
+                                    "typeIdentifier": "t_rational_11686428871296916225025290510632365625395445387980470392141259832914507806711_by_1",
+                                    "typeString": "int_const 1168...(69 digits omitted)...6711"
                                   },
-                                  "value": "0x1a35db7bda90917b6fb58aaf5f87acb6a4ef2c4193d80b8840e4b58470ca0ae6"
+                                  "value": "0x19d648ca7d6730c72acc1ecf88adc6a74a72d8ec8d5a71f995b193b7474537f7"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_11855291779139119188820547336498205065087737286756248164575671052554769926886_by_1",
-                                    "typeString": "int_const 1185...(69 digits omitted)...6886"
+                                    "typeIdentifier": "t_rational_11686428871296916225025290510632365625395445387980470392141259832914507806711_by_1",
+                                    "typeString": "int_const 1168...(69 digits omitted)...6711"
                                   }
                                 ],
                                 "id": 1079,
@@ -9477,7 +9477,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831643237356238653035303766366364626636663435393866666530316262356530376261393961633965356239636337653761643762323462636330353438",
+                                  "hexValue": "307830326131313862313865316231373061633439323733666261316266663161333931353330623332386130363464633836376337643061303630343435356130",
                                   "id": 1085,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9487,17 +9487,17 @@
                                   "nodeType": "Literal",
                                   "src": "7739:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_13186611532200904617952462263759586263093744174684872853987051659442946573640_by_1",
-                                    "typeString": "int_const 1318...(69 digits omitted)...3640"
+                                    "typeIdentifier": "t_rational_1189258503384225312866708703068770982425369008260612351506442329124493350304_by_1",
+                                    "typeString": "int_const 1189...(68 digits omitted)...0304"
                                   },
-                                  "value": "0x1d275b8e0507f6cdbf6f4598ffe01bb5e07ba99ac9e5b9cc7e7ad7b24bcc0548"
+                                  "value": "0x02a118b18e1b170ac49273fba1bff1a391530b328a064dc867c7d0a0604455a0"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_13186611532200904617952462263759586263093744174684872853987051659442946573640_by_1",
-                                    "typeString": "int_const 1318...(69 digits omitted)...3640"
+                                    "typeIdentifier": "t_rational_1189258503384225312866708703068770982425369008260612351506442329124493350304_by_1",
+                                    "typeString": "int_const 1189...(68 digits omitted)...0304"
                                   }
                                 ],
                                 "id": 1084,
@@ -9537,7 +9537,7 @@
                             {
                               "arguments": [
                                 {
-                                  "hexValue": "307831656336343431363039323965366530323533636161376637613631653264623036626637613938306434343236373133376337356661326335363264316135",
+                                  "hexValue": "307832336631663861353764363838393961396531353931613537633166666230646261393231393233323666623235333531346132366264626265343062356434",
                                   "id": 1089,
                                   "isConstant": false,
                                   "isLValue": false,
@@ -9547,17 +9547,17 @@
                                   "nodeType": "Literal",
                                   "src": "7816:66:2",
                                   "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_13919691089159568233572412102850392931142726121209973354702467158324252168613_by_1",
-                                    "typeString": "int_const 1391...(69 digits omitted)...8613"
+                                    "typeIdentifier": "t_rational_16258475937718159054292715289902826307714012450572249950170688242266784445908_by_1",
+                                    "typeString": "int_const 1625...(69 digits omitted)...5908"
                                   },
-                                  "value": "0x1ec644160929e6e0253caa7f7a61e2db06bf7a980d44267137c75fa2c562d1a5"
+                                  "value": "0x23f1f8a57d68899a9e1591a57c1ffb0dba92192326fb253514a26bdbbe40b5d4"
                                 }
                               ],
                               "expression": {
                                 "argumentTypes": [
                                   {
-                                    "typeIdentifier": "t_rational_13919691089159568233572412102850392931142726121209973354702467158324252168613_by_1",
-                                    "typeString": "int_const 1391...(69 digits omitted)...8613"
+                                    "typeIdentifier": "t_rational_16258475937718159054292715289902826307714012450572249950170688242266784445908_by_1",
+                                    "typeString": "int_const 1625...(69 digits omitted)...5908"
                                   }
                                 ],
                                 "id": 1088,
@@ -9866,7 +9866,7 @@
                         {
                           "arguments": [
                             {
-                              "hexValue": "307832306464343637353136313036386166303739636436363530643031623731313962653865323639643932366335363135656238643832353032343763306162",
+                              "hexValue": "307831643438353765663266373362356532343762303439343662663866323237313335656334623930363635346664643137336366353630326364323637363033",
                               "id": 1115,
                               "isConstant": false,
                               "isLValue": false,
@@ -9876,17 +9876,17 @@
                               "nodeType": "Literal",
                               "src": "7986:66:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_rational_14864970634862203416047869388573946571244881971321870869760738993329467277483_by_1",
-                                "typeString": "int_const 1486...(69 digits omitted)...7483"
+                                "typeIdentifier": "t_rational_13244892497935471403222791139203866298453083151577885045244195064911443162627_by_1",
+                                "typeString": "int_const 1324...(69 digits omitted)...2627"
                               },
-                              "value": "0x20dd4675161068af079cd6650d01b7119be8e269d926c5615eb8d8250247c0ab"
+                              "value": "0x1d4857ef2f73b5e247b04946bf8f227135ec4b906654fdd173cf5602cd267603"
                             }
                           ],
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_rational_14864970634862203416047869388573946571244881971321870869760738993329467277483_by_1",
-                                "typeString": "int_const 1486...(69 digits omitted)...7483"
+                                "typeIdentifier": "t_rational_13244892497935471403222791139203866298453083151577885045244195064911443162627_by_1",
+                                "typeString": "int_const 1324...(69 digits omitted)...2627"
                               }
                             ],
                             "id": 1114,
@@ -9926,7 +9926,7 @@
                         {
                           "arguments": [
                             {
-                              "hexValue": "307832643366653138366364393130383031336332663466643332333631353437653937383134313630626562353034323965666533616562373430373938373566",
+                              "hexValue": "307831383230313966356463633262356237646339623836343663363935613965326137646534656266313633363936326636313538313635326534383566363132",
                               "id": 1119,
                               "isConstant": false,
                               "isLValue": false,
@@ -9936,17 +9936,17 @@
                               "nodeType": "Literal",
                               "src": "8063:66:2",
                               "typeDescriptions": {
-                                "typeIdentifier": "t_rational_20466946078537589160115540346834948487058375674221773910637774048164883040095_by_1",
-                                "typeString": "int_const 2046...(69 digits omitted)...0095"
+                                "typeIdentifier": "t_rational_10912226644165707983525449539683519447000684071494257347597782476120178161170_by_1",
+                                "typeString": "int_const 1091...(69 digits omitted)...1170"
                               },
-                              "value": "0x2d3fe186cd9108013c2f4fd32361547e97814160beb50429efe3aeb74079875f"
+                              "value": "0x182019f5dcc2b5b7dc9b8646c695a9e2a7de4ebf1636962f61581652e485f612"
                             }
                           ],
                           "expression": {
                             "argumentTypes": [
                               {
-                                "typeIdentifier": "t_rational_20466946078537589160115540346834948487058375674221773910637774048164883040095_by_1",
-                                "typeString": "int_const 2046...(69 digits omitted)...0095"
+                                "typeIdentifier": "t_rational_10912226644165707983525449539683519447000684071494257347597782476120178161170_by_1",
+                                "typeString": "int_const 1091...(69 digits omitted)...1170"
                               }
                             ],
                             "id": 1118,
@@ -12227,7 +12227,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-01-18T13:50:38.661Z",
+  "updatedAt": "2024-01-18T17:30:45.922Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

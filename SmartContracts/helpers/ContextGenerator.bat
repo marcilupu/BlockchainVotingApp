@@ -19,9 +19,10 @@ cd "../"
 @echo Deploy smart contract...
 CALL truffle compile --all 
 
-CALL truffle migrate --f 2
+CALL truffle migrate --f 3
 
 @echo Generate new abi and bytecode files...
-CALL solcjs --bin --abi --include-path "../../node_modules/" --base-path . "../contracts/Election.sol" -o "../metadata"
+::CALL solcjs --bin --abi --include-path "../node_modules/" --base-path . "contracts/Election.sol" -o "metadata"
+node "../helpers/GenerateABIandBytecode.js"
 
 @echo JOB DONE

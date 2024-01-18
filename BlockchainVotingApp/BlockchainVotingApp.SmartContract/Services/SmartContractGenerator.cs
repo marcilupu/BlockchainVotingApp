@@ -58,7 +58,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             var abi = await File.ReadAllTextAsync(abiPath);
             var bytecode = await File.ReadAllTextAsync(bytecodePath);
 
-            var contractMetadata = new ContractMetadata(bytecode, abi);
+            var contractMetadata = new ContractMetadata(bytecode.Trim('"'), abi);
 
             return contractMetadata;
         }
