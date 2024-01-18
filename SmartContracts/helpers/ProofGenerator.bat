@@ -1,11 +1,12 @@
-set "electionVerifierDirPath=%1"
+set "contextIdentifier=%1"
 set "arguments=%2"
-set "proofPath=%3"
+
+set "verifierContext=%1/verifier/"
+
+cd "%verifierContext%"
 
 cd "%electionVerifierDirPath%"
 
 CALL zokrates compute-witness -a %arguments% -o "%electionVerifierDirPath%\witness"
 
 CALL zokrates generate-proof
-
-xcopy "%electionVerifierDirPath%\proof.json" "%proofPath%"
