@@ -16,11 +16,13 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
     {
         private readonly ICountyRepository _countyRepository;
         private readonly IElectionService _electionService;
+        private readonly IElectionRepository _electionRepository;
 
-        public ElectionsController(ICountyRepository countyRepository, IElectionService electionService)
+        public ElectionsController(ICountyRepository countyRepository, IElectionService electionService, IElectionRepository electionRepository)
         {
             _countyRepository = countyRepository;
             _electionService = electionService;
+            _electionRepository = electionRepository;
         }
 
         private async Task<ElectionsViewModel> GetELectionsViewModel()
@@ -72,14 +74,14 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromServices] IElectionRepository electionRepository, AddEditElectionModel electionModel, int electionId)
+        public async Task<IActionResult> Edit(AddEditElectionModel electionModel, int electionId)
         {
-            var dbDlection = await electionRepository.Get(electionId);
+            var dbDlection = await _electionRepository.Get(electionId);
 
             if(dbDlection != null)
             {
                 var election = electionModel.ToDb(dbDlection);
-                var result = await electionRepository.Update(election);
+                var result = await _electionRepository.Update(election);
 
                 if (result != 0)
                 {
@@ -90,15 +92,32 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete([FromServices] IElectionRepository electionRepository, int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var dbElection = await electionRepository.Get(id);
+            var dbElection = await _electionRepository.Get(id);
 
             if(dbElection != null )
             {
-                var result = await electionRepository.Delete(dbElection);
+                var result = await _electionRepository.Delete(dbElection);
 
                 if(result)
+                {
+                    return new OkResult();
+                }
+            }
+            return new BadRequestResult();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateSmartContract(int electionId)
+        {
+            var dbElection = await _electionRepository.Get(electionId);
+
+            if (dbElection != null)
+            {
+                var result = await _electionService.GenerateElectionSmartContract(dbElection);
+
+                if (result)
                 {
                     return new OkResult();
                 }

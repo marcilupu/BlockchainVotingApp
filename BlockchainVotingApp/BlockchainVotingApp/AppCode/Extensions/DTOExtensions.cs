@@ -32,7 +32,7 @@ namespace BlockchainVotingApp.AppCode.Extensions
         {
             election ??= new DbElection()
             {
-                State = ElectionState.Upcoming
+                State = ElectionState.Registration
             };
 
             election.Name = electionModel.Name;

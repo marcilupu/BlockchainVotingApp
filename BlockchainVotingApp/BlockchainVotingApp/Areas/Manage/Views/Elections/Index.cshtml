@@ -23,7 +23,7 @@
                         <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @election.Name</h4>
                         @if ((int)election.State == 0)
                         {
-                            <span class="badge bg-primary py-1 px-2">@election.State</span>
+                            <span class="badge py-1 px-" 2 style="background-color:#1e81b0">@election.State</span>
                         }
                         @if ((int)election.State == 1)
                         {
@@ -31,8 +31,13 @@
                         }
                         @if ((int)election.State == 2)
                         {
+                            <span class="badge bg-primary py-1 px-2">@election.State</span>
+                        }
+                        @if ((int)election.State == 3)
+                        {
                             <span class="badge bg-success py-1 px-2">@election.State</span>
                         }
+
                     </div>
                 </div>
                 <div class="card-body" data-election-id="@election.Id">
@@ -76,8 +81,10 @@
                                 </span>
                             }
                             <div class="d-flex justify-content-center">
-                                <button class="btn btn-primary rounded-pill py-1 px-4 me-2" data-edit-election="true" data-edit-election-id="@election.Id"><i class="fa fa-edit"></i> Edit</button>
-                                <button class="btn btn-danger rounded-pill py-1 px-4" data-delete-election="true" data-delete-election-id="@election.Id"><i class="fa-solid fa-trash-can"></i> Delete</button>
+                                <button class="btn btn-warning rounded-pill py-1 px-4 me-2" data-generate-smart-contract="true" data-generate-smart-contract-id="@election.Id"><i class="fa-solid fa-file-contract"></i></button>
+                                <button class="btn btn-primary rounded-pill py-1 px-4 me-2" data-edit-election="true" data-edit-election-id="@election.Id"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-danger rounded-pill py-1 px-4" data-delete-election="true" data-delete-election-id="@election.Id"><i class="fa-solid fa-trash-can"></i></button>
+
                             </div>
                         </div>
                         <div class="tab-pane fade" data-candidates-panel="@election.Id" role="tabpanel" aria-labelledby="candidates-tab">

@@ -26,6 +26,10 @@ const ElectionPageComponent = function () {
                 initiatorButton: '[data-delete-election]',
                 dataDeleteElectionId: 'data-delete-election-id',
                 target: 'deleteElectionModal'
+            },
+            smartContractGenerator: {
+                generateSmartContractButton: '[data-generate-smart-contract]',
+                smartContractElectionId: 'data-generate-smart-contract-id'
             }
         },
         apis: {
@@ -33,9 +37,29 @@ const ElectionPageComponent = function () {
             listElections: '/Manage/Elections/Index',
             editElectionUrl: '/Manage/Elections/Edit',
             deleteElectionUrl: '/Manage/Elections/Delete',
-            editCandidateUrl: '/Manage/Candidates/Edit'
+            editCandidateUrl: '/Manage/Candidates/Edit',
+            generateSmartContractUrl: '/Manage/Elections/GenerateSmartContract'
         }
     }
+
+    const generateSmartContractEngine = function () {
+        const generateSmartContract = function (electionId) {
+            $.ajax({
+                url: context.apis.generateSmartContractUrl,
+                method: 'POST',
+                data: {
+                    electionId: electionId
+                },
+                success: function () {
+                    location.href = context.apis.listElections
+                }
+            });
+        }
+
+        return {
+            generateSmartContract: generateSmartContract
+        }
+    }();
 
     const editElectionEngine = function () {
         const internalContext = {
@@ -257,6 +281,11 @@ const ElectionPageComponent = function () {
         $(context.ids.deleteElectionModal.initiatorButton).on('click', function (e) {
             electionId = $(this).attr(context.ids.deleteElectionModal.dataDeleteElectionId);
             deleteElectionEngine.openDeleteModal(electionId);
+        });
+
+        $(context.ids.smartContractGenerator.generateSmartContractButton).on('click', function (e) {
+            electionId = $(this).attr(context.ids.smartContractGenerator.smartContractElectionId);
+            generateSmartContractEngine.generateSmartContract(electionId);
         });
     }
 

@@ -8,7 +8,10 @@ namespace BlockchainVotingApp.SmartContract.Extensions
     {
         public static IServiceCollection AddSmartContractService(this IServiceCollection services)
         {
-            services.AddScoped<ISmartContractService, SmartContractService>();
+            services
+                .AddSingleton<ISmartContractConfiguration, SmartContractConfiguration>()
+                .AddSingleton<ISmartContractGenerator, SmartContractGenerator>()
+                .AddSingleton<ISmartContractServiceFactory, SmartContractServiceFactory>();
 
             return services;
         }

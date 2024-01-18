@@ -60,20 +60,6 @@ namespace BlockchainVotingApp.Core.Services
         {
             int candidateId = await _candidateRepository.Insert(dbCandidate);
 
-            var election = await _electionRepository.Get(dbCandidate.ElectionId);
-
-            if(election != null)
-            {
-                var result = await _smartContractService.AddCandidate(candidateId, election.ContractAddress);
-
-                //If the smart contract add candidate failed, drop the candidate from the db
-                if (!result)
-                {
-                    await _candidateRepository.Delete(dbCandidate);
-                    return 0;
-                }
-            }
-
             return candidateId;
         }
 

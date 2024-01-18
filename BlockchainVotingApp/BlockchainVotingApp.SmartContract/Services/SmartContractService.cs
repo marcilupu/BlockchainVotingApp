@@ -1,111 +1,68 @@
 ﻿using BlockchainVotingApp.SmartContract.Infrastructure;
-using BlockchainVotingApp.SmartContract.Models;
-using Microsoft.Extensions.Configuration;
+using BlockchainVotingApp.SmartContract.Models; 
 using Nethereum.Contracts;
 using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
 using Nethereum.Web3;
-using Nethereum.Web3.Accounts;
 using System.Numerics;
-using static BlockchainVotingApp.SmartContract.Infrastructure.ISmartContractService;
 
 namespace BlockchainVotingApp.SmartContract.Services
 {
+
     internal class SmartContractService : ISmartContractService
     {
         private record ExecutionResult(string Message, bool IsSuccess);
 
-        private readonly IConfiguration _configuration;
-        private string _blockchainNetworkUrl;
-        private string _adminDefaultAccountAddress;
-
-        public SmartContractService(IConfiguration configuration)
+        private readonly ISmartContractConfiguration _configuration;
+        private readonly ContractMetadata _metadata;
+ 
+        public SmartContractService(ContractMetadata metadata, ISmartContractConfiguration configuration)
         {
             _configuration = configuration;
-
-            _blockchainNetworkUrl = _configuration.GetSection("SmartContract").GetSection("BlockchainNetworkUrl").Value;
-            _adminDefaultAccountAddress = _configuration.GetSection("SmartContract").GetSection("AdminDefaultAccountAddress").Value;
+            _metadata = metadata;
+ 
         }
 
 
         public async Task<bool> AddCandidate(int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addCandidate", candidateId)).IsSuccess;
 
-        public async Task<bool> AddVoter(int voterId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addVoter", voterId)).IsSuccess;
-
-        public async Task<bool> AddVoters(List<int> votersIds, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addVoters", votersIds)).IsSuccess;
 
         public async Task<bool> ChangeElectionState(bool electionState, string contractAddress) => (await ExecuteSmartContract(contractAddress, "changeElectionState", electionState)).IsSuccess;
 
-        public async Task<string> DeploySmartContract(string adminAccountPrivateKey)
+
+        public async Task<Vote> GetUserVote(Proof voterProof, string contractAddress)
         {
-            string adminDefaultAccountPrivateKey = adminAccountPrivateKey;
-
-            if (string.IsNullOrEmpty(adminDefaultAccountPrivateKey))
-            {
-                adminDefaultAccountPrivateKey = _configuration.GetSection("SmartContract").GetSection("AdminDefaultAccountPrivateKey").Value;
-            }
-
-            var account = new Account(adminDefaultAccountPrivateKey);
-            var web3 = new Web3(account, _blockchainNetworkUrl);
-
-            ElectionDeployment deploymentMessage = new ElectionDeployment();
+            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
 
             try
             {
-                //var estimatedGas = await web3.Eth.Transactions.EstimateGas.SendRequestAsync(new Nethereum.RPC.Eth.DTOs.CallInput
-                //{
-                //    From = _adminDefaultAccountAddress,
-                //    Data = deploymentMessage.ByteCode
-                //});
+                var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
 
-                var deploymentHandler = web3.Eth.GetContractDeploymentHandler<ElectionDeployment>();
-                var transactionReceipt = await deploymentHandler.SendRequestAndWaitForReceiptAsync(deploymentMessage);
+                //var result = await contract.GetFunction("getUserVote").CallDeserializingToObjectAsync<Votes>(voterId);
 
-                var contractAddress = transactionReceipt.ContractAddress;
+                //return result;
 
-                return contractAddress;
-            }
-            catch (RpcResponseException response)
-            {
-                throw response;
+                return null;
             }
             catch
             {
-                return string.Empty;
-            }
-        }
-
-        public async Task<Votes> GetUserVote(int voterId, string contractAddress)
-        {
-            var web3 = new Web3(_blockchainNetworkUrl);
-
-            try
-            {
-                var contract = web3.Eth.GetContract(ElectionDeployment.ABI, contractAddress);
-
-                var result = await contract.GetFunction("getUserVote").CallDeserializingToObjectAsync<Votes>(voterId);
-
-                return result;
-            }
-            catch
-            {
-                return new Votes();
+                return new Vote();
             }
         }
 
         public async Task<int> GetTotalNumberOfVotes(string contractAddress)
         {
-            var web3 = new Web3(_blockchainNetworkUrl);
+            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
 
             try
             {
-                var contract = web3.Eth.GetContract(ElectionDeployment.ABI, contractAddress);
+                var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
 
                 var result = await contract.GetFunction("votesCount").CallAsync<int>();
 
                 return result;
             }
-            catch(RpcResponseException ex)
+            catch (RpcResponseException ex)
             {
                 Console.WriteLine($" [RpcResponseException]. Message: {ex.Message}");
                 return 0;
@@ -114,27 +71,27 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         public async Task<bool> HasUserVoted(int voterId, string contractAddress)
         {
-            var web3 = new Web3(_blockchainNetworkUrl);
+            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
 
-            var contract = web3.Eth.GetContract(ElectionDeployment.ABI, contractAddress);
+            var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
 
             var result = await contract.GetFunction("checkUserHasVoted").CallAsync<bool>(voterId);
 
             return result;
         }
 
-        public async Task<bool> Vote(int voterId, int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "castVote", voterId, candidateId)).IsSuccess;
+        public async Task<bool> Vote(Proof voterProof,  int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "castVote", candidateId)).IsSuccess;
 
 
         #region Internals
 
         private async Task<ExecutionResult> ExecuteSmartContract(string contractAddress, string functionName, params object[]? parameters)
         {
-            var web3 = new Web3(_blockchainNetworkUrl);
+            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
 
             try
             {
-                var contract = web3.Eth.GetContract(ElectionDeployment.ABI, contractAddress);
+                var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
 
                 var function = contract.GetFunction(functionName);
 
@@ -142,7 +99,7 @@ namespace BlockchainVotingApp.SmartContract.Services
                 var estimatedGas = await EstimateGas(function);
 
                 var result = await function.SendTransactionAsync(
-                    from: _adminDefaultAccountAddress,
+                    from: _configuration.AdminDefaultAccountAddress,
                     gas: estimatedGas,
                     value: new HexBigInteger(new BigInteger(0)),
                     parameters

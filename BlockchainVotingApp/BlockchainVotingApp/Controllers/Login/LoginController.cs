@@ -62,16 +62,6 @@ namespace BlockchainVotingApp.Controllers.Login
                 {
                     result = await userManager.AddToRoleAsync(user, "Voter");
 
-                    //Add voter to the his election
-                    var elections = await electionService.GetAllByCounty(new AppUser(user));
-
-                    foreach(var election in elections)
-                    {
-                        var smartContractResult = await _smartContractService.AddVoter(user.Id, election.ContractAddress);
-
-                        //What happens if smartContractResult is not succeeded???
-                    }
-
                     return Redirect("/Login/Index");
                 }    
             }

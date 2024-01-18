@@ -19,8 +19,9 @@
 
     public enum ElectionState
     {
-        Upcoming = 0,
-        Ongoing = 1,
-        Completed = 2
+        Registration = 0, //the users register into the app, add users and candidates into db, set election metadatas
+        Upcoming = 1, // the last steps of the elections are set, others information to the election cannot be added.
+        Ongoing = 2,
+        Completed = 3
     }
 }

@@ -4,8 +4,9 @@ using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.SmartContract.Infrastructure;
-using Nethereum.Contracts.QueryHandlers.MultiCall;
-using System.ComponentModel.Design;
+using BlockchainVotingApp.SmartContract.Models;
+using Microsoft.Extensions.Configuration;
+
 
 namespace BlockchainVotingApp.Core.Services
 {
@@ -15,16 +16,22 @@ namespace BlockchainVotingApp.Core.Services
         private readonly IUserRepository _userRepository;
         private readonly ISmartContractService _smartContractService;
         private readonly ICandidateService _candidateService;
+        private readonly ICandidateRepository _candidateRepository;
+        private readonly IConfiguration _configuration;
 
         public ElectionService(IElectionRepository electionRepository,
                                IUserRepository userRepository,
                                ISmartContractService smartContractService,
-                               ICandidateService candidateService)
+                               ICandidateService candidateService,
+                               ICandidateRepository candidateRepository, 
+                               IConfiguration configuration)
         {
             _electionRepository = electionRepository;
             _userRepository = userRepository;
             _smartContractService = smartContractService;
             _candidateService = candidateService;
+            _candidateRepository = candidateRepository;
+            _configuration = configuration;
         }
 
         public async Task<UserElection?> Get(int id)
@@ -72,7 +79,8 @@ namespace BlockchainVotingApp.Core.Services
 
             foreach (var election in elections)
             {
-                election.HasVoted = await _smartContractService.HasUserVoted(user.Id, election.ContractAddress);
+                //todo: REFACTOR
+                election.HasVoted = false; // await _smartContractService.HasUserVoted(user.Id, election.ContractAddress);
             }
 
             return elections;
@@ -80,7 +88,9 @@ namespace BlockchainVotingApp.Core.Services
 
         public async Task<int> GetVoteForUser(int userId, string contractAddress)
         {
-            var result = await _smartContractService.GetUserVote(userId, contractAddress);
+            //todo: REFACTOR
+            var result = (Vote?)null; // await _smartContractService.GetUserVote(userId, contractAddress);
+            
             if (result != null)
             {
                 return result.CandidateId;
@@ -110,20 +120,52 @@ namespace BlockchainVotingApp.Core.Services
             return elections.Where(x => x.HasVoted).ToList();
         }
 
+        public async Task<bool> GenerateElectionSmartContract(DbElection election)
+        {
+            //Get users for this election
+            var usersIds = await GetUserIds(election);
+
+            //Generate the verifier.zok file needeed for ZKP based on participants users
+            GenerateVerifierFile(usersIds);
+
+            //Generate the verifier.sol and compile it.
+            
+            
+            // todo: uncommment _smartContractService.GenerateVerifierSmartContract();
+
+
+            //Deploy a new smart contract to interact with
+            //var deployedContract = await _smartContractService.DeploySmartContract(string.Empty);
+            //election.ContractAddress = deployedContract;
+
+            //Add voters to smart contract
+            //var result = await AddVoters(election, usersIds);
+
+            //if (!result)
+            //{
+            //    return false;
+            //}
+
+            ////Add candidates to smart contract
+            //var candidates = await _candidateRepository.GetAllForElection(election.Id);
+            //foreach(var candidate in candidates)
+            //{
+            //    var candidateResult = await _smartContractService.AddCandidate(candidate.Id, election.ContractAddress);
+
+            //    //If the smart contract add candidate failed, drop the candidate from the db
+            //    if (!candidateResult)
+            //    {
+            //        await _candidateRepository.Delete(candidate);
+            //        return false;
+            //    }
+            //}
+
+            return true;
+        }
+
         public async Task<int> Insert(DbElection election)
         {
-            //Deploy a new smart contract to interact with
-            var deployedContract = await _smartContractService.DeploySmartContract(string.Empty);
-            election.ContractAddress = deployedContract;
-
             int electionId = await _electionRepository.Insert(election);
-
-            var result = await AddVoters(election);
-
-            if(!result)
-            {
-                return 0;
-            }
 
             return electionId;
         }
@@ -143,7 +185,8 @@ namespace BlockchainVotingApp.Core.Services
 
                 if (election != null)
                 {
-                    var result = await _smartContractService.Vote(userId, candidateId, election.ContractAddress);
+                    //todo: REFACTOR
+                    var result = false; // await _smartContractService.Vote(userId, candidateId, election.ContractAddress);
 
                     return result;
                 }
@@ -152,7 +195,76 @@ namespace BlockchainVotingApp.Core.Services
             return false;
         }
 
-        private async Task<bool> AddVoters(DbElection election)
+
+        #region Private
+
+        private async Task<UserElection> RetrieveInternal(DbElection dbElection, int? userId)
+        {
+            var election = new UserElection(dbElection);
+
+            if (userId.HasValue)
+            {
+                //todo: REFACTOR
+
+                election.HasVoted = false; // await _smartContractService.HasUserVoted(userId.Value, election.ContractAddress);
+            }
+            else
+            {
+                election.HasVoted = false;
+            }
+
+            election.NumberOfVotes = await ElectionHelper.GetElectionVotes(_smartContractService, election.ContractAddress);
+
+            return election;
+        }
+
+
+        private void GenerateVerifierFile(List<int> usersIds)
+        {
+            string verifierZokPath = _configuration.GetSection("SmartContract").GetSection("VerifierZokPath").Value;
+            var fullPath = Path.GetFullPath(verifierZokPath);
+
+            try
+            {
+                StreamWriter sw = new StreamWriter(verifierZokPath);
+
+                var usersCount = usersIds.Count;
+
+                var rand = new Random();
+                var randNumber = rand.Next();
+
+                sw.WriteLine("def main(private field userId) {");
+                sw.Write($"field[{usersCount}] ids = [");
+                for (int i = 0; i < usersCount - 1; i++)
+                {
+                    sw.Write($"{usersIds[i]},");
+                }
+                sw.WriteLine($"{usersIds[usersCount - 1]}];");
+
+                sw.WriteLine($"field randomSeed = {randNumber};");
+                sw.WriteLine("field mut match = randomSeed;");
+
+                sw.WriteLine(@$"for u32 i in 0..{usersCount} " + "{");
+                sw.WriteLine(" match = if ids[i] == userId { match + 1 } else { match }; ");
+                sw.WriteLine("}");
+
+                sw.WriteLine("assert(match > randomSeed);");
+                sw.WriteLine("return;");
+                sw.WriteLine("}");
+
+                sw.Close();
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Exception: " + ex.Message);
+            }
+            finally
+            {
+                Console.WriteLine($"The file {fullPath} has been generated...");
+            }
+        }
+
+        private async Task<List<int>> GetUserIds(DbElection election)
         {
             //Get all the voters that can vote for the current election
             //If the election is intended for a specific country/administrative-territorial unit, only the users who resides in that particular area are allowed to vote
@@ -168,35 +280,7 @@ namespace BlockchainVotingApp.Core.Services
 
             List<int> usersIds = users.Select(item => item.Id).ToList();
 
-            //Storage into the smart contract the users that cand vote for this election
-            var result = await _smartContractService.AddVoters(usersIds, election.ContractAddress);
-
-            if (result)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        #region Private
-
-        private async Task<UserElection> RetrieveInternal(DbElection dbElection, int? userId)
-        {
-            var election = new UserElection(dbElection);
-
-            if (userId.HasValue)
-            {
-                election.HasVoted = await _smartContractService.HasUserVoted(userId.Value, election.ContractAddress);
-            }
-            else
-            {
-                election.HasVoted = false;
-            }
-
-            election.NumberOfVotes = await ElectionHelper.GetElectionVotes(_smartContractService, election.ContractAddress);
-
-            return election;
+            return usersIds;
         }
 
         #endregion
