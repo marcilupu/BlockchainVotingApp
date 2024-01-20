@@ -4,11 +4,20 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.24" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BlockchainVotingApp.Core\BlockchainVotingApp.Core.csproj" />
+    <ProjectReference Include="..\BlockchainVotingApp.Data.Ef\BlockchainVotingApp.Data.Ef.csproj" />
+    <ProjectReference Include="..\BlockchainVotingApp.Data\BlockchainVotingApp.Data.csproj" />
+    <ProjectReference Include="..\BlockchainVotingApp.SmartContract\BlockchainVotingApp.SmartContract.csproj" />
+    <ProjectReference Include="..\BlockchainVotingApp\BlockchainVotingApp.csproj" />
   </ItemGroup>
 
 </Project>

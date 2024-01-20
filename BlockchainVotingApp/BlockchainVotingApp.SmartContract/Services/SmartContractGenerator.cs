@@ -67,12 +67,13 @@ namespace BlockchainVotingApp.SmartContract.Services
         {
             // Setup the required path variables. 
             string generatorBat = _pathsLookup.PGeneratorBatPath();
+            string contextPath = _pathsLookup.ContextPath(contextIdentifier);
 
             // Generate a new unique identifier for proof.
             string proofId = Guid.NewGuid().ToString();
 
             // Execute the bat and extract the proof from file.
-            var response = await new Process().InvokeBat(generatorBat, contextIdentifier, proofId, userId.ToString());
+            var response = await new Process().InvokeBat(generatorBat, contextPath, proofId, userId.ToString());
 
             if (response != null)
             {

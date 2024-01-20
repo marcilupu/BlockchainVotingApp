@@ -6,12 +6,14 @@
         /// 
         /// </summary>
         public string BlockchainNetworkUrl { get; }
-        
+
+        [Obsolete("Asta trebuie sters la final")]
         /// <summary>
         /// 
         /// </summary>
         public string AdminDefaultAccountAddress { get; }
 
+        [Obsolete("Asta trebuie sters la final")]
         /// <summary>
         /// 
         /// </summary>

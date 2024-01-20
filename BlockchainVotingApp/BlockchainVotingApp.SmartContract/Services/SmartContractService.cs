@@ -79,7 +79,15 @@ namespace BlockchainVotingApp.SmartContract.Services
             return result;
         }
 
-        public async Task<bool> Vote(Proof voterProof,  int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "castVote", candidateId)).IsSuccess;
+        public async Task<bool> Vote(Proof voterProof,  int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "castVote", 
+            voterProof.AX, 
+            voterProof.AY, 
+            voterProof.B0X, 
+            voterProof.B0Y,
+            voterProof.B1X, 
+            voterProof.B1Y, 
+            voterProof.CX, 
+            voterProof.CY, candidateId)).IsSuccess;
 
 
         #region Internals
@@ -93,7 +101,7 @@ namespace BlockchainVotingApp.SmartContract.Services
                 var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
 
                 var function = contract.GetFunction(functionName);
-
+                
                 // Estimate the gas required to execute the smart contract function.
                 var estimatedGas = await EstimateGas(function);
 

@@ -149,27 +149,23 @@ namespace BlockchainVotingApp.Core.Services
             var deployedContract = await _smartContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
             election.ContractAddress = deployedContract;
 
-            //Add voters to smart contract
-            //var result = await AddVoters(election, usersIds);
+            await Update(election);
 
-            //if (!result)
-            //{
-            //    return false;
-            //}
+            ISmartContractService smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
 
-            ////Add candidates to smart contract
-            //var candidates = await _candidateRepository.GetAllForElection(election.Id);
-            //foreach(var candidate in candidates)
-            //{
-            //    var candidateResult = await _smartContractService.AddCandidate(candidate.Id, election.ContractAddress);
+            //Add candidates to smart contract
+            var candidates = await _candidateRepository.GetAllForElection(election.Id);
+            foreach (var candidate in candidates)
+            {
+                var candidateResult = await smartContractService.AddCandidate(candidate.Id, election.ContractAddress);
 
-            //    //If the smart contract add candidate failed, drop the candidate from the db
-            //    if (!candidateResult)
-            //    {
-            //        await _candidateRepository.Delete(candidate);
-            //        return false;
-            //    }
-            //}
+                //If the smart contract add candidate failed, drop the candidate from the db
+                if (!candidateResult)
+                {
+                    await _candidateRepository.Delete(candidate);
+                    return false;
+                }
+            }
 
             return true;
         }

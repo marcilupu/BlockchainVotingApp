@@ -4,7 +4,6 @@ using BlockchainVotingApp.Core.Extensions;
 using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Ef.Config;
 using BlockchainVotingApp.SmartContract.Extensions;
-using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -25,7 +24,7 @@ services.AddCoreServices();
 var serviceProvider = services.BuildServiceProvider();
 
 var scopedServiceProvider = serviceProvider.CreateScope();
-
+ 
 try
 {
     //===========================ELECTION state=====================================

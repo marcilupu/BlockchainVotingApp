@@ -8,7 +8,7 @@ namespace BlockchainVotingApp.SmartContract.Services
         public SmartContractConfiguration(IConfiguration configuration)
         {
             BlockchainNetworkUrl = configuration.GetSection("SmartContract:Connection:BlockchainNetworkUrl").Value;
-            AdminDefaultAccountAddress = configuration.GetSection("SmartContract:Connection:AdminDefaultAccountPrivateKey").Value;
+            AdminDefaultAccountAddress = configuration.GetSection("SmartContract:Connection:AdminDefaultAccountAddress").Value;
             AdminDefaultAccountPrivateKey = configuration.GetSection("SmartContract:Connection:AdminDefaultAccountPrivateKey").Value;
             GeneratorWorkspace = configuration.GetSection("SmartContract:Generation:Workspace").Value;
             ContextGenerator = configuration.GetSection("SmartContract:Generation:ContextGenerator").Value;
