@@ -41,6 +41,7 @@ namespace BlockchainVotingApp.AppCode.Extensions
             election.EndDate = electionModel.EndDate;
             election.Rules = electionModel.Rules;
             election.CountyId = electionModel.County;
+            election.State = electionModel.State;
 
             return election;
         }

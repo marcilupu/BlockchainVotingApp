@@ -47,6 +47,7 @@
                     <input type="hidden" value="@election.EndDate" data-election-end-date />
                     <input type="hidden" value="@election.Rules" data-election-rules />
                     <input type="hidden" value="@election.County" data-election-county />
+                    <input type="hidden" value="@election.State" data-election-state />
 
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -84,7 +85,6 @@
                                 <button class="btn btn-warning rounded-pill py-1 px-4 me-2" data-generate-smart-contract="true" data-generate-smart-contract-id="@election.Id"><i class="fa-solid fa-file-contract"></i></button>
                                 <button class="btn btn-primary rounded-pill py-1 px-4 me-2" data-edit-election="true" data-edit-election-id="@election.Id"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-danger rounded-pill py-1 px-4" data-delete-election="true" data-delete-election-id="@election.Id"><i class="fa-solid fa-trash-can"></i></button>
-
                             </div>
                         </div>
                         <div class="tab-pane fade" data-candidates-panel="@election.Id" role="tabpanel" aria-labelledby="candidates-tab">
@@ -190,11 +190,22 @@
                         <input id="editElectionRules" type="text" name="Rules" class="form-control" />
                     </div>
                     <div class="form-group mb-3">
+                        <label class="mb-2">County</label>
                         <select name="County" id="editCounty" class="form-select">
                             <option></option>
                             @foreach (var county in Model.Counties)
                             {
                                 <option name="SelectedCounty" value="@county.id">@county.name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label class="mb-2">State</label>
+                        <select name="State" id="editState" class="form-select text-black">
+                            <option></option>
+                            @foreach (var state in Model.States)
+                            {
+                                <option name="SelectedState" value="@state.id">@state.name</option>
                             }
                         </select>
                     </div>

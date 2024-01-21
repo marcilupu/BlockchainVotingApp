@@ -70,7 +70,7 @@ contract Election {
     }
 
     //Get the votes of the user
-    function getUserVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (uint CandidateId){
+    function getUserVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (uint candidateId){
         //Get Proof
         Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
 

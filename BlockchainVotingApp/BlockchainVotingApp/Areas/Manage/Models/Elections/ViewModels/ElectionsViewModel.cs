@@ -19,9 +19,15 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels
             {
                 return (county.Name, county.Id);
             }).ToList();
+
+            States = Enum.GetValues<ElectionState>().Select(x =>
+            {
+                return (x.ToString(), (int)x);
+            }).ToList();
         }
 
         public List<ElectionsItemViewModel> Elections { get; set; }
         public List<(string name, int id)> Counties { get; set; }
+        public List<(string name, int id)> States { get; set; }
     }
 }

@@ -21,6 +21,7 @@ const ElectionPageComponent = function () {
                 editEndDate: '#editEndDate',
                 editElectionRules: '#editElectionRules',
                 editCountySelect: '#editCounty',
+                editStateSelect: '#editState',
             },
             deleteElectionModal: {
                 initiatorButton: '[data-delete-election]',
@@ -72,6 +73,7 @@ const ElectionPageComponent = function () {
                 editEndDate: $(context.ids.editElectionModal.editEndDate),
                 editElectionRules: $(context.ids.editElectionModal.editElectionRules),
                 editCountySelect: $(context.ids.editElectionModal.editCountySelect),
+                editStateSelect: $(context.ids.editElectionModal.editStateSelect)
             },
             electionEditId: null
         }
@@ -88,7 +90,8 @@ const ElectionPageComponent = function () {
                 startDate: card.find('[data-election-start-date]').val(),
                 endDate: card.find('[data-election-end-date]').val(),
                 rules: card.find('[data-election-rules]').val(),
-                county: card.find('[data-election-county]').val()
+                county: card.find('[data-election-county]').val(),
+                state: card.find('[data-election-state]').val(),
             };
 
             internalContext.editElectionModal.nameInput.val(election.name);
@@ -100,7 +103,13 @@ const ElectionPageComponent = function () {
 
             internalContext.editElectionModal.editCountySelect.select2({
                 dropdownParent: internalContext.editElectionModal.target,
-                placeholder: election.county && election.county != '' ? election.county : 'Not selected',
+                placeholder: election.county && election.county != '' ? election.county : 'No county selected',
+                width: '100%'
+            });
+
+            internalContext.editElectionModal.editStateSelect.select2({
+                dropdownParent: internalContext.editElectionModal.target,
+                placeholder: election.state && election.state != '' ? election.state : 'No state selected',
                 width: '100%'
             });
 
@@ -142,6 +151,10 @@ const ElectionPageComponent = function () {
 
             $('#editCounty').select2({
                 placeholder: "Select the election's county"
+            });
+
+            $('#editState').select2({
+                placeholder: "Update the election's state"
             });
 
             internalContext.editElectionModal.target.find('.submit-edit-election').on('click', function (event) {

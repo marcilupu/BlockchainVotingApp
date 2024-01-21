@@ -91,6 +91,7 @@ namespace BlockchainVotingApp.Core.Services
             return elections;
         }
 
+        //TODO: fix it
         public async Task<int> GetVoteForUser(int userId, string contractAddress)
         {
             //todo: REFACTOR
@@ -104,6 +105,7 @@ namespace BlockchainVotingApp.Core.Services
             return 0;
         }
 
+        //TODO: fix it
         public async Task<List<UserElection>> GetVotesForUser(AppUser user)
         {
             var elections = await GetAllByCounty(user);
@@ -182,6 +184,7 @@ namespace BlockchainVotingApp.Core.Services
             return await _electionRepository.Update(election);
         }
 
+        //TODO: fix it
         public async Task<bool> Vote(int userId, int candidateId)
         {
             var candidate = await _candidateService.Get(candidateId);
@@ -202,9 +205,9 @@ namespace BlockchainVotingApp.Core.Services
             return false;
         }
 
-
         #region Private
-
+        
+        //TODO:
         private async Task<UserElection> RetrieveInternal(DbElection dbElection, int? userId)
         {
             var election = new UserElection(dbElection);

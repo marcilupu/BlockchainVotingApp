@@ -28,7 +28,7 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         public async Task<bool> ChangeElectionState(bool electionState, string contractAddress) => (await ExecuteSmartContract(contractAddress, "changeElectionState", electionState)).IsSuccess;
 
-
+        //TODO: fix it
         public async Task<Vote> GetUserVote(Proof voterProof, string contractAddress)
         {
             var web3 = new Web3(_configuration.BlockchainNetworkUrl);
@@ -68,6 +68,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             }
         }
 
+        //TODO: fix it if necessary
         public async Task<bool> HasUserVoted(int voterId, string contractAddress)
         {
             var web3 = new Web3(_configuration.BlockchainNetworkUrl);
