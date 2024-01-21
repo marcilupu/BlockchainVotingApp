@@ -1,4 +1,5 @@
 ﻿using BlockchainVotingApp.AppCode.Extensions;
+using BlockchainVotingApp.AppCode.Utilities;
 using BlockchainVotingApp.Areas.Manage.Models.Elections;
 using BlockchainVotingApp.Areas.Manage.Models.Elections.ViewModels;
 using BlockchainVotingApp.Core.Infrastructure;
@@ -60,7 +61,7 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
             var result = await _electionService.Insert(election);
 
-            if(result != 0)
+            if (result != 0)
             {
                 var electionViewModel = await GetELectionsViewModel();
 
@@ -78,9 +79,12 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         {
             var dbDlection = await _electionRepository.Get(electionId);
 
-            if(dbDlection != null)
+            if (dbDlection != null)
             {
                 var election = electionModel.ToDb(dbDlection);
+
+                await _electionService.ChangeElectionState(dbDlection, electionModel.State);
+
                 var result = await _electionRepository.Update(election);
 
                 if (result != 0)
@@ -96,11 +100,11 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         {
             var dbElection = await _electionRepository.Get(id);
 
-            if(dbElection != null )
+            if (dbElection != null)
             {
                 var result = await _electionRepository.Delete(dbElection);
 
-                if(result)
+                if (result)
                 {
                     return new OkResult();
                 }
@@ -113,7 +117,7 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         {
             var dbElection = await _electionRepository.Get(electionId);
 
-            if (dbElection != null)
+            if (dbElection != null && dbElection.State == ElectionState.Upcoming)
             {
                 var result = await _electionService.GenerateElectionSmartContract(dbElection);
 

@@ -4,6 +4,7 @@ using BlockchainVotingApp.Data.Ef.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlockchainVotingApp.Data.Ef.Migrations
 {
     [DbContext(typeof(VDbContext))]
-    partial class VDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240121141419_NullableContractAddressForElection")]
+    partial class NullableContractAddressForElection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

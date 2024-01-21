@@ -21,7 +21,7 @@ contract Election {
     mapping(uint => bool) public candidates;
 
     //Is the election is ongoing, changes to the election must not be made (eg. description or candidates of the election)
-    bool public IsUpcomingElection = false;
+    bool public IsUpcomingElection = true;
 
     function addCandidate(uint candidateId) public {
         require(candidateId != 0, "The candidate id is null");
@@ -70,7 +70,7 @@ contract Election {
     }
 
     //Get the votes of the user
-    function getUserVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (uint candidateId){
+    function getUserVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (uint CandidateId){
         //Get Proof
         Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
 

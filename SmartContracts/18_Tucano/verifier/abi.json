@@ -1,0 +1,15 @@
+{
+  "inputs": [
+    {
+      "name": "userId",
+      "public": false,
+      "type": "field"
+    }
+  ],
+  "output": {
+    "type": "tuple",
+    "components": {
+      "elements": []
+    }
+  }
+}

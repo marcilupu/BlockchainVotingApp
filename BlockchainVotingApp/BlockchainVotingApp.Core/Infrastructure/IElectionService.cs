@@ -24,5 +24,6 @@ namespace BlockchainVotingApp.Core.Infrastructure
         Task<List<UserElection>> GetVotesForUser(AppUser user);
 
         Task<bool> GenerateElectionSmartContract(DbElection election);
+        Task<bool> ChangeElectionState(DbElection currentElection, ElectionState newState);
     }
 }

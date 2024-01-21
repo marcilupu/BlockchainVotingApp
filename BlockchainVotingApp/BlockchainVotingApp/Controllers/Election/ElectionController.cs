@@ -18,7 +18,7 @@ namespace BlockchainVotingApp.Controllers.Election
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index([FromServices] ISmartContractService smartContractService)
+        public async Task<IActionResult> Index()
         {
             var user = await _appUserService.GetUserAsync();
 

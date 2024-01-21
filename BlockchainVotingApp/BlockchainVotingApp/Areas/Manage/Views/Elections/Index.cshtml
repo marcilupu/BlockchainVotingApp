@@ -70,10 +70,13 @@
                                     <span>@election.Rules</span>
                                 </span>
                             }
-                            <span style="display: block" class="mb-3">
-                                <i class="fa-solid fa-file-contract"></i>
-                                <span>@election.ContractAddress</span>
-                            </span>
+                            @if (!string.IsNullOrEmpty(election.ContractAddress))
+                            {
+                                <span style="display: block" class="mb-3">
+                                    <i class="fa-solid fa-file-contract"></i>
+                                    <span>@election.ContractAddress</span>
+                                </span>
+                            }
                             @if (!string.IsNullOrEmpty(election.County))
                             {
                                 <span style="display: block" class="mb-3">
@@ -82,7 +85,10 @@
                                 </span>
                             }
                             <div class="d-flex justify-content-center">
-                                <button class="btn btn-warning rounded-pill py-1 px-4 me-2" data-generate-smart-contract="true" data-generate-smart-contract-id="@election.Id"><i class="fa-solid fa-file-contract"></i></button>
+                                @if (election.State == BlockchainVotingApp.Data.Models.ElectionState.Upcoming)
+                                {
+                                    <button class="btn btn-warning rounded-pill py-1 px-4 me-2" data-generate-smart-contract="true" data-generate-smart-contract-id="@election.Id"><i class="fa-solid fa-file-contract"></i></button>
+                                }
                                 <button class="btn btn-primary rounded-pill py-1 px-4 me-2" data-edit-election="true" data-edit-election-id="@election.Id"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-danger rounded-pill py-1 px-4" data-delete-election="true" data-delete-election-id="@election.Id"><i class="fa-solid fa-trash-can"></i></button>
                             </div>
@@ -92,9 +98,12 @@
                                 <div class="col">
                                     <h5>List candidates</h5>
                                 </div>
-                                <div class="col d-flex justify-content-end">
-                                    <button class="btn btn-primary rounded-pill py-1 px-4" data-create-candidate="true" data-election-id="@election.Id"><i class="fa-solid fa-plus"></i> Add</button>
-                                </div>
+                                @if (election.State == BlockchainVotingApp.Data.Models.ElectionState.Registration)
+                                {
+                                    <div class="col d-flex justify-content-end">
+                                        <button class="btn btn-primary rounded-pill py-1 px-4" data-create-candidate="true" data-election-id="@election.Id"><i class="fa-solid fa-plus"></i> Add</button>
+                                    </div>
+                                }
                             </div>
                             <div class="row mt-4">
                                 <table class="table" data-candidates-table="@election.Id">

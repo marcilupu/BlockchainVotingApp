@@ -172,6 +172,26 @@ namespace BlockchainVotingApp.Core.Services
             return true;
         }
 
+        public async Task<bool> ChangeElectionState(DbElection currentElection, ElectionState newState)
+        {
+            ISmartContractService smartContractService;
+            var smartContratMetadata = await _smartContractGenerator.GetSmartContractMetadata(ElectionHelper.GetElectionContextIdentifier(currentElection.Id, currentElection.Name));
+            if (smartContratMetadata != null)
+            {
+                smartContractService = _smartContractServiceFactory.Create(smartContratMetadata);
+                if (currentElection.State != newState && newState == ElectionState.Upcoming)
+                {
+                    await smartContractService.ChangeElectionState(true, currentElection.ContractAddress);
+                }
+                if (currentElection.State != newState && newState != ElectionState.Upcoming)
+                {
+                    await smartContractService.ChangeElectionState(false, currentElection.ContractAddress);
+                }
+            }
+
+            return true;
+        }
+
         public async Task<int> Insert(DbElection election)
         {
             int electionId = await _electionRepository.Insert(election);

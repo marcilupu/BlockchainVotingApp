@@ -51,11 +51,11 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
         [HttpPost]
         public async Task<IActionResult> Edit([FromServices] ICandidateRepository candidateRepository, AddEditCandidateModel model, int candidateId)
         {
-            var dbDlection = await candidateRepository.Get(candidateId);
+            var dbCandidate = await candidateRepository.Get(candidateId);
 
-            if (dbDlection != null)
+            if (dbCandidate != null)
             {
-                var candidate = model.ToDb(dbDlection);
+                var candidate = model.ToDb(dbCandidate);
                 var result = await candidateRepository.Update(candidate);
 
                 if (result != 0)
