@@ -9,9 +9,6 @@ namespace BlockchainVotingApp.SmartContract.Models
     [FunctionOutput]
     public class Vote : IFunctionOutputDTO
     {
-        [Parameter("int", "VoterId", 1)]
-        public int VoterId { get; set; }
-
         [Parameter("int", "CandidateId", 2)]
         public int CandidateId { get; set; }
     }

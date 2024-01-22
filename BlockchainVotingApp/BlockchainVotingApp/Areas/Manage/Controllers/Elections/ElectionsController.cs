@@ -81,9 +81,9 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
             if (dbDlection != null)
             {
-                var election = electionModel.ToDb(dbDlection);
-
                 await _electionService.ChangeElectionState(dbDlection, electionModel.State);
+
+                var election = electionModel.ToDb(dbDlection);
 
                 var result = await _electionRepository.Update(election);
 

@@ -14,8 +14,8 @@ contract Election {
     }
 
     uint public votesCount;
-    mapping(bytes32 => uint) public votes;
-    mapping(bytes32 => bool) public usersVoted;
+    mapping(uint256 => uint) public votes;
+    mapping(uint256 => bool) public usersVoted;
 
     mapping(uint => uint) public candidatesVotesCount;
     mapping(uint => bool) public candidates;
@@ -34,7 +34,7 @@ contract Election {
         candidates[candidateId] = true;
     }
 
-    function castVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy, uint candidateId) public returns (bool){
+    function castVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy, uint256 proofSha, uint candidateId) public returns (bool){
         //todo: check the other args
         require(candidateId != 0, "The candidateId is null");
 
@@ -50,9 +50,6 @@ contract Election {
             
         try verifier.verifyTx(proof) 
         {
-            bytes memory encodedProof = abi.encode(proof);
-            bytes32 proofSha = getHash(encodedProof);
-
             require(!usersVoted[proofSha], "The user can vote only once");
         
             votes[proofSha] = candidateId;
@@ -70,24 +67,9 @@ contract Election {
     }
 
     //Get the votes of the user
-    function getUserVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (uint CandidateId){
-        //Get Proof
-        Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
-
-        try verifier.verifyTx(proof) 
-        {
-            //Compute sha256 on proof
-            bytes memory encodedProof = abi.encode(proof);
-            bytes32 proofSha = getHash(encodedProof);
-
-            require(usersVoted[proofSha], "Key does not exists. The user has not voted");
-            return votes[proofSha];
-        }
-        catch
-        {
-            require(false, "The voter is invalid");
-            return 0;
-        } 
+    function getUserVote(uint256 proofSha) public view returns (uint CandidateId){
+        require(usersVoted[proofSha], "Key does not exists. The user has not voted");
+        return votes[proofSha];
     }
 
     //Check if the user has already voted (the voter is in the votes mapping)
@@ -107,7 +89,7 @@ contract Election {
     }
 
     //private functions
-    function getProof(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) internal pure returns (Verifier.Proof memory proof) {
+    function getProof(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public pure returns (Verifier.Proof memory proof) {
         Pairing.G1Point memory a;
         Pairing.G2Point memory b;
         Pairing.G1Point memory c;
@@ -126,9 +108,5 @@ contract Election {
         proof.c = c;
 
         return proof;
-    }
-
-    function getHash(bytes memory data) internal pure returns (bytes32) {
-        return sha256(data);
     }
 }
