@@ -74,14 +74,14 @@ contract Election {
 
     //Check if the user has already voted (the voter is in the votes mapping)
     //The function returns true if the voter has already voted, than returns false
-    // function checkUserHasVoted(uint voterId) public view returns (bool) {
-    //     require(voterId != 0, "The voterId is null");
+    function checkUserHasVoted(uint256 proofSha) public view returns (bool) {
+        require(proofSha != 0, "The voterId is null");
 
-    //     if(votes[voterId] > 0 && usersVoted[voterId])
-    //         return true;
-    //     else
-    //         return false;
-    // }
+        if(votes[proofSha] > 0 && usersVoted[proofSha])
+            return true;
+        else
+            return false;
+    }
 
     //If the election change the state from upcoming to ungoing, set the IsUpcomingElection to true and do not let the users to made any other changes to the contract
     function changeElectionState(bool electionState) public{

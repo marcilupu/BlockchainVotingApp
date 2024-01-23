@@ -1,0 +1,28 @@
+﻿@model BlockchainVotingApp.Models.Election.ViewModels.VoteModalViewModel
+@{
+    Layout = null;
+}
+
+
+<p class="fs-6">To be able to vote, you need to enter the proof that was generated for you or generate one if you don't have it by pressing the <span class="fs-6 fw-bold text-warning">Proof</span> button.</p>
+
+<form action="/election/uploadProof"
+      class="dropzone p-2 rounded-2 border border-white justify-content-center align-items-center"
+      data-proof-form="true">
+    <div class="dz-message" data-dz-messagse>
+        <i class="fa-solid fa-file-arrow-up text-primary p-1" style="font-size:60px"></i>
+        <h5 class="p-1">Upload proof</h5>
+        <p class="p-1">Drag and drop your proof here</p>
+    </div>
+</form>
+
+<label class="mb-2">Choose the candidate</label>
+
+<select name="Candidate" data-candidate-select="true">
+    <option></option>
+
+    @foreach(var candidate in Model.Candidates)
+    {
+        <option value="@candidate.Id">@candidate.FullName</option>
+    }
+</select>

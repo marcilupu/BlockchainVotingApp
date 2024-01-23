@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
 
 namespace BlockchainVotingApp.SmartContract.Models
@@ -8,20 +9,22 @@ namespace BlockchainVotingApp.SmartContract.Models
     /// </summary>
     public sealed class Proof
     {
+        public Proof() { }
+
         /// <summary>
         /// Attempt to read a new instance of <see cref="Proof"/> from a zokrates proof.json file.
         /// </summary>
         public static bool TryRead(string proofFile, [NotNullWhen(true)] out Proof? proof)
         {
             proof = null;
-            
+
             try
             {
 
-                if(File.Exists(proofFile))
+                if (File.Exists(proofFile))
                 {
                     var jsonRaw = File.ReadAllText(proofFile);
-                
+
                     var json = JObject.Parse(jsonRaw);
                     var proofNode = json["proof"];
 
@@ -47,6 +50,8 @@ namespace BlockchainVotingApp.SmartContract.Models
                 return false;
             }
         }
+
+        
 
         public string AX { get; init; } = null!;
 

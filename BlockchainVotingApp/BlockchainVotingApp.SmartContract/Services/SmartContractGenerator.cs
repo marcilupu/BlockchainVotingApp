@@ -81,6 +81,14 @@ namespace BlockchainVotingApp.SmartContract.Services
 
                 if (Proof.TryRead(proofPath, out var proof))
                 {
+                    // TODO: Delete generated files after the proof was create...
+                    // At the moment this will be commented for testing dev
+                    //if (File.Exists(proofPath) && File.Exists(Path.Combine(proofPath + ".witness")))
+                    //{
+                    //    File.Delete(proofPath);
+                    //    File.Delete(proofPath + ".witness");
+                    //}
+
                     return proof;
                 }
             }

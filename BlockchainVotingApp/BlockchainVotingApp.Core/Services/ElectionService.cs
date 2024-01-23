@@ -6,7 +6,7 @@ using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.SmartContract.Infrastructure;
 using BlockchainVotingApp.SmartContract.Models;
 using Microsoft.Extensions.Configuration;
-
+using Newtonsoft.Json;
 
 namespace BlockchainVotingApp.Core.Services
 {
@@ -204,19 +204,21 @@ namespace BlockchainVotingApp.Core.Services
             return await _electionRepository.Update(election);
         }
 
-        //TODO: fix it
-        public async Task<bool> Vote(int userId, int candidateId)
+        public async Task<bool> Vote(string proof, int candidateId)
         {
             var candidate = await _candidateService.Get(candidateId);
-
+           
+            Proof voterProof = JsonConvert.DeserializeObject<Proof>(proof);
+             
             if (candidate != null)
             {
                 var election = await Get(candidate.ElectionId);
 
                 if (election != null)
-                {
-                    //todo: REFACTOR
-                    var result = false; // await _smartContractService.Vote(userId, candidateId, election.ContractAddress);
+                { 
+                    ISmartContractService smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+                   
+                    var result = await smartContractService.Vote(voterProof, candidateId, election.ContractAddress);
 
                     return result;
                 }

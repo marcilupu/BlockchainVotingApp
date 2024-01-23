@@ -34,13 +34,19 @@
                                 @if (!election.HasVoted && election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
                                 {
                                     <div class="col d-flex justify-content-end">
-                                        <div class="d-flex rounded-circle justify-content-center align-items-center bg-success vote-button">
-                                            <a href="/Election/Details?id=@election.Id" class="text-decoration-none text-white">Vote</a>                                       
+                                        <div class="d-flex rounded-circle justify-content-center align-items-center bg-warning vote-button">
+                                            <a href="/Election/GenerateProof?electionId=@election.Id" class="text-decoration-none text-white text-center">Proof</a>
+                                        </div>
+                                        <button type="button" class="ms-1 btn btn-success rounded-circle justify-content-center align-items-center vote-button" data-vote="true" data-vote-election-id="@election.Id">
+                                            Vote
+                                        </button>
+                                        <div class="ms-1 d-flex rounded-circle justify-content-center align-items-center bg-info vote-button">
+                                            <a href="/Election/Details?id=@election.Id" class="text-decoration-none text-white">Details</a>
                                         </div>
                                     </div>
                                 }
-                                else if((election.HasVoted && election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
-                                        || election.State == BlockchainVotingApp.Data.Models.ElectionState.Completed)
+                                else if ((election.HasVoted && election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
+                                || election.State == BlockchainVotingApp.Data.Models.ElectionState.Completed)
                                 {
                                     <div class="col d-flex justify-content-end">
                                         <div class="d-flex justify-content-center align-items-center">
@@ -78,3 +84,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="voteModal" tabindex="-1" aria-labelledby="voteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="voteModalContent">
+            <div class="modal-header">
+                <h5 class="modal-title" id="voteModalLabel">Vote your favorite candidate</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+           
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary submit-vote">Vote</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/election.js"></script>
+}

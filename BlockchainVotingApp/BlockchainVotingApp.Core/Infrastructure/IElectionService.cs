@@ -17,7 +17,7 @@ namespace BlockchainVotingApp.Core.Infrastructure
 
         Task<UserElection?> GetElectionForUser(int id, int userId);
 
-        Task<bool> Vote(int userId, int candidateId);
+        Task<bool> Vote(string proof, int candidateId);
 
         Task<int> GetVoteForUser(int userId, string ContractAddress);
 
