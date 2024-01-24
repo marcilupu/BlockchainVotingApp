@@ -37,7 +37,7 @@ namespace BlockchainVotingApp.Core.Services
 
             if (election != null )
             {
-                string contextIdentifier = ElectionHelper.GetElectionContextIdentifier(electionId, election.Name);
+                string contextIdentifier = ElectionHelper.CreateContextIdentifier(electionId, election.Name);
 
                 var contractMetadata = await _smartContractGenerator.GetSmartContractMetadata(contextIdentifier);
 
@@ -49,19 +49,19 @@ namespace BlockchainVotingApp.Core.Services
                 {
                     election.State = ElectionState.Upcoming;
                     await _electionRepository.Update(election);
-                    return await smartContractService.ChangeElectionState(true, election.ContractAddress);
+                    return (await smartContractService.ChangeElectionState(true, election.ContractAddress)).IsSuccess;
                 }
                 if (actualDateTime > election.EndDate)
                 {
                     election.State = ElectionState.Completed;
                     await _electionRepository.Update(election);
-                    return await smartContractService.ChangeElectionState(false, election.ContractAddress);
+                    return (await smartContractService.ChangeElectionState(false, election.ContractAddress)).IsSuccess;
                 }
                 else
                 {
                     election.State = ElectionState.Ongoing;
                     await _electionRepository.Update(election);
-                    return await smartContractService.ChangeElectionState(false, election.ContractAddress);
+                    return (await smartContractService.ChangeElectionState(false, election.ContractAddress)).IsSuccess;
                 }
             }
             return false;

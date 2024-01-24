@@ -51,5 +51,14 @@ namespace BlockchainVotingApp.SmartContract.Extensions
                 return stringBuilder.ToString();
             }
         }
+
+        public static string GetErrorMessage(this string input) {
+            int startIndex = input.IndexOf(":");
+            string substring = input.Substring(startIndex + 9);
+            int endIndex = substring.IndexOf(":");
+            string errorMessage = substring.Substring(0, endIndex);
+
+            return errorMessage;
+        }
     }
 }

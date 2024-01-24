@@ -5,11 +5,14 @@ namespace BlockchainVotingApp.Core.Infrastructure
 {
     public interface IAppUserService
     {
-        Task<AppUser> ChangePassword(string currentPass, string newPass); 
+        Task<AppUser> ChangePassword(string currentPass, string newPass);
         Task<AppUser> GetUserAsync();
 
         Task<IList<string>> GetUserRoles();
 
         Task<List<AppUser>> GetAll();
+
+        Task<int> Update(DbUser dbUser);
+        Task<DbUser> GetDbUserAsync();
     }
 }

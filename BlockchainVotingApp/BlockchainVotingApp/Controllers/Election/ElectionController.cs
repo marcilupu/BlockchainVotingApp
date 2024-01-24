@@ -35,7 +35,7 @@ namespace BlockchainVotingApp.Controllers.Election
         {
             var user = await _appUserService.GetUserAsync();
 
-            var elections = await _electionService.GetAllByCounty(user);
+            var elections = await _electionService.GetAll(user);
 
             var electionViewModel = new ElectionsViewModel(elections);
 
@@ -47,13 +47,13 @@ namespace BlockchainVotingApp.Controllers.Election
         {
             var user = await _appUserService.GetUserAsync();
 
-            var election = await _electionService.GetElectionForUser(id, user.Id);
+            var election = await _electionService.GetUserElection(id, user);
 
             if (election != null)
             {
                 if (election.HasVoted)
                 {
-                    return new UnauthorizedResult();
+                    return Unauthorized(); 
                 }
 
                 var electionViewModel = new ElectionCandidatesViewModel(election);
@@ -106,73 +106,74 @@ namespace BlockchainVotingApp.Controllers.Election
         [HttpPost]
         public async Task<IActionResult> Vote(int candidateId, string proof)
         {
-            if (candidateId == 0 || string.IsNullOrEmpty(proof))
+            if (candidateId != 0 && !string.IsNullOrEmpty(proof))
             {
-                return new BadRequestResult();
+                var user = await _appUserService.GetUserAsync();
+
+                var result = await _electionService.Vote(user, Encoding.UTF8.GetString(Convert.FromBase64String(proof)), candidateId);
+
+                if (result.Success)
+                {   
+                    var elections = await _electionService.GetAll(user);
+
+                    var electionViewModel = new VotesViewModel(elections);
+
+                    return View("/Views/Election/Votes.cshtml", electionViewModel);
+                }
+
+                return BadRequest(result.ErrorMessage);
             }
 
-            var user = await _appUserService.GetUserAsync();
-
-
-            var result = await _electionService.Vote(Encoding.UTF8.GetString(Convert.FromBase64String(proof)), candidateId);
-
-            if (result)
-            {
-                var elections = await _electionService.GetAllByCounty(user);
-
-                var electionViewModel = new VotesViewModel(elections);
-
-                return View("/Views/Election/Votes.cshtml", electionViewModel);
-            }
-
-            return new BadRequestResult();
+            return BadRequest("The candidate or the proof is null");
         }
-
-
 
         [HttpGet]
         public async Task<IActionResult> VoteDetails([FromServices] ICandidateService candidateService, int electionId)
         {
-            var election = await _electionService.Get(electionId);
             var user = await _appUserService.GetUserAsync();
 
-            if (election != null)
+            var candidateId = await _electionService.GetUserVote(user, null, electionId);
+
+            if (candidateId != null)
             {
-                var candidateId = await _electionService.GetVoteForUser(user.Id, election.ContractAddress);
+                var candidate = await candidateService.Get(candidateId.Value);
 
-                var candidate = await candidateService.Get(candidateId);
+                var election = await _electionService.GetUserElection(electionId, user);
 
-                if (candidate != null)
-                {
-                    var electionViewModel = new VoteViewModel(election, candidate.FullName);
+                var electionViewModel = new VoteViewModel(election!, candidate!.FullName);
 
-                    return View("/Views/Election/VoteDetails.cshtml", electionViewModel);
-                }
+                return View("/Views/Election/VoteDetails.cshtml", electionViewModel);
+
             }
 
             return NotFound();
         }
 
-        //http method?
+        [HttpGet]
         public async Task<IActionResult> GenerateProof([FromServices] ISmartContractGenerator smartContractGenerator, int electionId)
         {
             var user = await _appUserService.GetUserAsync();
-            var election = await _electionService.GetElectionForUser(electionId, user.Id);
+
+            var election = await _electionService.GetUserElection(electionId, user);
 
             if (election != null)
             {
-                var contextIdentifier = ElectionHelper.GetElectionContextIdentifier(election.Id, election.Name);
+                var contextIdentifier = ElectionHelper.CreateContextIdentifier(election.Id, election.Name);
+               
                 var proof = await smartContractGenerator.GenerateProof(contextIdentifier, user.Id);
 
-                string proofToString = JsonConvert.SerializeObject(proof);
+                if (proof != null)
+                {
+                    string proofToString = JsonConvert.SerializeObject(proof);
 
-                QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                QRCodeData qrCodeData = qrGenerator.CreateQrCode(proofToString, QRCodeGenerator.ECCLevel.Q);
-                BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(proofToString, QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
 
-                var imageBytes = qrCode.GetGraphic(12);
+                    var imageBytes = qrCode.GetGraphic(12);
 
-                return File(imageBytes, "image/jpeg", "proof.png");
+                    return File(imageBytes, "image/jpeg", "proof.png");
+                }
             }
 
             return new BadRequestResult();
@@ -183,7 +184,7 @@ namespace BlockchainVotingApp.Controllers.Election
         {
             var user = await _appUserService.GetUserAsync();
 
-            var elections = await _electionService.GetVotesForUser(user);
+            var elections = await _electionService.GetAll(user);
 
             var viewModel = new VotesViewModel(elections);
 

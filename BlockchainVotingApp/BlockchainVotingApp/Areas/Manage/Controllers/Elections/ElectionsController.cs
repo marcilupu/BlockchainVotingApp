@@ -119,7 +119,7 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
             if (dbElection != null && dbElection.State == ElectionState.Upcoming)
             {
-                var result = await _electionService.GenerateElectionSmartContract(dbElection);
+                var result = await _electionService.InitializeElectionContext(dbElection);
 
                 if (result)
                 {

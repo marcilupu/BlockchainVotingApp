@@ -99,12 +99,32 @@
             type: 'POST',
             data: 'candidateId=' + candidate + "&proof=" + context.state.proofContent,
             success: function () {
+                Swal.fire({
+                    title: 'Good job!',
+                    text: 'Your vote has been successfully recorded! Thank you!',
+                    icon: 'success',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    }
+                })
                 context.modal.modal("hide");
-                //location.href = context.apis.listElections;
             },
             complete: function () {
                 //unlock the modal
                 unlock();
+            },
+            error: function (result) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: result.responseText,
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    }
+                })
+                context.modal.modal("hide");
             }
         });
     }

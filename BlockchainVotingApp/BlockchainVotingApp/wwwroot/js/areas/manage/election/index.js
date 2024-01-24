@@ -45,6 +45,14 @@ const ElectionPageComponent = function () {
 
     const generateSmartContractEngine = function () {
         const generateSmartContract = function (electionId) {
+            Swal.fire({
+                title: 'Generate smart contract context',
+                html: 'Please wait, generating in progress...',
+                didOpen: () => {
+                    Swal.showLoading()
+                },
+                allowOutsideClick: false
+            });
             $.ajax({
                 url: context.apis.generateSmartContractUrl,
                 method: 'POST',
@@ -52,7 +60,15 @@ const ElectionPageComponent = function () {
                     electionId: electionId
                 },
                 success: function () {
-                    location.href = context.apis.listElections
+                    Swal.fire({
+                        title: 'Good job!',
+                        text: 'The smart contract context has been successfully generated!',
+                        icon: 'success',
+                        buttonsStyling: false,
+                        customClass: {
+                            confirmButton: 'btn btn-primary'
+                        }
+                    })
                 }
             });
         }

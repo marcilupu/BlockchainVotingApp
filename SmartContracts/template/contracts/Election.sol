@@ -45,13 +45,13 @@ contract Election {
         require(candidatesVotesCount[candidateId] >= 0, "The candidate has to be in the candidatesVotesCount list");
         require(candidates[candidateId], "The candidate has to be in the election candidates list");
 
+        require(!usersVoted[proofSha], "The user can vote only once");
+
         // Use ZKP to proove the voter is in the appropriate voters list
         Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
             
         try verifier.verifyTx(proof) 
-        {
-            require(!usersVoted[proofSha], "The user can vote only once");
-        
+        {        
             votes[proofSha] = candidateId;
             usersVoted[proofSha] = true;
 
@@ -74,14 +74,15 @@ contract Election {
 
     //Check if the user has already voted (the voter is in the votes mapping)
     //The function returns true if the voter has already voted, than returns false
-    function checkUserHasVoted(uint256 proofSha) public view returns (bool) {
-        require(proofSha != 0, "The voterId is null");
+    // the purpose of this function will be modified, the user has to introduce its proof in order to check if he has voted...
+    // function checkUserHasVoted(uint256 proofSha) public view returns (bool) {
+    //     require(proofSha != 0, "The voterId is null");
 
-        if(votes[proofSha] > 0 && usersVoted[proofSha])
-            return true;
-        else
-            return false;
-    }
+    //     if(votes[proofSha] > 0 && usersVoted[proofSha])
+    //         return true;
+    //     else
+    //         return false;
+    // }
 
     //If the election change the state from upcoming to ungoing, set the IsUpcomingElection to true and do not let the users to made any other changes to the contract
     function changeElectionState(bool electionState) public{

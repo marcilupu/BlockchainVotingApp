@@ -52,7 +52,7 @@ namespace BlockchainVotingApp.AppCode.Services.Users
             }).ToList();
         }
 
-        private async Task<DbUser> GetDbUserAsync()
+        public async Task<DbUser> GetDbUserAsync()
         {
             if (_memoryCache.TryGetValue(_currentUserMemoryKey, out DbUser? currentUser))
             {
@@ -66,6 +66,11 @@ namespace BlockchainVotingApp.AppCode.Services.Users
             _memoryCache.Set(_currentUserMemoryKey, dbUser, cacheOptions);
 
             return dbUser;
+        }
+
+        public async Task<int> Update(DbUser dbUser)
+        {
+            return await _userRepository.Update(dbUser);
         }
 
         public async Task<AppUser> GetUserAsync()

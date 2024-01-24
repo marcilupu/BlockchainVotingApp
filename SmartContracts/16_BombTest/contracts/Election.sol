@@ -14,14 +14,14 @@ contract Election {
     }
 
     uint public votesCount;
-    mapping(bytes32 => uint) public votes;
-    mapping(bytes32 => bool) public usersVoted;
+    mapping(uint256 => uint) public votes;
+    mapping(uint256 => bool) public usersVoted;
 
     mapping(uint => uint) public candidatesVotesCount;
     mapping(uint => bool) public candidates;
 
     //Is the election is ongoing, changes to the election must not be made (eg. description or candidates of the election)
-    bool public IsUpcomingElection = false;
+    bool public IsUpcomingElection = true;
 
     function addCandidate(uint candidateId) public {
         require(candidateId != 0, "The candidate id is null");
@@ -34,7 +34,7 @@ contract Election {
         candidates[candidateId] = true;
     }
 
-    function castVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy, uint candidateId) public returns (bool){
+    function castVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy, uint256 proofSha, uint candidateId) public returns (bool){
         //todo: check the other args
         require(candidateId != 0, "The candidateId is null");
 
@@ -45,16 +45,13 @@ contract Election {
         require(candidatesVotesCount[candidateId] >= 0, "The candidate has to be in the candidatesVotesCount list");
         require(candidates[candidateId], "The candidate has to be in the election candidates list");
 
+        require(!usersVoted[proofSha], "The user can vote only once");
+
         // Use ZKP to proove the voter is in the appropriate voters list
         Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
             
         try verifier.verifyTx(proof) 
-        {
-            bytes memory encodedProof = abi.encode(proof);
-            bytes32 proofSha = getHash(encodedProof);
-
-            require(!usersVoted[proofSha], "The user can vote only once");
-        
+        {        
             votes[proofSha] = candidateId;
             usersVoted[proofSha] = true;
 
@@ -70,36 +67,21 @@ contract Election {
     }
 
     //Get the votes of the user
-    function getUserVote(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (uint candidateId){
-        //Get Proof
-        Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
-
-        try verifier.verifyTx(proof) 
-        {
-            //Compute sha256 on proof
-            bytes memory encodedProof = abi.encode(proof);
-            bytes32 proofSha = getHash(encodedProof);
-
-            require(usersVoted[proofSha], "Key does not exists. The user has not voted");
-            return votes[proofSha];
-        }
-        catch
-        {
-            require(false, "The voter is invalid");
-            return 0;
-        } 
+    function getUserVote(uint256 proofSha) public view returns (uint CandidateId){
+        require(usersVoted[proofSha], "Key does not exists. The user has not voted");
+        return votes[proofSha];
     }
 
     //Check if the user has already voted (the voter is in the votes mapping)
     //The function returns true if the voter has already voted, than returns false
-    // function checkUserHasVoted(uint voterId) public view returns (bool) {
-    //     require(voterId != 0, "The voterId is null");
+    function checkUserHasVoted(uint256 proofSha) public view returns (bool) {
+        require(proofSha != 0, "The voterId is null");
 
-    //     if(votes[voterId] > 0 && usersVoted[voterId])
-    //         return true;
-    //     else
-    //         return false;
-    // }
+        if(votes[proofSha] > 0 && usersVoted[proofSha])
+            return true;
+        else
+            return false;
+    }
 
     //If the election change the state from upcoming to ungoing, set the IsUpcomingElection to true and do not let the users to made any other changes to the contract
     function changeElectionState(bool electionState) public{
@@ -107,7 +89,7 @@ contract Election {
     }
 
     //private functions
-    function getProof(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) internal pure returns (Verifier.Proof memory proof) {
+    function getProof(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public pure returns (Verifier.Proof memory proof) {
         Pairing.G1Point memory a;
         Pairing.G2Point memory b;
         Pairing.G1Point memory c;
@@ -126,9 +108,5 @@ contract Election {
         proof.c = c;
 
         return proof;
-    }
-
-    function getHash(bytes memory data) internal pure returns (bytes32) {
-        return sha256(data);
     }
 }

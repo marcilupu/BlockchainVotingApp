@@ -56,7 +56,7 @@ namespace BlockchainVotingApp.Core.DomainModels
         {
      
         }
-       
+
         public bool HasVoted { get; set; }
         public string SelectedCandidate { get; set; } = null!;
 

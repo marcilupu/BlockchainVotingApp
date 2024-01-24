@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using BlockchainVotingApp.SmartContract.Extensions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace BlockchainVotingApp.SmartContract.Models
 {
@@ -51,7 +53,14 @@ namespace BlockchainVotingApp.SmartContract.Models
             }
         }
 
-        
+        public string GetHash()
+        {
+            string serializedProof = JsonConvert.SerializeObject(this);
+
+            var hash = serializedProof.ComputeSha256Hash();
+
+            return hash;
+        }
 
         public string AX { get; init; } = null!;
 

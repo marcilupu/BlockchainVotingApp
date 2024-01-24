@@ -3,27 +3,27 @@ using BlockchainVotingApp.Data.Models;
 
 namespace BlockchainVotingApp.Core.Infrastructure
 {
+
+    public record VoteResult(bool Success, string? ErrorMessage);
+
     public interface IElectionService
     {
         Task<int> Insert(DbElection election);
         
         Task<int> Update(DbElection election);
 
-        Task<List<UserElection>> GetAllByCounty(AppUser user);
+        Task<List<UserElection>> GetAll(AppUser user);
 
         Task<List<Election>> GetAll();
 
-        Task<UserElection?> Get(int id);
+        Task<UserElection?> GetUserElection(int id, AppUser user);
 
-        Task<UserElection?> GetElectionForUser(int id, int userId);
+        Task<VoteResult> Vote(AppUser user, string proof, int candidateId);
 
-        Task<bool> Vote(string proof, int candidateId);
+        Task<int?> GetUserVote(AppUser user, string proof, int electionId);
 
-        Task<int> GetVoteForUser(int userId, string ContractAddress);
+        Task<bool> InitializeElectionContext(DbElection election);
 
-        Task<List<UserElection>> GetVotesForUser(AppUser user);
-
-        Task<bool> GenerateElectionSmartContract(DbElection election);
         Task<bool> ChangeElectionState(DbElection currentElection, ElectionState newState);
     }
 }

@@ -28,5 +28,14 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
         {
             return await _vDbContext.Users.FirstOrDefaultAsync(user => user.NationaId== nationalId);
         }
+
+        public async Task<int> Update(DbUser user)
+        {
+            _vDbContext.Update(user);
+
+            await _vDbContext.SaveChangesAsync();
+
+            return user.Id;
+        }
     }
 }

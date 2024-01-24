@@ -10,10 +10,10 @@ set "proofPath=%2"
 cd "%verifierContext%"
 
 
-CALL zokrates compute-witness -a %3 -o "%witnessPath%"
+CALL zokrates compute-witness --json -a %3 -o "%witnessPath%"
 
 @echo Witness generated
 
-CALL zokrates generate-proof -w "%witnessPath%" -j "%proofPath%"
+CALL zokrates generate-proof -w "%witnessPath%" -j "%proofPath%" -e 0
 
 @echo Proof generated

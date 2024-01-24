@@ -6,6 +6,7 @@ using Nethereum.Hex.HexTypes;
 using Nethereum.JsonRpc.Client;
 using Nethereum.Web3;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Globalization;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -15,7 +16,6 @@ namespace BlockchainVotingApp.SmartContract.Services
 
     internal class SmartContractService : ISmartContractService
     {
-        private record ExecutionResult(string Message, bool IsSuccess);
 
         private readonly ISmartContractConfiguration _configuration;
         private readonly ContractMetadata _metadata;
@@ -27,12 +27,12 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         }
 
-        public async Task<bool> AddCandidate(int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addCandidate", candidateId)).IsSuccess;
+        public async Task<ExecutionResult> AddCandidate(int candidateId, string contractAddress) => (await ExecuteSmartContract(contractAddress, "addCandidate", candidateId));
 
 
-        public async Task<bool> ChangeElectionState(bool electionState, string contractAddress) => (await ExecuteSmartContract(contractAddress, "changeElectionState", electionState)).IsSuccess;
+        public async Task<ExecutionResult> ChangeElectionState(bool electionState, string contractAddress) => (await ExecuteSmartContract(contractAddress, "changeElectionState", electionState));
 
-        public async Task<Vote> GetUserVote(Proof voterProof, string contractAddress)
+        public async Task<ExecutionResult<Vote>> GetUserVote(Proof voterProof, string contractAddress)
         {
             var web3 = new Web3(_configuration.BlockchainNetworkUrl);
 
@@ -40,20 +40,19 @@ namespace BlockchainVotingApp.SmartContract.Services
             {
                 var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
 
-                string serializedProof = JsonConvert.SerializeObject(voterProof);
-                var voterProofHash = serializedProof.ComputeSha256Hash();
+                var proofHash = voterProof.GetHash();
 
-                var result = await contract.GetFunction("getUserVote").CallDeserializingToObjectAsync<Vote>(voterProofHash);
+                var result = await contract.GetFunction("getUserVote").CallDeserializingToObjectAsync<Vote>(proofHash);
 
-                return result;
+                return new ExecutionResult<Vote>(result, false);
             }
             catch
             {
-                return new Vote();
+                return new ExecutionResult<Vote>(new Vote(), false);
             }
         }
 
-        public async Task<int> GetTotalNumberOfVotes(string contractAddress)
+        public async Task<ExecutionResult<int>> GetTotalNumberOfVotes(string contractAddress)
         {
             var web3 = new Web3(_configuration.BlockchainNetworkUrl);
 
@@ -63,31 +62,20 @@ namespace BlockchainVotingApp.SmartContract.Services
 
                 var result = await contract.GetFunction("votesCount").CallAsync<int>();
 
-                return result;
+                return new ExecutionResult<int>(result, true);
             }
             catch (RpcResponseException ex)
             {
                 Console.WriteLine($" [RpcResponseException]. Message: {ex.Message}");
-                return 0;
+
+                return new ExecutionResult<int>(-1, false, ex.Message);
             }
         }
 
-        //TODO: fix it if necessary
-        public async Task<bool> HasUserVoted(int voterId, string contractAddress)
+
+        public async Task<ExecutionResult> Vote(Proof voterProof, int candidateId, string contractAddress)
         {
-            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
-
-            var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
-
-            var result = await contract.GetFunction("checkUserHasVoted").CallAsync<bool>(voterId);
-
-            return result;
-        }
-
-        public async Task<bool> Vote(Proof voterProof, int candidateId, string contractAddress)
-        {
-            string serializedProof = JsonConvert.SerializeObject(voterProof);
-            var proofHash = serializedProof.ComputeSha256Hash();
+            var proofHash = voterProof.GetHash();
 
             return (await ExecuteSmartContract(contractAddress, "castVote",
                 voterProof.AX,
@@ -99,7 +87,7 @@ namespace BlockchainVotingApp.SmartContract.Services
                 voterProof.CX,
                 voterProof.CY,
                 proofHash,
-                candidateId)).IsSuccess;
+                candidateId));
         }
 
         #region Internals
@@ -124,15 +112,15 @@ namespace BlockchainVotingApp.SmartContract.Services
                     parameters
                 );
 
-                return new ExecutionResult(result, true);
+                return new ExecutionResult(true, result);
             }
             catch (RpcResponseException response)
             {
-                return new ExecutionResult(response.RpcError.Message, false);
+                return new ExecutionResult(false, response.RpcError.Message.GetErrorMessage());
             }
             catch
             {
-                return new ExecutionResult(string.Empty, false);
+                return new ExecutionResult(false);
             }
 
             async Task<HexBigInteger> EstimateGas(Function function)

@@ -12,6 +12,7 @@ namespace BlockchainVotingApp.Data.Models
         public DateTime? DateOfBirth { get; set; }
         public DbCounty? County { get; set; }
         public int CountyId { get; set; } 
+        public bool HasVoted { get; set; }
 
         //AccountAddress - AspNetUserClaim
 
