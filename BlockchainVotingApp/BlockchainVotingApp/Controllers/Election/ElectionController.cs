@@ -64,6 +64,7 @@ namespace BlockchainVotingApp.Controllers.Election
             return NotFound();
         }
 
+        [HttpPost]
         public IActionResult UploadProof()
         {
             var file = HttpContext.Request.Form.Files["file"];

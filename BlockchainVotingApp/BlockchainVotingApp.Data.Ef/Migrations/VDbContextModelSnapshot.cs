@@ -236,9 +236,6 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("HasVoted")
-                        .HasColumnType("bit");
-
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -339,6 +336,35 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                             Name = "Voter",
                             NormalizedName = "VOTER"
                         });
+                });
+
+            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbUserVote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("ElectionId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("HasVoted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ElectionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserVotes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -473,6 +499,25 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired();
 
                     b.Navigation("County");
+                });
+
+            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbUserVote", b =>
+                {
+                    b.HasOne("BlockchainVotingApp.Data.Models.DbElection", "Election")
+                        .WithMany()
+                        .HasForeignKey("ElectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BlockchainVotingApp.Data.Models.DbUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Election");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

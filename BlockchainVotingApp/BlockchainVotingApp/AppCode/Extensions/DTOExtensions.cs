@@ -45,5 +45,15 @@ namespace BlockchainVotingApp.AppCode.Extensions
 
             return election;
         }
+
+        public static DbUserVote ToDb(int userId, int electionId, DbUserVote? userVote = null)
+        {
+            userVote ??= new DbUserVote();
+
+            userVote.UserId = userId;
+            userVote.ElectionId = electionId;
+
+            return userVote;
+        }
     }
 }

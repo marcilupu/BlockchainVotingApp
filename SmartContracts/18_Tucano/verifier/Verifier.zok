@@ -1,6 +1,6 @@
 def main(private field userId) {
 	field[6] ids = [1,2,3,4,5,6];
-	field randomSeed = 287008623;
+	field randomSeed = 750167904;
 	field mut match = randomSeed;
 	for u32 i in 0..6 {
 	    match = if ids[i] == userId { match + 1 } else { match }; 
