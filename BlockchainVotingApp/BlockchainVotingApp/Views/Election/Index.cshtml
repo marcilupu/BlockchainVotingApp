@@ -20,7 +20,7 @@
                                     <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @election.Name</h4>
                                     @if ((int)election.State == 0)
                                     {
-                                        <span class="badge bg-primary py-1 px-2">@election.State</span>
+                                        <span class="badge py-1 px-" 2 style="background-color:#1e81b0">@election.State</span>
                                     }
                                     @if ((int)election.State == 1)
                                     {
@@ -28,22 +28,24 @@
                                     }
                                     @if ((int)election.State == 2)
                                     {
+                                        <span class="badge bg-primary py-1 px-2">@election.State</span>
+                                    }
+                                    @if ((int)election.State == 3)
+                                    {
                                         <span class="badge bg-success py-1 px-2">@election.State</span>
                                     }
                                 </div>
-                                @if (!election.HasVoted && election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
-                                {
-                                    <div class="col d-flex justify-content-end">
+                                <div class="col d-flex justify-content-end">
+                                    @if (!election.HasVoted && election.State == BlockchainVotingApp.Data.Models.ElectionState.Ongoing)
+                                    {
                                         <div class="d-flex rounded-circle justify-content-center align-items-center bg-warning vote-button">
                                             <a href="/Election/GenerateProof?electionId=@election.Id" class="text-decoration-none text-white text-center">Proof</a>
                                         </div>
                                         <button type="button" class="ms-1 btn btn-success rounded-circle justify-content-center align-items-center vote-button" data-vote="true" data-vote-election-id="@election.Id">
                                             Vote
                                         </button>
-                                    </div>
-                                }
-                                <div class="col d-flex justify-content-end">
-                                    <div class="d-flex justify-content-center align-items-center">
+                                    }
+                                    <div class="ms-1 d-flex justify-content-center align-items-center">
                                         <a href="/Election/Details?id=@election.Id" class=" text-decoration-none btn btn-outline-primary">Vote details</a>
                                     </div>
                                 </div>
@@ -96,4 +98,4 @@
 
 @section Scripts {
     <script src="~/js/election.js"></script>
-}
+    }

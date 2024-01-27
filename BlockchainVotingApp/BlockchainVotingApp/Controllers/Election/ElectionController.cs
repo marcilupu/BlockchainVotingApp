@@ -6,17 +6,8 @@ using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Ess;
-using QRCoder;
-using System.Drawing;
-using System.Reflection.Emit;
-using System.Security.Policy;
 using System.Text;
-using System.Text.Unicode;
-using ZXing;
-using ZXing.Common;
-using ZXing.QrCode;
-using ZXing.Windows.Compatibility;
+
 
 namespace BlockchainVotingApp.Controllers.Election
 {
@@ -63,8 +54,9 @@ namespace BlockchainVotingApp.Controllers.Election
         #endregion
 
         #region Proof
+
         [HttpPost]
-        public IActionResult UploadProof()
+        public IActionResult UploadProof([FromServices] IQRGenerator qRGenerator)
         {
             var file = HttpContext.Request.Form.Files["file"];
 
@@ -72,29 +64,16 @@ namespace BlockchainVotingApp.Controllers.Election
             {
                 using var stream = file.OpenReadStream();
 
-#pragma warning disable CA1416 // Validate platform compatibility
+                var result = qRGenerator.GetCodeContent(stream);
 
-                var bitmap = new Bitmap(stream);
-
-                var luminanceSource = new BitmapLuminanceSource(bitmap);
-
-                var source = new BinaryBitmap(new HybridBinarizer(luminanceSource));
-
-#pragma warning restore CA1416 // Validate platform compatibility
-
-
-                var reader = new QRCodeReader();
-
-                var result = reader.decode(source);
-
-                return new JsonResult(new { content = Convert.ToBase64String(Encoding.UTF8.GetBytes(result.Text)) });
+                return new JsonResult(new { content = result });
             }
 
             return new BadRequestResult();
         }
 
         [HttpGet]
-        public async Task<IActionResult> GenerateProof([FromServices] ISmartContractGenerator smartContractGenerator, int electionId)
+        public async Task<IActionResult> GenerateProof([FromServices] ISmartContractGenerator smartContractGenerator, [FromServices] IQRGenerator qRGenerator, int electionId)
         {
             var user = await _appUserService.GetUserAsync();
 
@@ -109,12 +88,8 @@ namespace BlockchainVotingApp.Controllers.Election
                 if (proof != null)
                 {
                     string proofToString = JsonConvert.SerializeObject(proof);
-
-                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(proofToString, QRCodeGenerator.ECCLevel.Q);
-                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
-
-                    var imageBytes = qrCode.GetGraphic(12);
+        
+                    var imageBytes = qRGenerator.CreateCode(proofToString);
 
                     return File(imageBytes, "image/jpeg", "proof.png");
                 }
@@ -137,7 +112,7 @@ namespace BlockchainVotingApp.Controllers.Election
 
         [HttpPost]
         public async Task<IActionResult> Vote(int candidateId, string proof)
-        {
+        { 
             if (candidateId != 0 && !string.IsNullOrEmpty(proof))
             {
                 var user = await _appUserService.GetUserAsync();

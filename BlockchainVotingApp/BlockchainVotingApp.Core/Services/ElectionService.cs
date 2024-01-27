@@ -105,7 +105,8 @@ namespace BlockchainVotingApp.Core.Services
                     }
                 }
             }
-            return -1;
+
+            return null;
         }
 
         public async Task<bool> InitializeElectionContext(DbElection election)

@@ -21,7 +21,7 @@
         },
         apis: {
             vote: '/Election/Vote',
-            voteModal: '/Election/GetVoteModal'
+            voteModal: '/Election/GetVoteModal',
         }
     }
 
@@ -93,7 +93,7 @@
 
         //Prevent closing the modal until the request is sent
         const unlock = lock('Voting...');
-         
+
         $.ajax({
             url: context.apis.vote,
             type: 'POST',
@@ -108,7 +108,10 @@
                         confirmButton: 'btn btn-primary'
                     }
                 })
+
                 context.modal.modal("hide");
+
+                location.reload();
             },
             complete: function () {
                 //unlock the modal
