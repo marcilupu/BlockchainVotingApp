@@ -1,0 +1,15 @@
+﻿@{
+    Layout = null;
+}
+
+<p class="fs-6">To be able to see your vote, you need to enter the proof.</p>
+
+<form action="/election/uploadProof"
+      class="dropzone p-2 rounded-2 border border-white justify-content-center align-items-center"
+      data-proof-form="true">
+    <div class="dz-message" data-dz-messagse>
+        <i class="fa-solid fa-file-arrow-up text-primary p-1" style="font-size:60px"></i>
+        <h5 class="p-1">Upload proof</h5>
+        <p class="p-1">Drag and drop your proof here</p>
+    </div>
+</form>

@@ -10,6 +10,7 @@ using Org.BouncyCastle.Asn1.Ess;
 using QRCoder;
 using System.Drawing;
 using System.Reflection.Emit;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Unicode;
 using ZXing;
@@ -30,6 +31,7 @@ namespace BlockchainVotingApp.Controllers.Election
             _electionService = electionService;
         }
 
+        #region Elections
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -51,11 +53,6 @@ namespace BlockchainVotingApp.Controllers.Election
 
             if (election != null)
             {
-                if (election.HasVoted)
-                {
-                    return Unauthorized(); 
-                }
-
                 var electionViewModel = new ElectionCandidatesViewModel(election);
 
                 return View("/Views/Election/Details.cshtml", electionViewModel);
@@ -63,7 +60,9 @@ namespace BlockchainVotingApp.Controllers.Election
 
             return NotFound();
         }
+        #endregion
 
+        #region Proof
         [HttpPost]
         public IActionResult UploadProof()
         {
@@ -94,6 +93,38 @@ namespace BlockchainVotingApp.Controllers.Election
             return new BadRequestResult();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GenerateProof([FromServices] ISmartContractGenerator smartContractGenerator, int electionId)
+        {
+            var user = await _appUserService.GetUserAsync();
+
+            var election = await _electionService.GetUserElection(electionId, user);
+
+            if (election != null)
+            {
+                var contextIdentifier = ElectionHelper.CreateContextIdentifier(election.Id, election.Name);
+
+                var proof = await smartContractGenerator.GenerateProof(contextIdentifier, user.Id);
+
+                if (proof != null)
+                {
+                    string proofToString = JsonConvert.SerializeObject(proof);
+
+                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
+                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(proofToString, QRCodeGenerator.ECCLevel.Q);
+                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+
+                    var imageBytes = qrCode.GetGraphic(12);
+
+                    return File(imageBytes, "image/jpeg", "proof.png");
+                }
+            }
+
+            return new BadRequestResult();
+        }
+        #endregion
+
+        #region Vote
         [HttpGet]
         public async Task<IActionResult> GetVoteModal([FromServices] ICandidateService candidateService, int electionId)
         {
@@ -129,68 +160,50 @@ namespace BlockchainVotingApp.Controllers.Election
         }
 
         [HttpGet]
-        public async Task<IActionResult> VoteDetails([FromServices] ICandidateService candidateService, int electionId)
-        {
-            var user = await _appUserService.GetUserAsync();
-
-            var candidateId = await _electionService.GetUserVote(user, null, electionId);
-
-            if (candidateId != null)
-            {
-                var candidate = await candidateService.Get(candidateId.Value);
-
-                var election = await _electionService.GetUserElection(electionId, user);
-
-                var electionViewModel = new VoteViewModel(election!, candidate!.FullName);
-
-                return View("/Views/Election/VoteDetails.cshtml", electionViewModel);
-
-            }
-
-            return NotFound();
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GenerateProof([FromServices] ISmartContractGenerator smartContractGenerator, int electionId)
-        {
-            var user = await _appUserService.GetUserAsync();
-
-            var election = await _electionService.GetUserElection(electionId, user);
-
-            if (election != null)
-            {
-                var contextIdentifier = ElectionHelper.CreateContextIdentifier(election.Id, election.Name);
-               
-                var proof = await smartContractGenerator.GenerateProof(contextIdentifier, user.Id);
-
-                if (proof != null)
-                {
-                    string proofToString = JsonConvert.SerializeObject(proof);
-
-                    QRCodeGenerator qrGenerator = new QRCodeGenerator();
-                    QRCodeData qrCodeData = qrGenerator.CreateQrCode(proofToString, QRCodeGenerator.ECCLevel.Q);
-                    BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
-
-                    var imageBytes = qrCode.GetGraphic(12);
-
-                    return File(imageBytes, "image/jpeg", "proof.png");
-                }
-            }
-
-            return new BadRequestResult();
-        }
-
-        [HttpGet]
         public async Task<IActionResult> Votes()
         {
             var user = await _appUserService.GetUserAsync();
 
-            var elections = await _electionService.GetAll(user);
+            // Retrieve all elections for which the user has voted.
+            var elections = (await _electionService.GetAll(user)).Where(x => x.HasVoted).ToList();
 
             var viewModel = new VotesViewModel(elections);
 
             return View(viewModel);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> VoteDetails([FromServices] ICandidateService candidateService, int electionId, string proof)
+        {
+            var user = await _appUserService.GetUserAsync();
+
+            var candidateId = await _electionService.GetUserVote(user, Encoding.UTF8.GetString(Convert.FromBase64String(proof)), electionId);
+
+            if (candidateId != null)
+            {
+                var candidate = await candidateService.Get(candidateId.Value);
+
+                if(candidate != null)
+                {
+                    var election = await _electionService.GetUserElection(electionId, user);
+
+                    if (election != null)
+                    {
+                        var electionViewModel = new VoteViewModel(election!, candidate!.FullName);
+
+                        return View("/Views/Election/VoteDetails.cshtml", electionViewModel);
+                    }
+                }
+            }
+
+            return NotFound();
+        }
+
+        [HttpGet]
+        public IActionResult GetProofModal()
+        {
+            return PartialView("/Views/Election/_ProofModal.cshtml");
+        }
+        #endregion
     }
 }

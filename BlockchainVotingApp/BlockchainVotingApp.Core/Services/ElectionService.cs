@@ -87,17 +87,26 @@ namespace BlockchainVotingApp.Core.Services
         //TODO: fix it
         public async Task<int?> GetUserVote(AppUser user, string proof, int electionId)
         {
-            //todo: REFACTOR
-            var result = (Vote?)null; // await _smartContractService.GetUserVote(userId, contractAddress);
+            var election = await GetUserElection(electionId, user);
 
-            if (result != null)
+            if (election != null)
             {
-                return result.CandidateId;
+                ISmartContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+
+                if (smartContractService != null)
+                {
+                    Proof voterProof = JsonConvert.DeserializeObject<Proof>(proof);
+
+                    var result = await smartContractService.GetUserVote(voterProof, election.ContractAddress);
+
+                    if (result != null && result.Value != null)
+                    {
+                        return result.Value.CandidateId;
+                    }
+                }
             }
-
-            return 0;
+            return -1;
         }
-
 
         public async Task<bool> InitializeElectionContext(DbElection election)
         {

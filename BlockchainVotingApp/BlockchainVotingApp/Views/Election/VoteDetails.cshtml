@@ -8,6 +8,19 @@
     <div class="row mt-4">
         <h3>@Model.Name result</h3>
     </div>
+
+    <div class="row mt-4">
+        <div class="col-12 mb-5">
+            <div class="card bg-light border-3 border-success">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> You voted: <span class="fs-4">@Model.SelectedCandidate</span></h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mt-4">
         <div class="col-12 mb-5">
             <div class="card">
@@ -54,33 +67,6 @@
     </div>
 
     <div class="row mt-4">
-        <div class="col-12 mb-5">
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <h4 class=text-success>Result</h4>
-                    </div>
-                </div>
-                <div class="card-body" id="electionCardBody">
-                    <span class="fs-5">
-                        <span class="fw-bold">You voted: </span>
-                        <span>@Model.SelectedCandidate</span>
-                    </span>
-
-                    @if ((int)Model.State == 2)
-                    {
-                        <br />
-                        <span class="fs-5">
-                            <span class="fw-bold">Total number of votes: </span>
-                            <span> @Model.NumberOfVotes</span>
-                        </span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mt-4">
         <h4 class="text-center pb-4" style="font-size: 28px;">Candidates</h4>
         @foreach (var candidate in Model.Candidates)
         {
@@ -88,7 +74,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <h4 class="card-label"><i class="fa-solid fa-check-to-slot text-primary"></i> @candidate.FullName</h4>
+                            <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @candidate.FullName</h4>
                         </div>
                     </div>
                     <div class="card-body" id="candidateCardBody">
