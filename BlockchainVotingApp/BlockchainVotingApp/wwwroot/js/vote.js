@@ -43,6 +43,15 @@
             success: function (file, response) {
                 context.state.proofContent = response.content
 
+                Swal.fire({
+                    title: 'Getting your vote...',
+                    html: 'Please wait...',
+                    didOpen: () => {
+                        Swal.showLoading()
+                    },
+                    allowOutsideClick: false
+                });
+
                 location.href = context.apis.voteDetails + "?electionId=" + context.state.electionId + "&proof=" + context.state.proofContent
             }
         });
