@@ -124,26 +124,31 @@ namespace BlockchainVotingApp.Core.Services
             var deployedContract = await _smartContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
             election.ContractAddress = deployedContract;
 
-            await Update(election);
-
             ISmartContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
 
-
-            //Add candidates to smart contract
-            var candidates = await _candidateRepository.GetAllForElection(election.Id);
-            foreach (var candidate in candidates)
+            if(smartContractService != null)
             {
-                var candidateResult = await smartContractService.AddCandidate(candidate.Id, election.ContractAddress);
-
-                //If the smart contract add candidate failed, drop the candidate from the db
-                if (!candidateResult.IsSuccess)
+                //Add candidates to smart contract
+                var candidates = await _candidateRepository.GetAllForElection(election.Id);
+                foreach (var candidate in candidates)
                 {
-                    await _candidateRepository.Delete(candidate);
-                    return false;
+                    var candidateResult = await smartContractService.AddCandidate(candidate.Id, election.ContractAddress);
+
+                    //If the smart contract add candidate failed, drop the candidate from the db
+                    if (!candidateResult.IsSuccess)
+                    {
+                        await _candidateRepository.Delete(candidate);
+                        return false;
+                    }
                 }
+                election.State = ElectionState.Ongoing;
+
+                await Update(election);
+
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         public async Task<bool> ChangeElectionState(DbElection currentElection, ElectionState newState)
