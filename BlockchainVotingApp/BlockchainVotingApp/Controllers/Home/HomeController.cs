@@ -56,7 +56,9 @@ namespace BlockchainVotingApp.Controllers
                         candidatesDict.Add(fullName, result == null ? 0 : result.Value);
                     }
 
-                    return new JsonResult(new { candidatesDict, electionResult });
+                    var winner = candidatesDict.MaxBy(x => x.Key);
+
+                    return new JsonResult(new { candidatesDict, electionResult, winner });
                 }
             }
 

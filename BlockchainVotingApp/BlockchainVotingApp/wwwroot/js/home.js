@@ -49,6 +49,7 @@ const HomeComponent = function () {
                 context.state.chartData = data
                 const labels = Object.keys(context.state.chartData.candidatesDict);
                 const values = Object.values(context.state.chartData.candidatesDict);
+                const winner = context.state.chartData.winner;
 
                 const customColors = [
                     'rgba(255, 99, 132, 0.2)',
@@ -68,18 +69,18 @@ const HomeComponent = function () {
 
                 const backgroundColors = customColors.slice(0, labels.length);
 
-                barchartInit(labels, values, backgroundColors);
+                barchartInit(labels, values, backgroundColors, winner);
             }
         });
     }
 
-    const barchartInit = function (labelsData, values, backgroundColors) {
+    const barchartInit = function (labelsData, values, backgroundColors, winner) {
         context.chart.chartData = {
             type: 'bar',
             data: {
                 labels: labelsData,
                 datasets: [{
-                    label: context.state.chartData.electionResult + ' votes for ' + context.state.electionName,
+                    label: context.state.chartData.electionResult + ' votes for ' + context.state.electionName + '. The winner is ' + winner.key,
                     data: values,
                     backgroundColor: backgroundColors,
                     borderWidth: 3,
