@@ -69,6 +69,7 @@ const ElectionPageComponent = function () {
                             confirmButton: 'btn btn-primary'
                         }
                     })
+                    location.reload();
                 }
             });
         }

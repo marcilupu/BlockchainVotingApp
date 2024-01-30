@@ -5,6 +5,7 @@ const HomeComponent = function () {
             select: {
                 target: '[data-election-select]'
             },
+            winnerSpan: 'winnerId',
             barchart: 'chart-election-results'
         },
         state: {
@@ -14,7 +15,8 @@ const HomeComponent = function () {
             },
             electionId: null,
             electionName: null,
-            chartData: null
+            chartData: null,
+            chartObject: null,
         },
         chart: {
             chartData: null,
@@ -69,6 +71,8 @@ const HomeComponent = function () {
 
                 const backgroundColors = customColors.slice(0, labels.length);
 
+                $("#" + context.ids.winnerSpan).text("");
+                $("#" + context.ids.winnerSpan).text(winner.key);
                 barchartInit(labels, values, backgroundColors, winner);
             }
         });
@@ -80,7 +84,7 @@ const HomeComponent = function () {
             data: {
                 labels: labelsData,
                 datasets: [{
-                    label: context.state.chartData.electionResult + ' votes for ' + context.state.electionName + '. The winner is ' + winner.key,
+                    label: '# of ' + context.state.chartData.electionResult + ' Votes',
                     data: values,
                     backgroundColor: backgroundColors,
                     borderWidth: 3,
@@ -91,27 +95,39 @@ const HomeComponent = function () {
 
         // Options
         context.chart.chartOptions = {
-            options: {
-                scales: {
-                    x:
-                    {
-                        stepSize: 1,
-                        ticks: {
-                            color: '#4285F4',
-                        },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'My Chart Title', // Set your chart title text
+                    font: {
+                        size: 18, // Set the font size for the chart title
                     },
-                    y:
-                    {
-                        stepSize: 1,
-                        ticks: {
-                            color: '#f44242',
-                        },
+                },
+            },
+            scales: {
+                x:
+                {
+                    stepSize: 1,
+                    ticks: {
+                        color: '#4285F4',
+                    },
+                },
+                y:
+                {
+                    stepSize: 1,
+                    ticks: {
+                        color: '#f44242',
                     },
                 },
             },
         };
 
-        new Chart(
+        // Destroy chart.js bar graph to redraw other graph in same <canvas>
+        if (context.state.chartObject != null) {
+            context.state.chartObject.destroy();
+        }
+
+        context.state.chartObject = new Chart(
             context.state.jQuery.barchart,
             context.chart.chartData,
             context.chart.chartOptions
@@ -128,6 +144,10 @@ const HomeComponent = function () {
         });
 
         initChart();
+
+        context.state.jQuery.electionSelect.on('select2:select', function (e) {
+            initChart();
+        });
     }
 
     return {
