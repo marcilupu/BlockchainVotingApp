@@ -25,5 +25,7 @@ namespace BlockchainVotingApp.Core.Infrastructure
         Task<bool> InitializeElectionContext(DbElection election);
 
         Task<bool> ChangeElectionState(DbElection currentElection, ElectionState newState);
+
+        Task<int> GetElectionResult(DbElection election);
     }
 }

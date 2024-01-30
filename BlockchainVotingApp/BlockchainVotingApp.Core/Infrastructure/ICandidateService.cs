@@ -10,5 +10,7 @@ namespace BlockchainVotingApp.Core.Infrastructure
         public Task<List<Candidate>> GetAll();
         public Task<List<Candidate>> GetAllForElection(int electionId);
         public Task<Candidate?> Get(int id);
+
+        Task<int?> GetCandidateResult(DbCandidate candidate);
     }
 }

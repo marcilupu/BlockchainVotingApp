@@ -13,6 +13,12 @@ namespace BlockchainVotingApp.SmartContract.Models
         public int CandidateId { get; set; }
     }
 
+    [FunctionOutput]
+    public class CandidateResult: IFunctionOutputDTO
+    {
+        [Parameter("int", "result", 2)]
+        public int Result { get; set; }
+    }
 
     public class ElectionDeployment : ContractDeploymentMessage
     {

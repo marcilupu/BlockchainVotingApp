@@ -70,8 +70,35 @@ namespace BlockchainVotingApp.SmartContract.Services
 
                 return new ExecutionResult<int>(-1, false, ex.Message);
             }
+            catch
+            {
+                return new ExecutionResult<int>(-1, false);
+            }
         }
 
+        public async Task<ExecutionResult<CandidateResult>> GetCandidateResult(int candidateId, string contractAddress)
+        {
+            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
+
+            try
+            {
+                var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
+
+                var result = await contract.GetFunction("getCandidateResults").CallDeserializingToObjectAsync<CandidateResult>(candidateId);
+
+                return new ExecutionResult<CandidateResult>(result, true);
+            }
+            catch (RpcResponseException ex)
+            {
+                Console.WriteLine($" [RpcResponseException]. Message: {ex.Message}");
+
+                return new ExecutionResult<CandidateResult>(new CandidateResult(), false, ex.Message);
+            }
+            catch
+            {
+                return new ExecutionResult<CandidateResult>(new CandidateResult(), false);
+            }
+        }
 
         public async Task<ExecutionResult> Vote(Proof voterProof, int candidateId, string contractAddress)
         {

@@ -41,9 +41,6 @@
                                     <li>
                                         <a class="dropdown-item" asp-area="Manage" asp-controller="Candidates" asp-action="Index">Candidates</a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="Manage" asp-controller="Users" asp-action="Index">Users</a>
-                                    </li>
                                 </ul>
                             </li>
                         </admin>
@@ -82,6 +79,7 @@
     <script src="~/lib/datatable/js/dataTables.bootstrap5.min.js" asp-append-version="true"></script>
     <script src="~/lib/dropzone/js/dropzone.min.js" asp-append-version="true"></script>
     <script src="~/lib/sweetalert2/js/sweetalert2.all.min.js" asp-append-version="true"></script>
+    <script src="~/lib/chart/js/chart.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -8,7 +8,7 @@ using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BlockchainVotingApp.Controllers.Login
+namespace BlockchainVotingApp.Controllers
 {
     public class LoginController : Controller
     {

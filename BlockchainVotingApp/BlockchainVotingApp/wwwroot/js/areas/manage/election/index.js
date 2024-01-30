@@ -145,7 +145,7 @@ const ElectionPageComponent = function () {
                 data: internalContext.editElectionModal.form.serialize() + '&electionId=' + internalContext.electionEditId,
                 success: function () {
                     internalContext.editElectionModal.target.modal("hide");
-                    location.href = context.apis.listElections;
+                    location.reload();
                 },
                 complete: function () {
                     //unlock the modal

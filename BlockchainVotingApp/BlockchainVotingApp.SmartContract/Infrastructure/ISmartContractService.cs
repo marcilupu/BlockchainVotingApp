@@ -18,6 +18,9 @@ namespace BlockchainVotingApp.SmartContract.Infrastructure
         Task<ExecutionResult<Vote>> GetUserVote(Proof voterProof, string contractAddress);
       
         Task<ExecutionResult<int>> GetTotalNumberOfVotes(string contractAddress);
- 
+
+        Task<ExecutionResult<CandidateResult>> GetCandidateResult(int candidateId, string contractAddress);
+
+
     }
 }

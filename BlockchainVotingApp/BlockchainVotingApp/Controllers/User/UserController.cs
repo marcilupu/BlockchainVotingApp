@@ -1,15 +1,12 @@
-﻿using BlockchainVotingApp.Core.DomainModels;
-using BlockchainVotingApp.Core.Infrastructure;
+﻿using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.Models.User.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
-namespace BlockchainVotingApp.Controllers.User
+namespace BlockchainVotingApp.Controllers
 {
     [Authorize]
     public class UserController : Controller

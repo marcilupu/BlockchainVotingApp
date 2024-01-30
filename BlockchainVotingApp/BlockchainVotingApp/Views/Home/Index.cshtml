@@ -1,4 +1,6 @@
-﻿@{
+﻿@model BlockchainVotingApp.Models.Home.HomeViewModel
+
+@{
     Layout = "_HomeLayout";
 }
 
@@ -10,10 +12,39 @@
     </div>
 </div>
 
-<div class="row p-4">
-    <div class="card pt-3 pb-3 shadow p-3 mb-1 rounded h-100">
-        <div class="card-body">
-            <h3>Bar chart results -> number of votes per election</h3>
+@if (Model.Elections.Any())
+{
+    <div class="row p-4">
+        <div class="col">
+            <h5>Choose the election to see the results</h5>
+            <select name="Election" data-election-select="true">
+                @foreach (var election in Model.Elections)
+                {
+                    <option value="@election.Value">@election.Key</option>
+                }
+            </select>
         </div>
     </div>
-</div>
+
+    <div class="row p-4">
+        <div class="card pt-3 pb-3 shadow p-3 mb-1 rounded h-100">
+            <div class="card-body">
+                <canvas id="chart-election-results"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+    @section Scripts {
+    <script src="~/js/home.js"></script>
+    }
+}
+else
+{
+    <div class="row p-4">
+        <div class="col">
+            <h5>There is no finalized election yet. We are waiting for the results!</h5>
+        </div>
+    </div>
+
+}

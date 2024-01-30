@@ -5,9 +5,7 @@ using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.SmartContract.Infrastructure;
 using BlockchainVotingApp.SmartContract.Models;
-using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using static System.Collections.Specialized.BitVector32;
 
 namespace BlockchainVotingApp.Core.Services
 {
@@ -84,7 +82,6 @@ namespace BlockchainVotingApp.Core.Services
             return (await Task.WhenAll(retrieveTasks)).ToList();
         }
 
-        //TODO: fix it
         public async Task<int?> GetUserVote(AppUser user, string proof, int electionId)
         {
             var election = await GetUserElection(electionId, user);
@@ -143,9 +140,14 @@ namespace BlockchainVotingApp.Core.Services
                 }
                 election.State = ElectionState.Ongoing;
 
-                await Update(election);
+                var stateResult = await smartContractService.ChangeElectionState(false, election.ContractAddress);
 
-                return true;
+                if(stateResult.IsSuccess)
+                {
+                    await Update(election);
+
+                    return true;
+                }
             }
 
             return false;
@@ -230,8 +232,14 @@ namespace BlockchainVotingApp.Core.Services
             return new VoteResult(false, "The candidate is null");
         }
 
-        #region Private
+        public async Task<int> GetElectionResult(DbElection election)
+        {
+            var result = await GetElectionVotes(election);
 
+            return result;
+        }
+
+        #region Private
 
         private async Task<UserElection> GetElectionInternal(DbElection dbElection, DbUserVote? dbVote)
         {
@@ -240,18 +248,24 @@ namespace BlockchainVotingApp.Core.Services
                 HasVoted = dbVote?.HasVoted ?? false
             };
 
-            ISmartContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
-
-            if (smartContractService != null)
-            {
-                election.NumberOfVotes = (await smartContractService.GetTotalNumberOfVotes(election.ContractAddress)).Value;
-            }
-            else
-            {
-                election.NumberOfVotes = 0;
-            }
+            election.NumberOfVotes = await GetElectionVotes(dbElection);
 
             return election;
+        }
+
+        private async Task<int> GetElectionVotes(DbElection election)
+        {
+            if (election.State == ElectionState.Completed)
+            {
+                ISmartContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+
+                if (smartContractService != null && !string.IsNullOrEmpty(election.ContractAddress))
+                {
+                    return (await smartContractService.GetTotalNumberOfVotes(election.ContractAddress)).Value;
+                }
+            }
+
+            return 0;
         }
 
         private async Task<List<int>> GetUserIds(DbElection election)

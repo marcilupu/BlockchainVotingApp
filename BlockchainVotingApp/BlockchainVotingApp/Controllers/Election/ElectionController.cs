@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using System.Text;
 
 
-namespace BlockchainVotingApp.Controllers.Election
+namespace BlockchainVotingApp.Controllers
 {
     [Authorize]
     public class ElectionController : Controller
