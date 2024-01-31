@@ -1,0 +1,40 @@
+{
+  "inputs": [
+    {
+      "name": "birthYear",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "currentYear",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "legalVotingAge",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "userCounty",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "electionCounty",
+      "public": true,
+      "type": "field"
+    },
+    {
+      "name": "countyManagement",
+      "public": true,
+      "type": "field"
+    }
+  ],
+  "output": {
+    "type": "tuple",
+    "components": {
+      "elements": []
+    }
+  }
+}

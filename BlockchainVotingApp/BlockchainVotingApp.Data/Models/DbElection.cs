@@ -7,6 +7,7 @@
         public string? ContractAddress { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public DateTime CreationDate { get; set; }
         public int NumberOfVotes { get; set; }
         public string? Rules { get; set; } //eg. only the voters within a county can vote
         public ElectionState State { get; set; }

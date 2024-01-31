@@ -1,0 +1,8 @@
+def main(private field birthYear, public field currentYear, public field legalVotingAge, private field userCounty, public field electionCounty, public field countyManagement) {
+	field age = currentYear - birthYear;
+
+	assert(age >= legalVotingAge && age > 0, "Age is not within legal limits");
+    assert((countyManagement == 1 && userCounty == electionCounty) || (countyManagement == 0 && userCounty == 0 && electionCounty == 0), "The user is not within election's county");
+
+	return;
+}

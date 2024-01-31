@@ -37,11 +37,18 @@ namespace BlockchainVotingApp.Controllers
 
         [HttpPost]
         public async Task<IActionResult> CreateAccount([FromServices] UserManager<DbUser> userManager,
-                                                       [FromServices] IElectionService electionService,
-                                                       RegisterModel registerModel)
+                                                       RegisterModel registerModel,
+                                                       [FromServices] IAppUserService appUserService)
         {
             if(ModelState.IsValid)
             {
+                var users = await appUserService.GetAll();
+
+                if(users.Any(x => x.NationalId == registerModel.NationalId))
+                {
+                    return BadRequest("The user with this national id already exists!");
+                }
+
                 var user = new DbUser()
                 {
                     FirstName = registerModel.FirstName,

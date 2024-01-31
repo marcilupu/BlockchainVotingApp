@@ -32,7 +32,8 @@ namespace BlockchainVotingApp.AppCode.Extensions
         {
             election ??= new DbElection()
             {
-                State = ElectionState.Registration
+                State = ElectionState.Registration,
+                CreationDate = DateTime.Now,
             };
 
             election.Name = electionModel.Name;
@@ -40,6 +41,7 @@ namespace BlockchainVotingApp.AppCode.Extensions
             election.EndDate = electionModel.EndDate;
             election.Rules = electionModel.Rules;
             election.State = electionModel.State;
+            
 
             if (!string.IsNullOrEmpty(electionModel.ContractAddress))
                 election.ContractAddress = electionModel.ContractAddress;

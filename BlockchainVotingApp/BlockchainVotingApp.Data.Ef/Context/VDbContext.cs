@@ -27,6 +27,8 @@ namespace BlockchainVotingApp.Data.Ef.Context
             builder.Entity<DbUser>().ToTable("Users");
             builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
 
+            builder.Entity<DbUser>().HasIndex(x => x.NationaId).IsUnique();
+
             VDbInitializer.Seed(builder);
         }
     }
