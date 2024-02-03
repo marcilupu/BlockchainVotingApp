@@ -15,7 +15,7 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
 
         public async Task<int> AddOrUpdate(DbUserVote dbUserVote, bool isNew)
         {
-            if(isNew)
+            if (isNew)
             {
                 await _context.AddAsync(dbUserVote);
             }
@@ -42,6 +42,27 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
         public async Task<List<DbUserVote>> GetAll(int userId)
         {
             return await _context.UserVotes.Where(x => x.UserId == userId).ToListAsync();
+        }
+
+        public async Task<List<DbUserVote>> GetAllForElection(int electionId)
+        {
+            return await _context.UserVotes.Where(x => x.ElectionId == electionId).ToListAsync();
+        }
+
+        public async Task<bool> Update(int userId, int electionId, bool voted)
+        {
+            var entity = await _context.UserVotes.AsTracking().FirstOrDefaultAsync(x => x.UserId == userId && x.ElectionId == electionId);
+
+            if(entity != null)
+            {
+                entity.HasVoted = voted;
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<int> Insert(DbUserVote userVote)

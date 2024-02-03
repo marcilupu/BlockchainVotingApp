@@ -7,27 +7,31 @@ namespace BlockchainVotingApp.SmartContract.Services
     /// </summary>
     internal class PathsLookup
     {
-        private readonly ISmartContractConfiguration _configuration;
+        public const string VOTING = "voting";
+        public const string REGISTRATION = "registration";
 
-        public PathsLookup(ISmartContractConfiguration configuration)
+
+        private readonly IContractConfiguration _configuration;
+
+        public PathsLookup(IContractConfiguration configuration)
         {
             _configuration = configuration;
         }
 
-        public string ContextPath(string contextIdentifier) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier);
+        public string ContextPath(string contextIdentifier, string contractType) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, contractType);
 
-        public string ContextVerifierProgramPath(string contextIdentifier) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, "verifier", "Verifier.zok");
+        public string ContextVerifierProgramPath(string contextIdentifier, string contractType) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, contractType, "verifier", "Verifier.zok");
 
-        public string ContextVerifierProofPath(string contextIdentifier, string proofIdentifier) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, "verifier", proofIdentifier);
+        public string ContextVerifierProofPath(string contextIdentifier, string proofIdentifier, string contractType) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, contractType, "verifier", proofIdentifier);
 
-        public string ContextAbiPath(string contextIdentifier) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, _configuration.ABI);
+        public string ContextAbiPath(string contextIdentifier, string contractType) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, contractType, _configuration.ABI);
 
-        public string ContextBytecodePath(string contextIdentifier) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, _configuration.Bytecode);
+        public string ContextBytecodePath(string contextIdentifier, string contractType) => Path.Combine(_configuration.GeneratorWorkspace, contextIdentifier, contractType, _configuration.Bytecode);
 
-        public string GeneratorTemplatePath() => Path.Combine(_configuration.GeneratorWorkspace, "template");
+        public string GeneratorTemplatePath(string contractType) => Path.Combine(_configuration.GeneratorWorkspace, "template", contractType);
 
-        public string CGeneratorBatPath() => Path.Combine(_configuration.GeneratorWorkspace, _configuration.ContextGenerator);
-        
-        public string PGeneratorBatPath() => Path.Combine(_configuration.GeneratorWorkspace, _configuration.ProofGenerator);
+        public string CGeneratorBatPath() => Path.Combine(_configuration.GeneratorWorkspace, "helpers", _configuration.ContextGenerator);
+
+        public string PGeneratorBatPath(string contractType) => Path.Combine(_configuration.GeneratorWorkspace, "helpers", contractType, _configuration.ProofGenerator);
     }
 }

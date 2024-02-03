@@ -16,14 +16,9 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
 
         public async Task<List<DbUser>> GetAll()
         {
-            return await _vDbContext.Users.Include(item => item.County).ToListAsync();
+            return await _vDbContext.Users.ToListAsync();
         }
-
-        public async Task<List<DbUser>> GetAllByCounty(int countyId)
-        {
-            return await _vDbContext.Users.Include(item => item.County).Where(item => item.CountyId == countyId).ToListAsync();
-        }
-
+    
         public async Task<DbUser?> GetByNationalId(string nationalId)
         {
             return await _vDbContext.Users.FirstOrDefaultAsync(user => user.NationaId== nationalId);

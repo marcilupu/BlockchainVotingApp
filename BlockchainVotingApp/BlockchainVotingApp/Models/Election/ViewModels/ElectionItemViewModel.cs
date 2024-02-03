@@ -10,7 +10,6 @@ namespace BlockchainVotingApp.Models.Election.ViewModels
             Name = election.Name;
             Id = election.Id;
             State = election.State;
-            County = election.County;
             ContractAddress = election.ContractAddress;
             StartDate = election.StartDate;
             EndDate = election.EndDate;
@@ -25,7 +24,6 @@ namespace BlockchainVotingApp.Models.Election.ViewModels
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string? Rules { get; set; }
-        public string? County { get; set; }
         public ElectionState State { get; set; }
         public bool HasVoted { get; set; }
         public int NumberOfVotes { get; set; }

@@ -10,10 +10,10 @@ namespace BlockchainVotingApp.Core.Services
     internal class ElectionModule : IElectionModule
     {
         private readonly IElectionRepository _electionRepository;
-        private readonly ISmartContractGenerator _smartContractGenerator;
-        private readonly ISmartContractServiceFactory _smartContractServiceFactory;
+        private readonly IVotingContractGenerator _smartContractGenerator;
+        private readonly IVotingContractServiceFactory _smartContractServiceFactory;
 
-        public ElectionModule(IElectionRepository electionRepository, ISmartContractServiceFactory smartContractServiceFactory, ISmartContractGenerator smartContractGenerator)
+        public ElectionModule(IElectionRepository electionRepository, IVotingContractServiceFactory smartContractServiceFactory, IVotingContractGenerator smartContractGenerator)
         {
             _electionRepository = electionRepository;
             _smartContractServiceFactory = smartContractServiceFactory;

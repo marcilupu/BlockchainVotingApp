@@ -73,7 +73,7 @@ namespace BlockchainVotingApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GenerateProof([FromServices] ISmartContractGenerator smartContractGenerator, [FromServices] IQRGenerator qRGenerator, int electionId)
+        public async Task<IActionResult> GenerateProof([FromServices] IVotingContractGenerator smartContractGenerator, [FromServices] IQRGenerator qRGenerator, int electionId)
         {
             var user = await _appUserService.GetUserAsync();
 

@@ -27,8 +27,8 @@ internal static class ZKPTest
 
         var serviceProvider = services.BuildServiceProvider();
 
-        var generator = serviceProvider.GetRequiredService<ISmartContractGenerator>();
-        var smartContractServiceFactory = serviceProvider.GetService<ISmartContractServiceFactory>();
+        var generator = serviceProvider.GetRequiredService<IVotingContractGenerator>();
+        var smartContractServiceFactory = serviceProvider.GetService<IVotingContractServiceFactory>();
 
         //var userIds = new List<int>() { 1, 2, 3, 4, 5, 6 };
         var contextIdentifier = "18_Tucano";

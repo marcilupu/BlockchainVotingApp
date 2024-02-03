@@ -6,7 +6,7 @@ namespace BlockchainVotingApp.AppCode.Utilities
     {
         public static string CreateContextIdentifier(int id, string name) => $"{id}_{name}";
 
-        public static async Task<ISmartContractService?> CreateSmartContractService(ISmartContractServiceFactory smartContractServiceFactory, ISmartContractGenerator smartContractGenerator, int electionId, string electioName)
+        public static async Task<IVotingContractService?> CreateSmartContractService(IVotingContractServiceFactory smartContractServiceFactory, IVotingContractGenerator smartContractGenerator, int electionId, string electioName)
         {
             var contextIdentifier = CreateContextIdentifier(electionId, electioName);
 

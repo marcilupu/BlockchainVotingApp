@@ -12,11 +12,7 @@ namespace BlockchainVotingApp.Core.DomainModels
             Username = user.UserName;
             Gender = user.Gender;
             NationalId = user.NationaId;
-            CountyId = user.CountyId;
-            if (user.DateOfBirth.HasValue)
-                DateOfBirth = user.DateOfBirth.Value;
-            if(user.County != null)
-                CountyName = user.County.Name;
+   
         }
 
         public int Id { get; set; }
@@ -24,10 +20,7 @@ namespace BlockchainVotingApp.Core.DomainModels
         public string Email { get; set; } = null!;
         public string Gender { get; set; } = null!;
         public string NationalId { get; set; } = null!;
-        public DateTime DateOfBirth { get; set; }
         public string Username { get; set; } = null!;
-        public int CountyId { get; set; }
-        public string CountyName { get; set;}
         public bool HasVoted { get; set; }
     }
 }

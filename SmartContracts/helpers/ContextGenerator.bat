@@ -24,6 +24,6 @@ CALL truffle migrate --f 3
 
 @echo Generate new abi and bytecode files...
 ::CALL solcjs --bin --abi --include-path "../node_modules/" --base-path . "contracts/Election.sol" -o "metadata"
-node "../helpers/GenerateABIandBytecode.js"
+node "../../helpers/GenerateABIandBytecode.js"
 
 @echo JOB DONE

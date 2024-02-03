@@ -12,6 +12,7 @@ namespace BlockchainVotingApp.Core.Extensions
             services.AddScoped<IElectionService, ElectionService>();
             services.AddScoped<IElectionModule, ElectionModule>();
             services.AddSingleton<IQRGenerator, QRGenerator>();
+            services.AddSingleton<IAppConfiguration, AppConfiguration>();
             
             //This service is used in order to change the election state
             services.AddScoped<IElectionModule, ElectionModule>();

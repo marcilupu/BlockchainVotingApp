@@ -1,0 +1,20 @@
+{
+  "inputs": [
+    {
+      "name": "birthYear",
+      "public": false,
+      "type": "field"
+    },
+    {
+      "name": "userCounty",
+      "public": false,
+      "type": "field"
+    }
+  ],
+  "output": {
+    "type": "tuple",
+    "components": {
+      "elements": []
+    }
+  }
+}

@@ -17,9 +17,6 @@ namespace BlockchainVotingApp.Models.Login
         [Required(ErrorMessage = "Gender is required")]
         public string Gender { get; set; } = null!;
 
-        [Required(ErrorMessage = "County is required")]
-        public int County { get; set; }
-
         [Required(ErrorMessage = "The national ID is required"),
     StringLength(256, MinimumLength = 6, ErrorMessage = "The input has to be between 6 and 256 characters long")]
         public string NationalId { get; set; } = null!;

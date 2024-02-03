@@ -45,8 +45,7 @@ namespace BlockchainVotingApp.AppCode.Extensions
 
             if (!string.IsNullOrEmpty(electionModel.ContractAddress))
                 election.ContractAddress = electionModel.ContractAddress;
-            if(electionModel.County.HasValue)
-                election.CountyId = electionModel.County;
+ 
 
             return election;
         }

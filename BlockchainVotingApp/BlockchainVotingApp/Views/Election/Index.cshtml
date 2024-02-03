@@ -46,7 +46,7 @@
                                         </button>
                                     }
                                     <div class="ms-1 d-flex justify-content-center align-items-center">
-                                        <a href="/Election/Details?id=@election.Id" class=" text-decoration-none btn btn-outline-primary">Vote details</a>
+                                        <a href="/Election/Details?id=@election.Id" class=" text-decoration-none btn btn-outline-primary">Details</a>
                                     </div>
                                 </div>
                             </div>
@@ -62,13 +62,6 @@
                             <span style="display: block" class="mb-3">
                                 <i class="fa-solid fa-circle-info"></i>
                                 <span>@election.Rules</span>
-                            </span>
-                        }
-                        @if (!string.IsNullOrEmpty(election.County))
-                        {
-                            <span style="display: block" class="mb-3">
-                                <i class="fa-solid fa-city"></i>
-                                <span>@election.County</span>
                             </span>
                         }
                     </div>

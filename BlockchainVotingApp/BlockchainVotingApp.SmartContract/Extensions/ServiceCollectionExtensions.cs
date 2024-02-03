@@ -10,9 +10,9 @@ namespace BlockchainVotingApp.SmartContract.Extensions
         {
             services
                 .AddSingleton<PathsLookup>()
-                .AddSingleton<ISmartContractConfiguration, SmartContractConfiguration>()
-                .AddSingleton<ISmartContractGenerator, SmartContractGenerator>()
-                .AddSingleton<ISmartContractServiceFactory, SmartContractServiceFactory>();
+                .AddSingleton<IContractConfiguration, ContractConfiguration>()
+                .AddSingleton<IVotingContractGenerator, VotingContractGenerator>()
+                .AddSingleton<IVotingContractServiceFactory, VotingContractServiceFactory>();
 
             return services;
         }

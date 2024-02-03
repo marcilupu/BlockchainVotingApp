@@ -13,10 +13,10 @@ namespace BlockchainVotingApp.Core.Services
     {
         private readonly ICandidateRepository _candidateRepository;
         private readonly IElectionRepository _electionRepository;
-        private readonly ISmartContractServiceFactory _smartContractServiceFactory;
-        private readonly ISmartContractGenerator _smartContractGenerator;
+        private readonly IVotingContractServiceFactory _smartContractServiceFactory;
+        private readonly IVotingContractGenerator _smartContractGenerator;
 
-        public CandidateService(ICandidateRepository candidateRepository, IElectionRepository electionRepository, ISmartContractServiceFactory smartContractServiceFactory, ISmartContractGenerator smartContractGenerator)
+        public CandidateService(ICandidateRepository candidateRepository, IElectionRepository electionRepository, IVotingContractServiceFactory smartContractServiceFactory, IVotingContractGenerator smartContractGenerator)
         {
             _candidateRepository = candidateRepository;
             _electionRepository = electionRepository;
@@ -42,7 +42,7 @@ namespace BlockchainVotingApp.Core.Services
             var election = await _electionRepository.Get(candidate.ElectionId);
             if (election != null && !string.IsNullOrEmpty(election.ContractAddress))
             {
-                ISmartContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+                IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
 
                 if (smartContractService != null)
                 {

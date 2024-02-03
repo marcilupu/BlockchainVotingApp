@@ -20,7 +20,6 @@ namespace BlockchainVotingApp.Areas.Manage.Models.Users.ViewModels
         public UserViewModel(AppUser appUser) {
             FullName = appUser.Username;
             Email= appUser.Email;
-            CountyName= appUser.CountyName;
         }
 
         public string FullName { get; set; }

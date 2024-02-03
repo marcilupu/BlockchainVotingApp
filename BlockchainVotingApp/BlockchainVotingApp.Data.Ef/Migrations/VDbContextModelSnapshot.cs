@@ -171,9 +171,6 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Property<string>("ContractAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CountyId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
@@ -187,6 +184,9 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Property<int>("NumberOfVotes")
                         .HasColumnType("int");
 
+                    b.Property<string>("RegisterContractAddress")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Rules")
                         .HasColumnType("nvarchar(max)");
 
@@ -197,8 +197,6 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CountyId");
 
                     b.ToTable("Elections");
                 });
@@ -217,12 +215,6 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CountyId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("DateOfBirth")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -251,7 +243,7 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
 
                     b.Property<string>("NationaId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -282,7 +274,8 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CountyId");
+                    b.HasIndex("NationaId")
+                        .IsUnique();
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -482,26 +475,6 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .IsRequired();
 
                     b.Navigation("Election");
-                });
-
-            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbElection", b =>
-                {
-                    b.HasOne("BlockchainVotingApp.Data.Models.DbCounty", "County")
-                        .WithMany()
-                        .HasForeignKey("CountyId");
-
-                    b.Navigation("County");
-                });
-
-            modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbUser", b =>
-                {
-                    b.HasOne("BlockchainVotingApp.Data.Models.DbCounty", "County")
-                        .WithMany()
-                        .HasForeignKey("CountyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("County");
                 });
 
             modelBuilder.Entity("BlockchainVotingApp.Data.Models.DbUserVote", b =>

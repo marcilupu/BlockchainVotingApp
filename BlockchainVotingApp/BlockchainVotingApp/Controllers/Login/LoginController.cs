@@ -4,7 +4,6 @@ using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.Models.Login;
 using BlockchainVotingApp.Models.Login.ViewModels;
-using BlockchainVotingApp.SmartContract.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,8 +55,7 @@ namespace BlockchainVotingApp.Controllers
                     UserName = $"{registerModel.FirstName.ToLower()}.{registerModel.LastName.ToLower()}",
                     Gender = registerModel.Gender,
                     NationaId = registerModel.NationalId,
-                    Email = registerModel.Email,
-                    CountyId = registerModel.County
+                    Email = registerModel.Email
                 };
 
                 var result = await userManager.CreateAsync(user, registerModel.Password);

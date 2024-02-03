@@ -5,17 +5,13 @@ namespace BlockchainVotingApp.SmartContract.Utilities
     /// <summary>
     /// Use this class to generate the zokrates verifier file which must be compiled to obtain the proof.
     /// </summary>
-    internal class VerifierProgramCreator
+    internal abstract class VerifierProgramCreator
     {
-        private readonly Random _random;
-        private readonly List<int> _usersIds;
         private int _identation;
-        
-        public static VerifierProgramCreator New(IReadOnlyCollection<int> usersIds) => new VerifierProgramCreator(usersIds);
+        protected readonly Random _random;
 
-        private VerifierProgramCreator(IReadOnlyCollection<int> usersIds)
+        protected VerifierProgramCreator()
         {
-            _usersIds = usersIds.ToList();
             _random = new Random();
             _identation = 0;
         }
@@ -28,32 +24,8 @@ namespace BlockchainVotingApp.SmartContract.Utilities
             try
             {
                 var builder = new StringBuilder(400);
-                var usersCount = _usersIds.Count;
-                var randNumber = _random.Next();
 
-                WriteLine(builder, "def main(private field userId) {");
-
-                // Increase identation
-                _identation++;
-
-                WriteLine(builder, $"field[{usersCount}] ids = [{string.Join(',', _usersIds)}];");
-
-                WriteLine(builder,$"field randomSeed = {randNumber};");
-                WriteLine(builder,"field mut match = randomSeed;");
-
-                WriteLine(builder, $"for u32 i in 0..{usersCount} {{");
-                WriteLine(builder, "    match = if ids[i] == userId { match + 1 } else { match }; ");
-                WriteLine(builder, "}");
-
-                WriteLine(builder, "assert(match > randomSeed);");
-                WriteLine(builder, "return;");
-
-                // Decrease identation.
-                _identation--;
-
-
-                WriteLine(builder, "}");
-
+                GenerateProgram(builder);
 
                 return builder.ToString();
             }
@@ -65,8 +37,9 @@ namespace BlockchainVotingApp.SmartContract.Utilities
             }
         }
 
+        protected abstract void GenerateProgram(StringBuilder builder);
 
-        private void Write(StringBuilder builder, string text)
+        protected void Write(StringBuilder builder, string text)
         {
             // Add identation.
             for (int i = 0; i < _identation; i++)
@@ -78,12 +51,22 @@ namespace BlockchainVotingApp.SmartContract.Utilities
             builder.Append(text);
         }
 
-        private void WriteLine(StringBuilder builder, string text)
+        protected void WriteLine(StringBuilder builder, string text)
         {
             Write(builder,text);
 
             // Add newline
             builder.Append('\n');
+        }
+
+        protected void NewBlock(Action writer)
+        {
+            // Increase identation
+            _identation++;
+
+            writer();
+
+            _identation--;
         }
     }
 }

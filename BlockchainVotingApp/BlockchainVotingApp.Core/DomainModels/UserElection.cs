@@ -15,15 +15,12 @@ namespace BlockchainVotingApp.Core.DomainModels
             Id = election.Id;
             State = election.State;
             ContractAddress = election.ContractAddress;
+            RegisterContractAddress = election.RegisterContractAddress;
             StartDate = election.StartDate;
             EndDate = election.EndDate;
             Rules = election.Rules;
             NumberOfVotes= election.NumberOfVotes;
-            if (election.CountyId.HasValue && election.County != null)
-            {
-                County = election.County.Name;
-                CountyId = election.CountyId;
-            }
+          
         }
 
         
@@ -31,17 +28,15 @@ namespace BlockchainVotingApp.Core.DomainModels
         
         public string Name { get; set; } = null!;
         
-        public string ContractAddress { get; set; } = null!;
-        
+        public string? ContractAddress { get; set; } 
+
+        public string? RegisterContractAddress { get; set; }  
+
         public DateTime StartDate { get; set; }
         
         public DateTime EndDate { get; set; }
         
         public string? Rules { get; set; }
-        
-        public int? CountyId { get; set; }
-        
-        public string? County { get; set; }
 
         public int NumberOfVotes { get; set; }
         

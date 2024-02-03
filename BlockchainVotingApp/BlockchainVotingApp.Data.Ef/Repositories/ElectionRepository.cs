@@ -2,11 +2,6 @@
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlockchainVotingApp.Data.Ef.Repositories
 {
@@ -29,23 +24,14 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
 
         public async Task<DbElection?> Get(int electionId)
         {
-            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates).FirstOrDefaultAsync(x => x.Id == electionId);
+            return await _context.Elections.Include(item => item.Candidates).FirstOrDefaultAsync(x => x.Id == electionId);
         }
 
         public async Task<List<DbElection>> GetAll()
         {
-            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates)
+            return await _context.Elections.Include(item => item.Candidates)
                                            .OrderBy(item => item.State)
                                            .OrderByDescending(x => x.StartDate).ToListAsync();
-        }
-
-        public async Task<List<DbElection>> GetAllByCounty(int countyId)
-        {
-            return await _context.Elections.Include(item => item.County).Include(item => item.Candidates)
-                                            .Where(item => (item.CountyId.HasValue && item.CountyId == countyId) || !item.CountyId.HasValue)
-                                            .OrderBy(item => item.State)
-                                            .OrderByDescending(x => x.StartDate)
-                                            .ToListAsync();
         }
 
         public async Task<int> Insert(DbElection election)
