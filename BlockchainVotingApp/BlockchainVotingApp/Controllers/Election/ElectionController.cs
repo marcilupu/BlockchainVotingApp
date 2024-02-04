@@ -28,7 +28,7 @@ namespace BlockchainVotingApp.Controllers
         {
             var user = await _appUserService.GetUserAsync();
 
-            var elections = await _electionService.GetAll(user);
+            var elections = await _electionService.GetRegisteredElections(user);
 
             var electionViewModel = new ElectionsViewModel(elections);
 

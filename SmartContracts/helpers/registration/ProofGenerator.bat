@@ -14,6 +14,6 @@ CALL zokrates compute-witness --json -a %3 %4 -o "%witnessPath%"
 
 @echo Witness generated
 
-CALL zokrates generate-proof -w "%witnessPath%" -j "%proofPath%" -e 0
+CALL zokrates generate-proof -w "%witnessPath%" -j "%proofPath%"
 
 @echo Proof generated

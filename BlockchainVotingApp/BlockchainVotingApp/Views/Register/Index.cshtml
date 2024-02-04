@@ -1,0 +1,88 @@
+﻿@model BlockchainVotingApp.Models.Register.RegisterViewModel
+
+@{
+    Layout = "_HomeLayout";
+}
+
+<div>
+    <div class="row">
+        <h2>My elections</h2>
+    </div>
+    <div class="row mt-4">
+        @foreach (var election in Model.Items)
+        {
+            <div class="col-12 mb-5">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <div class="row">
+                                <div class="col">
+                                    <h4 class="card-label"><i class="fa-solid fa-check-to-slot"></i> @election.Name</h4>
+                                    @if ((int)election.State == 0)
+                                    {
+                                        <span class="badge py-1 px-" 2 style="background-color:#1e81b0">@election.State</span>
+                                    }
+                                    @if ((int)election.State == 1)
+                                    {
+                                        <span class="badge py-1 px-2" style="background-color:#e37300; cursor:not-allowed">@election.State</span>
+                                    }
+                                    @if ((int)election.State == 2)
+                                    {
+                                        <span class="badge bg-primary py-1 px-2">@election.State</span>
+                                    }
+                                    @if ((int)election.State == 3)
+                                    {
+                                        <span class="badge bg-success py-1 px-2">@election.State</span>
+                                    }
+                                </div>
+                                <div class="col d-flex justify-content-end">
+                                    @if (election.HasRegistered)
+                                    {
+                                        <span class="badge bg-success" style="height: 20px;">Registered</span>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="ms-1 btn btn-success rounded-circle justify-content-center align-items-center vote-button" data-register="true" data-register-election-id="@election.Id">
+                                            Join
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="electionCardBody">
+                        @if (!string.IsNullOrEmpty(election.Rules))
+                        {
+                            <span style="display: block" class="mb-3">
+                                <i class="fa-solid fa-circle-info"></i>
+                                <span>@election.Rules</span>
+                            </span>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="registerModalContent">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Register for this election</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary submit-vote">Join</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/registration.js"></script>
+    }

@@ -59,19 +59,15 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         {
             var election = electionModel.ToDb();
 
-            var result = await _electionService.Insert(election);
-
+            var result = await _electionService.Insert(election, electionModel.County);
             if (result != 0)
             {
                 var electionViewModel = await GetELectionsViewModel();
 
                 return View("/Areas/Manage/Views/Elections/Index.cshtml", electionViewModel);
             }
-            else
-            {
-                //Throw a message that the election could not be created and why...(eg. The election is ongoing and cannot be edited)
-                return new BadRequestResult();
-            }
+
+            return new BadRequestResult();
         }
 
         [HttpPost]

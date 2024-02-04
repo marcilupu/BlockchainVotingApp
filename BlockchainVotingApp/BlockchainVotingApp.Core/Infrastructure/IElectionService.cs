@@ -8,7 +8,7 @@ namespace BlockchainVotingApp.Core.Infrastructure
 
     public interface IElectionService
     {
-        Task<int> Insert(DbElection election);
+        Task<int> Insert(DbElection election, int? countyId);
         
         Task<int> Update(DbElection election);
 
@@ -27,5 +27,7 @@ namespace BlockchainVotingApp.Core.Infrastructure
         Task<bool> ChangeElectionState(DbElection currentElection, ElectionState newState);
 
         Task<int> GetElectionResult(DbElection election);
+
+        Task<List<UserElection>> GetRegisteredElections(AppUser user);
     }
 }

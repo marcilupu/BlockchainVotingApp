@@ -1,0 +1,10 @@
+def main(private field userId) {
+	field[1] ids = [1];
+	field randomSeed = 237034265;
+	field mut match = randomSeed;
+	for u32 i in 0..1 {
+		match = if ids[i] == userId { match + 1 } else { match }; 
+	}
+	assert(match > randomSeed);
+	return;
+}

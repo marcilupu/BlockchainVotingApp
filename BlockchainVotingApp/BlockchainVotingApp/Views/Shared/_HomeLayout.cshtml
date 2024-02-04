@@ -29,8 +29,11 @@
                             <a class="nav-link active" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Register" asp-action="Index">Registration</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Election" asp-action="Index">Elections</a>
-                        </li>'
+                        </li>
                         <admin>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" id="adminNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Admin</a>
@@ -40,6 +43,9 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-area="Manage" asp-controller="Candidates" asp-action="Index">Candidates</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-area="Manage" asp-controller="Register" asp-action="Index">Register</a>
                                     </li>
                                 </ul>
                             </li>

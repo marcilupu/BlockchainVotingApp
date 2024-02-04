@@ -1,0 +1,42 @@
+﻿@model BlockchainVotingApp.Areas.Manage.Models.Register.RegisterViewModel
+
+@{
+    Layout = "_HomeLayout";
+}
+
+<div>
+    <h2>Create a proof for user</h2>
+    <form action="/manage/register/GenerateProof" method="post" style="width: 35rem;" class="mt-4">
+        <div class="form-group mb-3">
+            <label class="mb-2">Birth year</label>
+            <input id="birthDate" type="text" name="BirthYear" class="form-control" />
+        </div>
+        <div class="form-group mb-3">
+            <label class="mb-2">County</label>
+            <select name="County" id="county" class="form-select">
+                <option></option>
+                @foreach (var county in Model.Counties)
+                {
+                    <option name="SelectedCounty" value="@county.id">@county.name</option>
+                }
+            </select>
+        </div>
+         <div class="form-group mb-3">
+            <label class="mb-2">Election</label>
+            <select name="Election" id="election" class="form-select">
+                <option></option>
+                @foreach (var election in Model.Elections)
+                {
+                    <option name="SelectedCounty" value="@election.Value">@election.Key</option>
+                }
+            </select>
+        </div>
+        <div class="form-group p-3 mb-2 text-center">
+            <button type="submit" class="btn btn-primary px-5 py-2">Create</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/areas/manage/register/index.js"></script>
+}

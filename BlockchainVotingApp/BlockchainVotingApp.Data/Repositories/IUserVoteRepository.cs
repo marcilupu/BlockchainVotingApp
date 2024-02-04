@@ -13,7 +13,7 @@ namespace BlockchainVotingApp.Data.Repositories
 
         Task<DbUserVote?> Get(int userId, int electionId);
 
-        Task<List<DbUserVote>> GetAll(int userId);
+        Task<List<DbUserVote>> GetAll(int userId, bool includeElection = false);
 
         Task<List<DbUserVote>> GetAllForElection(int electionId);
 

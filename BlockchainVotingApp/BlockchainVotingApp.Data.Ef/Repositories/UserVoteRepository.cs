@@ -39,9 +39,16 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
             return await _context.UserVotes.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<List<DbUserVote>> GetAll(int userId)
+        public async Task<List<DbUserVote>> GetAll(int userId, bool includeElection = false)
         {
-            return await _context.UserVotes.Where(x => x.UserId == userId).ToListAsync();
+            var query = _context.UserVotes.AsQueryable();
+
+            if (includeElection)
+            {
+                query = query.Include(x => x.Election);
+            }
+
+            return await query.Where(x => x.UserId == userId).ToListAsync();
         }
 
         public async Task<List<DbUserVote>> GetAllForElection(int electionId)
@@ -53,7 +60,7 @@ namespace BlockchainVotingApp.Data.Ef.Repositories
         {
             var entity = await _context.UserVotes.AsTracking().FirstOrDefaultAsync(x => x.UserId == userId && x.ElectionId == electionId);
 
-            if(entity != null)
+            if (entity != null)
             {
                 entity.HasVoted = voted;
 

@@ -16,8 +16,11 @@ namespace BlockchainVotingApp.Core.Services
         private readonly IUserVoteRepository _userVoteRepository;
 
         private readonly ICandidateService _candidateService;
-        private readonly IVotingContractServiceFactory _smartContractServiceFactory;
         private readonly IVotingContractGenerator _smartContractGenerator;
+        private readonly IVotingContractServiceFactory _smartContractServiceFactory;
+
+        private readonly IRegisterContractGenerator _registerContractGenerator;
+        private readonly IRegisterContractServiceFactory _registerContractServiceFactory;
 
         private readonly IContractConfiguration _smartContractConfiguration;
 
@@ -27,7 +30,9 @@ namespace BlockchainVotingApp.Core.Services
                                ICandidateRepository candidateRepository,
                                IVotingContractGenerator smartContractGenerator,
                                IContractConfiguration smartContractConfiguration,
-                               IUserVoteRepository userVoteRepository)
+                               IUserVoteRepository userVoteRepository,
+                               IRegisterContractGenerator registerContractGenerator,
+                               IRegisterContractServiceFactory registerContractServiceFactory)
         {
             _electionRepository = electionRepository;
             _smartContractServiceFactory = smartContractServiceFactory;
@@ -36,6 +41,8 @@ namespace BlockchainVotingApp.Core.Services
             _smartContractGenerator = smartContractGenerator;
             _smartContractConfiguration = smartContractConfiguration;
             _userVoteRepository = userVoteRepository;
+            _registerContractGenerator = registerContractGenerator;
+            _registerContractServiceFactory = registerContractServiceFactory;
         }
 
         public async Task<UserElection?> GetUserElection(int id, AppUser user)
@@ -73,10 +80,26 @@ namespace BlockchainVotingApp.Core.Services
             // Get all user votes and map them so the UserElection domain model may be constructed.
             var userVotes = (await _userVoteRepository.GetAll(user.Id)).ToDictionary(v => v.ElectionId, v => v);
 
-
             var retrieveTasks = elections.Select(async dbElection => await GetElectionInternal(dbElection, dbVote: userVotes.TryGetValue(dbElection.Id, out var vote) ? vote : null)).ToList();
 
             return (await Task.WhenAll(retrieveTasks)).ToList();
+        }
+
+        public async Task<List<UserElection>> GetRegisteredElections(AppUser user)
+        {
+            // Get all user votes and map them so the UserElection domain model may be constructed.
+            var userVotes = (await _userVoteRepository.GetAll(user.Id, includeElection: true)).ToDictionary(v => v.ElectionId, v => v);
+
+            List<UserElection> userElections = new List<UserElection>(userVotes.Count);
+
+            foreach (var userVote in userVotes)
+            {
+                var election = await GetElectionInternal(userVote.Value.Election, userVote.Value);
+
+                userElections.Add(election);
+            }
+
+            return userElections;
         }
 
         public async Task<int?> GetUserVote(AppUser user, string proof, int electionId)
@@ -180,11 +203,23 @@ namespace BlockchainVotingApp.Core.Services
             return false;
         }
 
-        public async Task<int> Insert(DbElection election)
+        public async Task<int> Insert(DbElection election, int? countyId)
         {
             int electionId = await _electionRepository.Insert(election);
 
-            return electionId;
+            // Create a new registration context and deploy the created smart contracts
+            var contextIdentifier = ElectionHelper.CreateContextIdentifier(electionId, election.Name);
+
+            var contextResult = await _registerContractGenerator.CreateSmartContractContext(contextIdentifier, countyId);
+
+            var deployResult = await _registerContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
+
+            var dbElection = await _electionRepository.Get(electionId);
+            dbElection.RegisterContractAddress = deployResult;
+
+            var result = await _electionRepository.Update(dbElection);
+
+            return result;
         }
 
         public async Task<int> Update(DbElection election)
@@ -238,7 +273,8 @@ namespace BlockchainVotingApp.Core.Services
         {
             var election = new UserElection(dbElection)
             {
-                HasVoted = dbVote?.HasVoted ?? false
+                HasVoted = dbVote?.HasVoted ?? false,
+                HasRegistered = dbVote != null
             };
 
             election.NumberOfVotes = await GetElectionVotes(dbElection);
@@ -263,9 +299,9 @@ namespace BlockchainVotingApp.Core.Services
 
         private async Task<List<int>> GetUserIds(DbElection election)
         {
-            var users = await _userVoteRepository.GetAllForElection(election.Id);
+            var usersVotes = await _userVoteRepository.GetAllForElection(election.Id);
 
-            List<int> usersIds = users.Select(item => item.UserId).ToList();
+            List<int> usersIds = usersVotes.Select(item => item.UserId).ToList();
 
             return usersIds;
         }

@@ -4,10 +4,10 @@ namespace BlockchainVotingApp.SmartContract.Utilities
 {
     internal class RegistrationProgramCreator : VerifierProgramCreator
     {
-        private int countyId;
-        public static RegistrationProgramCreator New(int countyId) => new RegistrationProgramCreator(countyId);
+        private int? countyId;
+        public static RegistrationProgramCreator New(int? countyId) => new RegistrationProgramCreator(countyId);
 
-        private RegistrationProgramCreator(int countyId)
+        private RegistrationProgramCreator(int? countyId)
         {
             this.countyId = countyId;
         }
@@ -17,7 +17,14 @@ namespace BlockchainVotingApp.SmartContract.Utilities
             var currentYear = DateTime.Now.Year;
             int legalVotingAge = 18;
 
-            WriteLine(builder, "def main(private field birthYear, private field userCounty) {");
+            if (countyId.HasValue)
+            {
+                WriteLine(builder, "def main(private field birthYear, private field userCounty) {");
+            }
+            else
+            {
+                WriteLine(builder, "def main(private field birthYear) {");
+            }
 
             NewBlock(() =>
             {
@@ -29,10 +36,10 @@ namespace BlockchainVotingApp.SmartContract.Utilities
                 WriteLine(builder, "");
                 WriteLine(builder, $"assert(age >= legalVotingAge && age > 0);");
 
-                if (countyId != 0)
+                if (countyId.HasValue)
                 {
                     WriteLine(builder, "");
-                    WriteLine(builder, $"field electionCounty = {countyId};");
+                    WriteLine(builder, $"field electionCounty = {countyId.Value};");
                     WriteLine(builder, "");
                     WriteLine(builder, $"assert(userCounty == electionCounty);");
                 }

@@ -14,7 +14,7 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         protected override string Type => PathsLookup.REGISTRATION;
 
-        public async Task<ContractMetadata?> CreateSmartContractContext(string contextIdentifier, int county)
+        public async Task<ContractMetadata?> CreateSmartContractContext(string contextIdentifier, int? county)
         {
             // 1. Create election smart contract context setup
             string registrationPath = _pathsLookup.GeneratorTemplatePath(Type);
@@ -49,7 +49,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             return null;
         }
 
-        public async Task<Proof?> GenerateProof(string contextIdentifier, int county, int birthYear)
+        public async Task<Proof?> GenerateProof(string contextIdentifier, int? county, int birthYear)
         {
             // Setup the required path variables. 
             string generatorBat = _pathsLookup.PGeneratorBatPath(Type);
@@ -58,8 +58,17 @@ namespace BlockchainVotingApp.SmartContract.Services
             // Generate a new unique identifier for proof.
             string proofId = Guid.NewGuid().ToString();
 
+            int? response;
+
             // Execute the bat and extract the proof from file.
-            var response = await new Process().InvokeBat(generatorBat, contextPath, proofId, birthYear.ToString(), county.ToString());
+            if(county.HasValue)
+            {
+                response = await new Process().InvokeBat(generatorBat, contextPath, proofId, birthYear.ToString(), county.Value.ToString());
+            }
+            else
+            {
+                response = await new Process().InvokeBat(generatorBat, contextPath, proofId, birthYear.ToString());
+            }
 
             if (response != null)
             {
