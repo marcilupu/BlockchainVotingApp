@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using Nethereum.JsonRpc.Client;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace BlockchainVotingApp.SmartContract.Extensions
@@ -51,10 +52,15 @@ namespace BlockchainVotingApp.SmartContract.Extensions
                 return stringBuilder.ToString();
             }
         }
+         
 
-        public static string GetErrorMessage(this string input) {
+        public static string GetDisplayMessage(this RpcError error) {
+
+            string input = error.Message;
+
             int startIndex = input.IndexOf(":");
-            string substring = input.Substring(startIndex + 9);
+            string substring = input.Substring(startIndex + 1);
+            
             int endIndex = substring.IndexOf(":");
             string errorMessage = substring.Substring(0, endIndex);
 

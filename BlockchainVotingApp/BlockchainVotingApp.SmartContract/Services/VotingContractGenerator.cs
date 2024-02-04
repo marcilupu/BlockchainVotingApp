@@ -40,7 +40,7 @@ namespace BlockchainVotingApp.SmartContract.Services
                     File.WriteAllText(verifierZokPath, verifierProgram);
 
                     // 3. Setup and run context generator. 
-                    string generatorBat = _pathsLookup.CGeneratorBatPath();
+                    string generatorBat = _pathsLookup.CGeneratorBatPath(Type);
 
                     var response = await new Process().InvokeBat(generatorBat, contextPath);
 
@@ -57,7 +57,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             return null;
         }
 
-        public async Task<VotingProof?> GenerateProof(string contextIdentifier, int userId)
+        public async Task<Proof?> GenerateProof(string contextIdentifier, int userId)
         {
             // Setup the required path variables. 
             string generatorBat = _pathsLookup.PGeneratorBatPath(Type);
@@ -73,7 +73,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             {
                 var proofPath = _pathsLookup.ContextVerifierProofPath(contextIdentifier, proofId, Type);
 
-                if (VotingProof.TryRead(proofPath, out var proof))
+                if (Proof.TryRead(proofPath, out var proof))
                 {
                     // TODO: Delete generated files after the proof was create...
                     // At the moment this will be commented for testing dev

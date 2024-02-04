@@ -16,7 +16,7 @@ contract Registration {
     function register(uint256 ax, uint256 ay, uint256 bx0, uint256 bx1, uint256 by0, uint256 by1, uint256 cx, uint256 cy) public view returns (bool){
         //todo: check the args
 
-        // Use ZKP to proove the voter is in the appropriate voters list
+        // Use ZKP to prove the voter has the legal age to vote and that he is in the election's county if it exists.
         Verifier.Proof memory proof= getProof(ax, ay, bx0, bx1, by0, by1, cx, cy);
             
         try verifier.verifyTx(proof) 

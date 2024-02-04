@@ -11,7 +11,6 @@ namespace BlockchainVotingApp.Core.Services
 {
     internal class ElectionService : IElectionService
     {
-        private readonly IUserRepository _userRepository;
         private readonly IElectionRepository _electionRepository;
         private readonly ICandidateRepository _candidateRepository;
         private readonly IUserVoteRepository _userVoteRepository;
@@ -23,7 +22,6 @@ namespace BlockchainVotingApp.Core.Services
         private readonly IContractConfiguration _smartContractConfiguration;
 
         public ElectionService(IElectionRepository electionRepository,
-                               IUserRepository userRepository,
                                IVotingContractServiceFactory smartContractServiceFactory,
                                ICandidateService candidateService,
                                ICandidateRepository candidateRepository,
@@ -32,7 +30,6 @@ namespace BlockchainVotingApp.Core.Services
                                IUserVoteRepository userVoteRepository)
         {
             _electionRepository = electionRepository;
-            _userRepository = userRepository;
             _smartContractServiceFactory = smartContractServiceFactory;
             _candidateService = candidateService;
             _candidateRepository = candidateRepository;
@@ -92,7 +89,7 @@ namespace BlockchainVotingApp.Core.Services
 
                 if (smartContractService != null)
                 {
-                    VotingProof voterProof = JsonConvert.DeserializeObject<VotingProof>(proof);
+                    Proof voterProof = JsonConvert.DeserializeObject<Proof>(proof);
 
                     var result = await smartContractService.GetUserVote(voterProof, election.ContractAddress);
 
@@ -199,7 +196,7 @@ namespace BlockchainVotingApp.Core.Services
         {
             var candidate = await _candidateService.Get(candidateId);
 
-            VotingProof voterProof = JsonConvert.DeserializeObject<VotingProof>(proof);
+            Proof voterProof = JsonConvert.DeserializeObject<Proof>(proof);
 
             if (candidate != null)
             {

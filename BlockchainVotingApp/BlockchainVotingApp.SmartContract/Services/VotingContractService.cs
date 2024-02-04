@@ -10,25 +10,16 @@ using System.Numerics;
 namespace BlockchainVotingApp.SmartContract.Services
 {
 
-    internal class VotingContractService : IVotingContractService
+    internal class VotingContractService : ElectionContractService, IVotingContractService
     {
-
-        private readonly IContractConfiguration _configuration;
-        private readonly ContractMetadata _metadata;
-
-        public VotingContractService(ContractMetadata metadata, IContractConfiguration configuration)
-        {
-            _configuration = configuration;
-            _metadata = metadata;
-
-        }
+        public VotingContractService(ContractMetadata metadata, IContractConfiguration configuration) : base(metadata, configuration) { }
 
         public async Task<ExecutionResult> AddCandidate(int candidateId, string contractAddress) => (await Post(contractAddress, "addCandidate", candidateId));
 
 
         public async Task<ExecutionResult> ChangeElectionState(bool electionState, string contractAddress) => (await Post(contractAddress, "changeElectionState", electionState));
 
-        public async Task<ExecutionResult<Vote>> GetUserVote(VotingProof voterProof, string contractAddress)
+        public async Task<ExecutionResult<Vote>> GetUserVote(Proof voterProof, string contractAddress)
         {
             var proofHash = voterProof.GetHash();
 
@@ -45,7 +36,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             return await Get(contractAddress, "getCandidateResults", function => function.CallDeserializingToObjectAsync<CandidateResult>(candidateId), defaultValue: new());
         }
 
-        public async Task<ExecutionResult> Vote(VotingProof voterProof, int candidateId, string contractAddress)
+        public async Task<ExecutionResult> Vote(Proof voterProof, int candidateId, string contractAddress)
         {
             var proofHash = voterProof.GetHash();
 
@@ -61,79 +52,5 @@ namespace BlockchainVotingApp.SmartContract.Services
                 proofHash,
                 candidateId));
         }
-
-        #region Internals
-
-        private async Task<ExecutionResult<DataType>> Get<DataType>(string contractAddress, string functionName, Func<Function, Task<DataType>> executor, DataType? defaultValue = default)
-        {
-            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
-
-            try
-            {
-                var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
-
-                var function = contract.GetFunction(functionName);
-
-                var result = await executor(function);
-
-                return new ExecutionResult<DataType>(result, true);
-            }
-            catch (RpcResponseException ex)
-            {
-                Console.WriteLine($" [RpcResponseException]. Message: {ex.Message}");
-
-                return new ExecutionResult<DataType>(defaultValue, false, ex.Message);
-            }
-            catch
-            {
-                return new ExecutionResult<DataType>(defaultValue, false);
-            }
-        }
-
-        private async Task<ExecutionResult> Post(string contractAddress, string functionName, params object[]? parameters)
-        {
-            var web3 = new Web3(_configuration.BlockchainNetworkUrl);
-
-            try
-            {
-                var contract = web3.Eth.GetContract(_metadata.Abi, contractAddress);
-
-                var function = contract.GetFunction(functionName);
-
-                // Estimate the gas required to execute the smart contract function.
-                var estimatedGas = await EstimateGas(function);
-
-                var result = await function.SendTransactionAsync(
-                    from: _configuration.AdminDefaultAccountAddress,
-                    gas: estimatedGas,
-                    value: new HexBigInteger(new BigInteger(0)),
-                    parameters
-                );
-
-                return new ExecutionResult(true, result);
-            }
-            catch (RpcResponseException response)
-            {
-                return new ExecutionResult(false, response.RpcError.Message.GetErrorMessage());
-            }
-            catch
-            {
-                return new ExecutionResult(false);
-            }
-
-            async Task<HexBigInteger> EstimateGas(Function function)
-            {
-                try
-                {
-                    return await function.EstimateGasAsync(parameters);
-                }
-                catch
-                {
-                    return new HexBigInteger(new BigInteger(50000));
-                }
-            }
-        }
-
-        #endregion
     }
 }

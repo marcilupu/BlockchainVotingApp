@@ -1,0 +1,13 @@
+def main(private field birthYear, private field userCounty) {
+	field currentYear = 2024;
+	field legalVotingAge = 18;
+	
+	field age = currentYear - birthYear;
+	
+	assert(age >= legalVotingAge && age > 0);
+	
+	field electionCounty = 1;
+	
+	assert(userCounty == electionCounty);
+	return;
+}

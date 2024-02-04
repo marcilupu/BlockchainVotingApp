@@ -32,7 +32,7 @@ namespace BlockchainVotingApp.SmartContract.Services
                     File.WriteAllText(verifierZokPath, verifierProgram);
 
                     // 3. Setup and run context generator. 
-                    string generatorBat = _pathsLookup.CGeneratorBatPath();
+                    string generatorBat = _pathsLookup.CGeneratorBatPath(Type);
 
                     var response = await new Process().InvokeBat(generatorBat, contextPath);
 
@@ -49,7 +49,7 @@ namespace BlockchainVotingApp.SmartContract.Services
             return null;
         }
 
-        public async Task<VotingProof?> GenerateProof(string contextIdentifier, int county, int birthYear)
+        public async Task<Proof?> GenerateProof(string contextIdentifier, int county, int birthYear)
         {
             // Setup the required path variables. 
             string generatorBat = _pathsLookup.PGeneratorBatPath(Type);
@@ -59,13 +59,13 @@ namespace BlockchainVotingApp.SmartContract.Services
             string proofId = Guid.NewGuid().ToString();
 
             // Execute the bat and extract the proof from file.
-            var response = await new Process().InvokeBat(generatorBat, contextPath, proofId, county.ToString(), birthYear.ToString());
+            var response = await new Process().InvokeBat(generatorBat, contextPath, proofId, birthYear.ToString(), county.ToString());
 
             if (response != null)
             {
                 var proofPath = _pathsLookup.ContextVerifierProofPath(contextIdentifier, proofId, Type);
 
-                if (VotingProof.TryRead(proofPath, out var proof))
+                if (Proof.TryRead(proofPath, out var proof))
                 {
                     return proof;
                 }

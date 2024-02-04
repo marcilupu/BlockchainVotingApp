@@ -1,7 +1,7 @@
 const Election = artifacts.require('Election');
 
 //Deployed contract address
-const contractAddress = '0x8368b844b32b26b8cb9cf9e282d92a668e31914a'
+const contractAddress = '0x4F945511B862B5b2cAa370395A2d93239dd3C844'
 
 const myElection = await Election.at(contractAddress);
 

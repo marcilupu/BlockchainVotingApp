@@ -7,6 +7,6 @@ namespace BlockchainVotingApp.SmartContract.Infrastructure
     {
         Task<ContractMetadata?> CreateSmartContractContext(string contextIdentifier, int county);
 
-        Task<VotingProof?> GenerateProof(string contextIdentifier, int county, int birthYear);
+        Task<Proof?> GenerateProof(string contextIdentifier, int county, int birthYear);
     }
 }

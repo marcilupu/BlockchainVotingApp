@@ -30,7 +30,7 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         public string GeneratorTemplatePath(string contractType) => Path.Combine(_configuration.GeneratorWorkspace, "template", contractType);
 
-        public string CGeneratorBatPath() => Path.Combine(_configuration.GeneratorWorkspace, "helpers", _configuration.ContextGenerator);
+        public string CGeneratorBatPath(string contractType) => Path.Combine(_configuration.GeneratorWorkspace, "helpers", contractType, _configuration.ContextGenerator);
 
         public string PGeneratorBatPath(string contractType) => Path.Combine(_configuration.GeneratorWorkspace, "helpers", contractType, _configuration.ProofGenerator);
     }
