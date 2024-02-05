@@ -98,7 +98,63 @@ const HomeComponent = function () {
             plugins: {
                 title: {
                     display: true,
-                    text: 'My Chart Title', // Set your chart title text
+                    text: 'Election results', // Set your chart title text
+                    font: {
+                        size: 18, // Set the font size for the chart title
+                    },
+                },
+            },
+            scales: {
+                x:
+                {
+                    stepSize: 1,
+                    ticks: {
+                        color: '#4285F4',
+                    },
+                },
+                y:
+                {
+                    stepSize: 1,
+                    ticks: {
+                        color: '#f44242',
+                    },
+                },
+            },
+        };
+
+        // Destroy chart.js bar graph to redraw other graph in same <canvas>
+        if (context.state.chartObject != null) {
+            context.state.chartObject.destroy();
+        }
+
+        context.state.chartObject = new Chart(
+            context.state.jQuery.barchart,
+            context.chart.chartData,
+            context.chart.chartOptions
+        );
+    }
+
+    const initEmptyChart = function () {
+        context.chart.chartData = {
+            type: 'bar',
+            data: {
+                labels: [],  // Empty array for labels
+                datasets: [{
+                    label: 'Election results',
+                    data: [],   // Empty array for data points
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',  // Adjust as needed
+                    borderColor: 'rgba(75, 192, 192, 1)',        // Adjust as needed
+                    borderWidth: 1
+                }]
+            },
+        };
+
+        // Options
+        context.chart.chartOptions = {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Election results', // Set your chart title text
                     font: {
                         size: 18, // Set the font size for the chart title
                     },
@@ -140,10 +196,11 @@ const HomeComponent = function () {
         context.state.jQuery.barchart = $("#" + context.ids.barchart);
 
         context.state.jQuery.electionSelect.select2({
-            width: '50%'
+            width: '50%',
+            placeholder: 'Select the election you want to see the results'
         });
 
-        initChart();
+        initEmptyChart();
 
         context.state.jQuery.electionSelect.on('select2:select', function (e) {
             initChart();

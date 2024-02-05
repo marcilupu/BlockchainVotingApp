@@ -11,6 +11,8 @@ namespace BlockchainVotingApp.SmartContract.Services
 
         public async Task<ExecutionResult> Register(Proof registerProof, string contractAddress)
         {
+            var proofHash = registerProof.GetHash();
+
             return (await Post(contractAddress, "register",
                 registerProof.AX,
                 registerProof.AY,
@@ -19,7 +21,8 @@ namespace BlockchainVotingApp.SmartContract.Services
                 registerProof.B0Y,
                 registerProof.B1Y,
                 registerProof.CX,
-                registerProof.CY));
+                registerProof.CY,
+                proofHash));
         }
     }
 }

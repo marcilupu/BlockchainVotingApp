@@ -3,7 +3,6 @@ using BlockchainVotingApp.Core.Infrastructure;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
 using BlockchainVotingApp.Models.Login;
-using BlockchainVotingApp.Models.Login.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,19 +18,9 @@ namespace BlockchainVotingApp.Controllers
         public IActionResult Index() => View();
 
         [HttpGet]
-        public IActionResult Register([FromServices] ICountyRepository countyRepository)
+        public IActionResult Register()
         {
-            var counties = countyRepository.GetAll().Result;
-
-            LoginViewModel loginViewModel = new LoginViewModel();
-            loginViewModel.Counties = new List<(string, int)>();
-
-            foreach(DbCounty county in counties)
-            {
-                loginViewModel.Counties.Add((county.Name, county.Id));
-            }
-
-            return View(loginViewModel);
+            return View();
         }
 
         [HttpPost]
@@ -53,7 +42,6 @@ namespace BlockchainVotingApp.Controllers
                     FirstName = registerModel.FirstName,
                     LastName = registerModel.LastName,
                     UserName = $"{registerModel.FirstName.ToLower()}.{registerModel.LastName.ToLower()}",
-                    Gender = registerModel.Gender,
                     NationaId = registerModel.NationalId,
                     Email = registerModel.Email
                 };

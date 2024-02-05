@@ -20,7 +20,6 @@ const ElectionPageComponent = function () {
                 editStartDate: '#editStartDate',
                 editEndDate: '#editEndDate',
                 editElectionRules: '#editElectionRules',
-                editCountySelect: '#editCounty',
                 editStateSelect: '#editState',
             },
             deleteElectionModal: {
@@ -89,7 +88,6 @@ const ElectionPageComponent = function () {
                 editStartDate: $(context.ids.editElectionModal.editStartDate),
                 editEndDate: $(context.ids.editElectionModal.editEndDate),
                 editElectionRules: $(context.ids.editElectionModal.editElectionRules),
-                editCountySelect: $(context.ids.editElectionModal.editCountySelect),
                 editStateSelect: $(context.ids.editElectionModal.editStateSelect)
             },
             electionEditId: null
@@ -107,7 +105,6 @@ const ElectionPageComponent = function () {
                 startDate: card.find('[data-election-start-date]').val(),
                 endDate: card.find('[data-election-end-date]').val(),
                 rules: card.find('[data-election-rules]').val(),
-                county: card.find('[data-election-county]').val(),
                 state: card.find('[data-election-state]').val(),
             };
 
@@ -116,13 +113,6 @@ const ElectionPageComponent = function () {
             internalContext.editElectionModal.editStartDate.val(election.startDate);
             internalContext.editElectionModal.editEndDate.val(election.endDate);
             internalContext.editElectionModal.editElectionRules.val(election.rules);
-
-
-            internalContext.editElectionModal.editCountySelect.select2({
-                dropdownParent: internalContext.editElectionModal.target,
-                placeholder: election.county && election.county != '' ? election.county : 'No county selected',
-                width: '100%'
-            });
 
             internalContext.editElectionModal.editStateSelect.select2({
                 dropdownParent: internalContext.editElectionModal.target,
@@ -164,10 +154,6 @@ const ElectionPageComponent = function () {
             $('#editEndDatepicker').datepicker({
                 todayHighlight: true,
                 orientation: "bottom"
-            });
-
-            $('#editCounty').select2({
-                placeholder: "Select the election's county"
             });
 
             $('#editState').select2({

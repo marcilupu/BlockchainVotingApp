@@ -41,20 +41,21 @@
             maxFiles: 1,
             init: function () {
                 this.on("sending", function (file, xhr, formData) {
+
+                    Swal.fire({
+                        title: 'Registering...',
+                        html: 'Please wait...',
+                        didOpen: () => {
+                            Swal.showLoading()
+                        },
+                        allowOutsideClick: false
+                    });
+
                     formData.append("electionId", context.state.electionId);
                 });
             },
             success: function (file, response) {
                 context.state.proofContent = response.content
-
-                Swal.fire({
-                    title: 'Registering...',
-                    html: 'Please wait...',
-                    didOpen: () => {
-                        Swal.showLoading()
-                    },
-                    allowOutsideClick: false
-                });
 
                 Swal.fire({
                     title: 'Good job!',
@@ -67,6 +68,18 @@
                 })
 
                 location.reload();
+            },
+            error: function (result) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Your proof is wrong or you have already registered',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    }
+                })
+                context.modal.modal("hide");
             }
         });
     }

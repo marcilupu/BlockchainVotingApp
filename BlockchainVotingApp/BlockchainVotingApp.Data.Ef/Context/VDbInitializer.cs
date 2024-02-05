@@ -29,7 +29,8 @@ namespace BlockchainVotingApp.Data.Ef.Context
 
             modelBuilder.Entity<DbUserRole>().HasData(
                 new DbUserRole { Id = 1, Name = "Admin", NormalizedName = "ADMIN", ConcurrencyStamp = "1" },
-                new DbUserRole { Id = 2, Name = "Voter", NormalizedName = "VOTER", ConcurrencyStamp = "2" }
+                new DbUserRole { Id = 2, Name = "Voter", NormalizedName = "VOTER", ConcurrencyStamp = "2" },
+                new DbUserRole { Id = 3, Name = "Authority", NormalizedName = "AUTHORITY", ConcurrencyStamp = "3" }
             );
         }
     }

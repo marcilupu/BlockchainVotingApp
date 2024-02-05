@@ -237,7 +237,7 @@ namespace BlockchainVotingApp.Core.Services
             {
                 var election = await GetUserElection(candidate.ElectionId, user);
 
-                if (election != null)
+                if (election != null && !string.IsNullOrEmpty(election.ContractAddress))
                 {
                     IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
 
@@ -251,7 +251,7 @@ namespace BlockchainVotingApp.Core.Services
                             return new VoteResult(result.IsSuccess, result.Message);
                         }
 
-                        return new VoteResult(false, "Failed to save user new state");
+                        return new VoteResult(false, "The proof is wrong or the user has already voted!");
 
                     }
                     return new VoteResult(false, "The smart contract service is null");

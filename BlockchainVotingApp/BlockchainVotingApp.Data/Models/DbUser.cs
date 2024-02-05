@@ -7,7 +7,7 @@ namespace BlockchainVotingApp.Data.Models
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
-        public string Gender { get; set; } = null!;
+        public string? Gender { get; set; }
         public string NationaId { get; set; } = null!;
 
         //AccountAddress - AspNetUserClaim

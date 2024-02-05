@@ -228,7 +228,6 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gender")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -331,6 +330,13 @@ namespace BlockchainVotingApp.Data.Ef.Migrations
                             ConcurrencyStamp = "2",
                             Name = "Voter",
                             NormalizedName = "VOTER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = "3",
+                            Name = "Authority",
+                            NormalizedName = "AUTHORITY"
                         });
                 });
 
