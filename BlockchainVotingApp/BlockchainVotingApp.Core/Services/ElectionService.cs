@@ -212,14 +212,24 @@ namespace BlockchainVotingApp.Core.Services
 
             var contextResult = await _registerContractGenerator.CreateSmartContractContext(contextIdentifier, countyId);
 
-            var deployResult = await _registerContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
+            // If smart contract has been succesufully generated, continue.
+            if (contextResult != null)
+            {
+                // If smart contract has been succesufully deployed, continue.
+                var deployResult = await _registerContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
 
-            var dbElection = await _electionRepository.Get(electionId);
-            dbElection.RegisterContractAddress = deployResult;
+                // Assign the smart contract address to election register contract address.
+                if (!string.IsNullOrEmpty(deployResult))
+                {
+                    election.RegisterContractAddress = deployResult;
 
-            var result = await _electionRepository.Update(dbElection);
+                    var result = await _electionRepository.Update(election);
 
-            return result;
+                    return result;
+                }
+            }
+
+            return 0;
         }
 
         public async Task<int> Update(DbElection election)
