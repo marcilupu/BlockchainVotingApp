@@ -101,6 +101,27 @@ namespace BlockchainVotingApp.SmartContract.Services
             return null;
         }
 
+        public bool Cleanup(string contextIdentifier)
+        {
+            try
+            {
+                var contextPath = _pathsLookup.ContextPath(contextIdentifier, Type);
+
+                // Delete all the content from context path recursive.
+                if (Directory.Exists(contextPath))
+                {
+                    Directory.Delete(contextPath, true); 
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+
+        }
+
         #endregion
 
     }

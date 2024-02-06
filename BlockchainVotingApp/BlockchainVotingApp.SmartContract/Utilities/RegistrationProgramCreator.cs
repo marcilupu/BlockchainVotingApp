@@ -30,17 +30,17 @@ namespace BlockchainVotingApp.SmartContract.Utilities
             {
                 WriteLine(builder, $"field currentYear = {currentYear};");
                 WriteLine(builder, $"field legalVotingAge = {legalVotingAge};");
-                WriteLine(builder, "");
+                WriteLine(builder, string.Empty);
 
                 WriteLine(builder, $"field age = currentYear - birthYear;");
-                WriteLine(builder, "");
+                WriteLine(builder, string.Empty);
                 WriteLine(builder, $"assert(age >= legalVotingAge && age > 0);");
 
                 if (countyId.HasValue)
                 {
-                    WriteLine(builder, "");
+                    WriteLine(builder, string.Empty);
                     WriteLine(builder, $"field electionCounty = {countyId.Value};");
-                    WriteLine(builder, "");
+                    WriteLine(builder, string.Empty);
                     WriteLine(builder, $"assert(userCounty == electionCounty);");
                 }
 

@@ -6,14 +6,10 @@
 
 <div>
     <h2>Create a new election</h2>
-    <form action="/manage/elections/createElection" method="post" style="width: 35rem;" class="mt-4">
+    <form style="width: 35rem;" class="mt-4" id="addForm">
         <div class="form-group mb-3">
             <label class="mb-2">Election name</label>
             <input id="electionName" type="text" name="Name" class="form-control" />
-        </div>
-        <div class="form-group mb-3">
-            <label class="mb-2">Contract address</label>
-            <input id="contractAddress" type="text" name="ContractAddress" class="form-control" />
         </div>
         <div class="form-group mb-3">
             <label class="mb-2">Election start date</label>
@@ -52,7 +48,7 @@
             </select>
         </div>
         <div class="form-group p-3 mb-2 text-center">
-            <button type="submit" class="btn btn-primary px-5 py-2">Create</button>
+            <button id="addButton" class="btn btn-primary px-5 py-2">Create</button>
         </div>
     </form>
 </div>

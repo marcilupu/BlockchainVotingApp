@@ -37,15 +37,11 @@ namespace BlockchainVotingApp.AppCode.Extensions
             };
 
             election.Name = electionModel.Name;
-            election.StartDate = electionModel.StartDate;
-            election.EndDate = electionModel.EndDate;
+            election.StartDate = electionModel.StartDate ?? DateTime.Now;
+            election.EndDate = electionModel.EndDate ?? DateTime.Now.AddMonths(1);
             election.Rules = electionModel.Rules;
             election.State = electionModel.State;
             
-
-            if (!string.IsNullOrEmpty(electionModel.ContractAddress))
-                election.ContractAddress = electionModel.ContractAddress;
-
             return election;
         }
 

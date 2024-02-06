@@ -2,15 +2,13 @@
 using BlockchainVotingApp.Data.Ef.Repositories;
 using BlockchainVotingApp.Data.Models;
 using BlockchainVotingApp.Data.Repositories;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace BlockchainVotingApp.Data.Ef.Config
 {
-    public static class Extensions
+    public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddDataAccessLayer(this IServiceCollection services, IConfiguration configuration)
         {

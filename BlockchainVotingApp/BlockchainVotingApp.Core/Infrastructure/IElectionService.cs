@@ -12,6 +12,8 @@ namespace BlockchainVotingApp.Core.Infrastructure
         
         Task<int> Update(DbElection election);
 
+        Task<bool> Delete(DbElection election);
+
         Task<List<UserElection>> GetAll(AppUser user);
 
         Task<List<Election>> GetAll();

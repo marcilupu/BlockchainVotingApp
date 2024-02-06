@@ -26,7 +26,7 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
             _electionRepository = electionRepository;
         }
 
-        private async Task<ElectionsViewModel> GetELectionsViewModel()
+        private async Task<ElectionsViewModel> GetElectionsViewModel()
         {
             var elections = await _electionService.GetAll();
 
@@ -39,7 +39,7 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
         public async Task<IActionResult> Index()
         {
-            var electionViewModel = await GetELectionsViewModel();
+            var electionViewModel = await GetElectionsViewModel();
 
             return View(electionViewModel);
         }
@@ -57,17 +57,21 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
         [HttpPost]
         public async Task<IActionResult> CreateElection(AddEditElectionModel electionModel)
         {
-            var election = electionModel.ToDb();
-
-            var result = await _electionService.Insert(election, electionModel.County);
-            if (result != 0)
+            if (ModelState.IsValid)
             {
-                var electionViewModel = await GetELectionsViewModel();
+                var election = electionModel.ToDb();
 
-                return View("/Areas/Manage/Views/Elections/Index.cshtml", electionViewModel);
+                var result = await _electionService.Insert(election, electionModel.County);
+
+                if (result != 0)
+                {
+                    return Ok();
+                }
+
+                return BadRequest("Failed to register election, please try again.");
             }
 
-            return new BadRequestResult();
+            return BadRequest("Form is invalid, please complete all required fields");
         }
 
         [HttpPost]
@@ -85,10 +89,10 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
                 if (result != 0)
                 {
-                    return new OkResult();
+                    return Ok();
                 }
             }
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpPost]
@@ -98,14 +102,14 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
             if (dbElection != null)
             {
-                var result = await _electionRepository.Delete(dbElection);
+                var result = await _electionService.Delete(dbElection);
 
                 if (result)
                 {
-                    return new OkResult();
+                    return Ok();
                 }
             }
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpPost]
@@ -119,10 +123,11 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Election
 
                 if (result)
                 {
-                    return new OkResult();
+                    return Ok();
                 }
             }
-            return new BadRequestResult();
+
+            return BadRequest();
         }
     }
 }

@@ -7,5 +7,10 @@ namespace BlockchainVotingApp.SmartContract.Infrastructure
         Task<string> DeploySmartContract(string contextIdentifier, string adminAccountPrivateKey);
 
         Task<ContractMetadata?> GetSmartContractMetadata(string contextIdentifier);
+
+        /// <summary>
+        /// Remove all data associated with the given context.
+        /// </summary>
+        bool Cleanup(string contextIdentifier);
     }
 }

@@ -16,7 +16,7 @@ namespace BlockchainVotingApp.Core.Services
         private readonly IUserVoteRepository _userVoteRepository;
 
         private readonly ICandidateService _candidateService;
-        private readonly IVotingContractGenerator _smartContractGenerator;
+        private readonly IVotingContractGenerator _votingContractGenerator;
         private readonly IVotingContractServiceFactory _smartContractServiceFactory;
 
         private readonly IRegisterContractGenerator _registerContractGenerator;
@@ -38,7 +38,7 @@ namespace BlockchainVotingApp.Core.Services
             _smartContractServiceFactory = smartContractServiceFactory;
             _candidateService = candidateService;
             _candidateRepository = candidateRepository;
-            _smartContractGenerator = smartContractGenerator;
+            _votingContractGenerator = smartContractGenerator;
             _smartContractConfiguration = smartContractConfiguration;
             _userVoteRepository = userVoteRepository;
             _registerContractGenerator = registerContractGenerator;
@@ -108,7 +108,7 @@ namespace BlockchainVotingApp.Core.Services
 
             if (election != null)
             {
-                IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+                IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _votingContractGenerator, election.Id, election.Name);
 
                 if (smartContractService != null)
                 {
@@ -135,13 +135,13 @@ namespace BlockchainVotingApp.Core.Services
             string contextIdentifier = ElectionHelper.CreateContextIdentifier(election.Id, election.Name);
 
             // Generate election context
-            var contractMetadata = await _smartContractGenerator.CreateSmartContractContext(contextIdentifier, usersIds);
+            var contractMetadata = await _votingContractGenerator.CreateSmartContractContext(contextIdentifier, usersIds);
 
             //Deploy a new smart contract to interact with
-            var deployedContract = await _smartContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
+            var deployedContract = await _votingContractGenerator.DeploySmartContract(contextIdentifier, _smartContractConfiguration.AdminDefaultAccountPrivateKey);
             election.ContractAddress = deployedContract;
 
-            IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+            IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _votingContractGenerator, election.Id, election.Name);
 
             if (smartContractService != null)
             {
@@ -177,7 +177,7 @@ namespace BlockchainVotingApp.Core.Services
         {
             IVotingContractService smartContractService;
 
-            var smartContratMetadata = await _smartContractGenerator.GetSmartContractMetadata(ElectionHelper.CreateContextIdentifier(currentElection.Id, currentElection.Name));
+            var smartContratMetadata = await _votingContractGenerator.GetSmartContractMetadata(ElectionHelper.CreateContextIdentifier(currentElection.Id, currentElection.Name));
 
             if (smartContratMetadata != null)
             {
@@ -229,8 +229,14 @@ namespace BlockchainVotingApp.Core.Services
                 }
             }
 
+            // As fallback, clean up election and return 0.
+            await CleanupElectionInternal(election);
+
             return 0;
         }
+
+
+        public Task<bool> Delete(DbElection election) => CleanupElectionInternal(election);
 
         public async Task<int> Update(DbElection election)
         {
@@ -249,7 +255,7 @@ namespace BlockchainVotingApp.Core.Services
 
                 if (election != null && !string.IsNullOrEmpty(election.ContractAddress))
                 {
-                    IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+                    IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _votingContractGenerator, election.Id, election.Name);
 
                     if (smartContractService != null)
                     {
@@ -296,7 +302,7 @@ namespace BlockchainVotingApp.Core.Services
         {
             if (election.State == ElectionState.Completed)
             {
-                IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _smartContractGenerator, election.Id, election.Name);
+                IVotingContractService? smartContractService = await ElectionHelper.CreateSmartContractService(_smartContractServiceFactory, _votingContractGenerator, election.Id, election.Name);
 
                 if (smartContractService != null && !string.IsNullOrEmpty(election.ContractAddress))
                 {
@@ -314,6 +320,30 @@ namespace BlockchainVotingApp.Core.Services
             List<int> usersIds = usersVotes.Select(item => item.UserId).ToList();
 
             return usersIds;
+        }
+
+        private async Task<bool> CleanupElectionInternal(DbElection election)
+        {
+            try
+            {
+                // Remove election from database.
+                var succeded = await _electionRepository.Delete(election);
+
+                if (succeded)
+                {
+                    // If election has been removed from database, remove referenced files from disk.
+                    var contextIdentifier = ElectionHelper.CreateContextIdentifier(election.Id, election.Name);
+
+                    return _registerContractGenerator.Cleanup(contextIdentifier) && _votingContractGenerator.Cleanup(contextIdentifier);
+                }
+
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
+
         }
 
         #endregion

@@ -39,12 +39,12 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
 
             if(result != 0)
             {
-                return new OkResult();
+                return Ok();
             }
             else
             {
                 //return a message that the candidate could not be added and why
-                return new BadRequestResult();
+                return BadRequest();
             }    
         }
 
@@ -60,10 +60,11 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
 
                 if (result != 0)
                 {
-                    return new OkResult();
+                    return Ok();
                 }
             }
-            return new BadRequestResult();
+
+            return BadRequest();
         }
 
         [HttpPost]
@@ -77,10 +78,11 @@ namespace BlockchainVotingApp.Areas.Manage.Controllers.Candidate
 
                 if (result)
                 {
-                    return new OkResult();
+                    return Ok();
                 }
             }
-            return new BadRequestResult();
+
+            return BadRequest();
         }
     }
 }
