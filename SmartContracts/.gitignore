@@ -1,2 +1,11 @@
-./node_modules
-./build/
+*
+
+!helpers
+!registration
+!template
+!helpers/*
+!registration/*
+!template/*
+!.gitignore
+!.package.json
+!.package-lock.json
