@@ -69,7 +69,7 @@ namespace BlockchainVotingApp.Controllers
                 return new JsonResult(new { content = result });
             }
 
-            return new BadRequestResult();
+            return BadRequest();
         }
 
         [HttpGet]

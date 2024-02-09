@@ -52,7 +52,38 @@
                     allowOutsideClick: false
                 });
 
-                location.href = context.apis.voteDetails + "?electionId=" + context.state.electionId + "&proof=" + context.state.proofContent
+                $.ajax({
+                    url: context.apis.voteDetails + "?electionId=" + context.state.electionId + "&proof=" + context.state.proofContent,
+                    method: 'GET',
+                    success: function (response) {
+                        location.href = context.apis.voteDetails + "?electionId=" + context.state.electionId + "&proof=" + context.state.proofContent
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            title: 'Operation failed',
+                            text: 'The proof is wrong!',
+                            icon: 'error',
+                            buttonsStyling: false,
+                            customClass: {
+                                confirmButton: 'btn btn-primary'
+                            }
+                        });
+                        context.modal.modal('hide');
+                    }
+                });
+
+                //location.href = context.apis.voteDetails + "?electionId=" + context.state.electionId + "&proof=" + context.state.proofContent
+            },
+            error: function (message) {
+                Swal.fire({
+                    title: 'Operation failed',
+                    text: 'The proof is wrong!',
+                    icon: 'error',
+                    buttonsStyling: false,
+                    customClass: {
+                        confirmButton: 'btn btn-primary'
+                    }
+                })
             }
         });
     }
